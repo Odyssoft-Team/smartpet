@@ -8,7 +8,7 @@ export default function AppLayout() {
           <Link to="/">Inicio</Link>
           <Link to="/about">Nosotros</Link>
           <Link to="/services">Servicios</Link>
-          <Link to="/registro">Registro</Link>
+          <Link to="/auth/register">Registro</Link>
         </div>
         <Outlet />
       </div>
