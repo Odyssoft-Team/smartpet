@@ -1,21 +1,35 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import AppLayout from "./layouts/AppLayout";
+import { ProtectedLayout } from "./layouts/ProtedtedLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import ErrorPage from "@/shared/pages/ErrorPage";
 
-const Home = lazy(() => import("../domains/home/pages/HomePage"));
-const About = lazy(() => import("../domains/about/pages/AboutPage"));
-const Services = lazy(() => import("../domains/services/pages/ServicesPage"));
-const Registro = lazy(() => import("@/domains/registro/pages/RegistroPage"));
+const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
+const AboutPage = lazy(() => import("../domains/about/pages/AboutPage"));
+const ServicesPage = lazy(
+  () => import("../domains/services/pages/ServicesPage")
+);
+const RegistroPage = lazy(
+  () => import("@/domains/registro/pages/RegistroPage")
+);
+const LoginPage = lazy(() => import("@/domains/auth/pages/LoginPage"));
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <AppLayout />,
+    element: <ProtectedLayout />,
+    errorElement: <ErrorPage />,
     children: [
-      { path: "/", element: <Home /> },
-      { path: "/about", element: <About /> },
-      { path: "/services", element: <Services /> },
-      { path: "/registro", element: <Registro /> },
+      { path: "/", element: <HomePage /> },
+      { path: "/about", element: <AboutPage /> },
+      { path: "/services", element: <ServicesPage /> },
+      { path: "/registro", element: <RegistroPage /> },
     ],
+  },
+  {
+    path: "/auth",
+    element: <AuthLayout />,
+    errorElement: <ErrorPage />,
+    children: [{ path: "login", element: <LoginPage /> }],
   },
 ]);
