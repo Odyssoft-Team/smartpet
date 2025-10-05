@@ -4,6 +4,8 @@ import { ProtectedLayout } from "./layouts/ProtedtedLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import ErrorPage from "@/shared/pages/ErrorPage";
 import AppLayout from "./layouts/AppLayout";
+import MypetsPage from "@/domains/mypets/pages/MypetsPage";
+import RegistermypetsPage from "@/domains/mypets/pages/RegisterPage";
 
 const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
 const AboutPage = lazy(() => import("../domains/about/pages/AboutPage"));
@@ -26,6 +28,8 @@ export const router = createBrowserRouter([
           { path: "/", element: <HomePage /> },
           { path: "/about", element: <AboutPage /> },
           { path: "/services", element: <ServicesPage /> },
+          { path: "/mypets", element: <MypetsPage /> },
+          { path: "/registermypets", element: <RegistermypetsPage /> },
         ],
       },
     ],
