@@ -5,6 +5,7 @@ import AppLayout from "./layouts/AppLayout";
 const Home = lazy(() => import("../domains/home/pages/HomePage"));
 const About = lazy(() => import("../domains/about/pages/AboutPage"));
 const Services = lazy(() => import("../domains/services/pages/ServicesPage"));
+const Registro = lazy(() => import("@/domains/registro/pages/RegistroPage"));
 
 export const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/about", element: <About /> },
       { path: "/services", element: <Services /> },
+      { path: "/registro", element: <Registro /> },
     ],
   },
 ]);
