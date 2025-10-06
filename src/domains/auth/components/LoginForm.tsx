@@ -170,8 +170,8 @@ export function LoginForm() {
                   y2="407.5726"
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop offset="0" stop-color="#0062e0" />
-                  <stop offset="1" stop-color="#19afff" />
+                  <stop offset="0" stopColor="#0062e0" />
+                  <stop offset="1" stopColor="#19afff" />
                 </linearGradient>
                 <path
                   fill="url(#a)"

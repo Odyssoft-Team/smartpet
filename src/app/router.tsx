@@ -8,10 +8,16 @@ import MypetsPage from "@/domains/mypets/pages/MypetsPage";
 import RegistermypetsPage from "@/domains/mypets/pages/RegisterPage";
 
 const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
-const AboutPage = lazy(() => import("../domains/about/pages/AboutPage"));
 const ServicesPage = lazy(
   () => import("../domains/services/pages/ServicesPage")
 );
+const ShoppingPage = lazy(
+  () => import("../domains/shopping/pages/ShoppingPage")
+);
+const NotificationsPage = lazy(
+  () => import("../domains/notifications/pages/NotificationsPage")
+);
+const ProfilePage = lazy(() => import("../domains/profile/pages/ProfilePage"));
 const LoginPage = lazy(() => import("@/domains/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/domains/auth/pages/RegisterPage"));
 const RegisterNamePage = lazy(
@@ -35,8 +41,10 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { path: "/", element: <HomePage /> },
-          { path: "/about", element: <AboutPage /> },
           { path: "/services", element: <ServicesPage /> },
+          { path: "/shopping", element: <ShoppingPage /> },
+          { path: "/notifications", element: <NotificationsPage /> },
+          { path: "/profile", element: <ProfilePage /> },
           { path: "/mypets", element: <MypetsPage /> },
           { path: "/registermypets", element: <RegistermypetsPage /> },
         ],
