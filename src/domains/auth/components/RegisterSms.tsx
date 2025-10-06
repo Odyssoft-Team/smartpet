@@ -100,7 +100,7 @@ export function RegisterSms() {
             <Button
               onClick={handleValidate}
               disabled={loading}
-              className="flex items-center gap-2 min-w-[140px]"
+              className="flex items-center gap-2 min-w-[140px] !bg-black"
             >
               {loading ? (
                 <>

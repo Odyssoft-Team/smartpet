@@ -56,7 +56,7 @@ export function RegisterForm() {
           </Field>
 
           <Field>
-            <Button type="submit" className="group w-full">
+            <Button type="submit" className="group w-full !bg-black">
               Continuar{" "}
               <ArrowRightIcon
                 className="-me-1 transition-transform group-hover:translate-x-0.5"

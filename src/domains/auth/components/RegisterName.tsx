@@ -61,7 +61,7 @@ export function RegisterName() {
               variant="outline"
               type="button"
               onClick={handleBack}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 !bg-black"
             >
               Atrás
             </Button>

@@ -58,10 +58,10 @@ export function RegisterPhone() {
             )}
           </Field>
           <Field>
-            <Button onClick={handleNext}>
+            <Button onClick={handleNext} className="!bg-black">
               Continuar{" "}
               <ArrowRightIcon
-                className="-me-1 transition-transform group-hover:translate-x-0.5"
+                className="-me-1 transition-transform group-hover:translate-x-0.5 !text-white"
                 size={16}
                 aria-hidden="true"
               />
@@ -70,7 +70,7 @@ export function RegisterPhone() {
             <Button
               variant="outline"
               type="button"
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 !bg-black !text-white"
               onClick={handleBack}
             >
               Atrás

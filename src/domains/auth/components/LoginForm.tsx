@@ -112,7 +112,7 @@ export function LoginForm() {
           {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
           <Field>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="!bg-black">
               {loading ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="animate-spin" />
