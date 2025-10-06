@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useAuthStore } from "@/store/auth.store";
+import { useNavigate } from "react-router-dom";
 
 interface LoginResponse {
   success: boolean;
@@ -26,6 +28,9 @@ export function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
+  const { setCurrentUser, setToken, saveUser } = useAuthStore();
+  const navigate = useNavigate();
+
   const fakeLogin = async (
     email: string,
     password: string
@@ -34,7 +39,7 @@ export function LoginForm() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (email === "demo@gmail.com" && password === "123456") {
-      return { success: true, message: "Inicio de sesión exitoso 🎉" };
+      return { success: true, message: "Inicio de sesión exitoso" };
     } else {
       return { success: false, message: "Correo o contraseña incorrectos" };
     }
@@ -47,11 +52,15 @@ export function LoginForm() {
 
     const response = await fakeLogin(email, password);
     if (response.success) {
+      setCurrentUser(email);
+      setToken("token_test");
+      saveUser(email);
       toast.success("Inicio de sesión exitoso", {
         description: "Bienvenido a Smart Pet",
         position: "top-right",
         duration: 5000,
       });
+      navigate("/");
     } else {
       setError(response.message);
       toast.error("Inicio de sesión fallido", {
