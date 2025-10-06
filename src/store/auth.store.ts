@@ -17,7 +17,7 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
-      token: "token_init",
+      token: null,
       currentUser: null,
       savedUsers: [],
       hasHydrated: false,
