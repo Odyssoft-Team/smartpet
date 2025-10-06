@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth.store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface LoginResponse {
   success: boolean;
@@ -80,7 +80,8 @@ export function LoginForm() {
           <div className="flex flex-col items-center gap-2 text-center">
             <h1 className="text-5xl font-bold">Bienvenido a Smart Pet</h1>
             <FieldDescription>
-              ¿No tienes una cuenta? <a href="#">Regístrate</a>
+              ¿No tienes una cuenta?{" "}
+              <Link to={"/auth/register"}>Regístrate</Link>
             </FieldDescription>
           </div>
 
