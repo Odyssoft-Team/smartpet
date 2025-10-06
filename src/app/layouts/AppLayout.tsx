@@ -9,6 +9,7 @@ export default function AppLayout() {
           <Link to="/about">Nosotros</Link>
           <Link to="/services">Servicios</Link>
           <Link to="/auth/register">Registro</Link>
+          <Link to="/auth/login">Iniciar Sesión</Link>
         </div>
         <Outlet />
       </div>

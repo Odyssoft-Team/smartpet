@@ -7,7 +7,7 @@ import AppLayout from "./layouts/AppLayout";
 import MypetsPage from "@/domains/mypets/pages/MypetsPage";
 import RegistermypetsPage from "@/domains/mypets/pages/RegisterPage";
 
-const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
+//const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
 const AboutPage = lazy(() => import("../domains/about/pages/AboutPage"));
 const ServicesPage = lazy(
   () => import("../domains/services/pages/ServicesPage")
@@ -25,7 +25,8 @@ export const router = createBrowserRouter([
         path: "",
         element: <AppLayout />,
         children: [
-          { path: "/", element: <HomePage /> },
+          //{ path: "/", element: <HomePage /> },
+          { path: "/", element: <RegisterPage /> },
           { path: "/about", element: <AboutPage /> },
           { path: "/services", element: <ServicesPage /> },
           { path: "/mypets", element: <MypetsPage /> },
