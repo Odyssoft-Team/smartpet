@@ -5,7 +5,7 @@ export default function AppLayout() {
   return (
     <div className="flex flex-col items-center justify-between h-screen w-screen p-4 pb-[80px]">
       {/* Contenido principal */}
-      <div className="flex-1 w-full overflow-y-auto pb-[80px]">
+      <div className="flex-1 w-full overflow-y-auto">
         <Outlet />
       </div>
 

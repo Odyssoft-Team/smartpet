@@ -54,7 +54,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       logout: () => set({ token: null, currentUser: null }),
 
       // 🔹 Limpia absolutamente todo (ideal para reset global)
-      clearAuth: () => set(initialState),
+      clearAuth: () => set({ ...initialState, hasHydrated: true }),
     }),
     {
       name: "auth-storage",
