@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
+import fidel_pet from "@/assets/pets/fidel-dog.png";
+import trufa_cat from "@/assets/pets/trufa-cat.png";
+import olivia_dog from "@/assets/pets/olivia-dog.png";
+import { TbDog } from "react-icons/tb";
+import { Cat } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function MypetsPage() {
   return (
@@ -8,7 +14,8 @@ export default function MypetsPage() {
         size="back"
         variant={"back"}
         className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
-      ><IoIosArrowBack />
+      >
+        <IoIosArrowBack />
         Mis mascotas
       </Button>
       <div className="mt-6 w-full max-w-md mx-auto">
@@ -20,61 +27,73 @@ export default function MypetsPage() {
         {/* Mascota 1 */}
         <div className="flex gap-4 items-center py-2 border-b">
           <img
-            src="https://randomuser.me/api/portraits/men/1.jpg"
+            // src="https://randomuser.me/api/portraits/men/1.jpg"
+            src={fidel_pet}
             alt="Mascota 1"
             className="w-16 h-16 rounded-full object-cover mx-auto"
           />
           <div className="flex flex-col items-start w-full">
-            <span className="text-base text-black">Firulais</span>
+            <div className="flex gap-x-1 items-center">
+              <span className="text-base text-black">Fidel</span>
+              <TbDog />
+            </div>
             <span className="text-xs text-gray-500">Edad: 2 años</span>
           </div>
-          
-          <Button size="sm" variant="primary" className="w-20">
-            Editar
-          </Button>
+
+          <Link to="/perfil-fidel">
+            <Button size="sm" variant="primary" className="px-6 font-light">
+              Editar
+            </Button>
+          </Link>
         </div>
         {/* Mascota 2 */}
         <div className="flex gap-4 items-center py-2 border-b">
           <img
-            src="https://randomuser.me/api/portraits/women/2.jpg"
+            // src="https://randomuser.me/api/portraits/women/2.jpg"
+            src={trufa_cat}
             alt="Mascota 2"
             className="w-16 h-16 rounded-full object-cover mx-auto"
           />
           <div className="flex flex-col items-start w-full">
-            <span className="text-base text-black">Firulais</span>
-            <span className="text-xs text-gray-500">Edad: 2 años</span>
+            <div className="flex items-center gap-x-1">
+              <span className="text-base text-black">Trufa</span>
+              <Cat className="size-[15px]" />
+            </div>
+            <span className="text-xs text-gray-500">Edad: 4 años</span>
           </div>
-          <Button size="sm" variant="primary">
-            Editar
-          </Button>
+          <a href="">
+            <Button size="sm" variant="primary" className="px-6 font-light">
+              Editar
+            </Button>
+          </a>
         </div>
         {/* Mascota 3 */}
         <div className="flex gap-4 items-center py-2 border-b">
           <img
-            src="https://randomuser.me/api/portraits/men/3.jpg"
+            // src="https://randomuser.me/api/portraits/men/3.jpg"
+            src={olivia_dog}
             alt="Mascota 3"
             className="w-16 h-16 rounded-full object-cover mx-auto"
           />
           <div className="flex flex-col items-start w-full">
-            <span className="text-base text-black">Firulais</span>
-            <span className="text-xs text-gray-500">Edad: 2 años</span>
+            <span className="text-base text-black">Olivia</span>
+            <span className="text-xs text-gray-500">Edad: 3 años</span>
           </div>
-          <Button size="sm" variant="primary">
-            Editar
-          </Button>
+          <a href="">
+            <Button size="sm" variant="primary" className="px-6 font-light">
+              Editar
+            </Button>
+          </a>
         </div>
         {/* Nueva Mascota */}
 
-        <div className="flex gap-3 items-center justify-start py-2 rounded-lg">
-          <img
-            src="https://randomuser.me/api/portraits/men/3.jpg"
-            alt="Mascota 3"
-            className="w-16 h-16 rounded-full object-cover mx-auto"
-          />
-          
-          <Button size="sm" variant="ghost">
-            Nueva Mascota
-          </Button>
+        <div className="flex gap-1 items-center py-2 rounded-lg">
+          <div className="flex items-center">
+            <div className="w-16 h-16 rounded-full object-cover mx-auto bg-gray-200" />
+            <Button size="sm" variant="ghost" className="text-gray-400">
+              Nueva Mascota
+            </Button>
+          </div>
         </div>
       </div>
     </div>
