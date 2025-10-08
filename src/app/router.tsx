@@ -7,6 +7,8 @@ import AppLayout from "./layouts/AppLayout";
 import MypetsPage from "@/domains/mypets/pages/MypetsPage";
 import RegistermypetsPage from "@/domains/mypets/pages/RegisterPage";
 import Perfil1 from "@/domains/mypets/perfil/Perfil1";
+import Perfil2 from "@/domains/mypets/perfil/Perfil2";
+import Perfil3 from "@/domains/mypets/perfil/Perfil3";
 
 const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
 const ServicesPage = lazy(
@@ -49,8 +51,8 @@ export const router = createBrowserRouter([
           { path: "/mypets", element: <MypetsPage /> },
           { path: "/registermypets", element: <RegistermypetsPage /> },
           { path: "/perfil-fidel", element: <Perfil1 /> },
-          { path: "/perfil-trufa", element: <RegistermypetsPage /> },
-          { path: "/perfil-olivia", element: <RegistermypetsPage /> },
+          { path: "/perfil-trufa", element: <Perfil2 /> },
+          { path: "/perfil-olivia", element: <Perfil3 /> },
         ],
       },
     ],

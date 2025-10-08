@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { IoIosArrowBack } from "react-icons/io";
 import fidel_pet from "@/assets/pets/fidel-dog.png";
 import trufa_cat from "@/assets/pets/trufa-cat.png";
 import olivia_dog from "@/assets/pets/olivia-dog.png";
@@ -15,7 +14,6 @@ export default function MypetsPage() {
         variant={"back"}
         className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
       >
-        <IoIosArrowBack />
         Mis mascotas
       </Button>
       <div className="mt-6 w-full max-w-md mx-auto">
@@ -61,11 +59,11 @@ export default function MypetsPage() {
             </div>
             <span className="text-xs text-gray-500">Edad: 4 años</span>
           </div>
-          <a href="">
+          <Link to="/perfil-trufa">
             <Button size="sm" variant="primary" className="px-6 font-light">
               Editar
             </Button>
-          </a>
+          </Link>
         </div>
         {/* Mascota 3 */}
         <div className="flex gap-4 items-center py-2 border-b">
@@ -76,14 +74,17 @@ export default function MypetsPage() {
             className="w-16 h-16 rounded-full object-cover mx-auto"
           />
           <div className="flex flex-col items-start w-full">
-            <span className="text-base text-black">Olivia</span>
+            <div className="flex items-center gap-x-1">
+              <span className="text-base text-black">Olivia</span>
+              <TbDog />
+            </div>
             <span className="text-xs text-gray-500">Edad: 3 años</span>
           </div>
-          <a href="">
+          <Link to="/perfil-olivia">
             <Button size="sm" variant="primary" className="px-6 font-light">
               Editar
             </Button>
-          </a>
+          </Link>
         </div>
         {/* Nueva Mascota */}
 

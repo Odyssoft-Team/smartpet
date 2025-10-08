@@ -14,7 +14,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
-export default function Perfil1() {
+export default function Perfil3() {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date(2022, 7, 16)); // 2022-08-16
 
@@ -54,7 +54,7 @@ export default function Perfil1() {
           </div>
           <div className="size-64 rounded-full border-[25px] border-blue-200 flex items-center justify-center mb-2 mt-4 absolute -top-3 left-1/2 -translate-x-1/2 z-10" />
           <div className="flex flex-col items-center z-20">
-            <span className="text-3xl font-bold text-blue-500">Fidel</span>
+            <span className="text-3xl font-bold text-blue-500">Olivia</span>
             {/* botones */}
             <div className="rounded-full flex gap-x-6 border border-neutral-200 bg-gray-100 py-1 px-2 mb-2 mt-1">
               <button>

@@ -9,7 +9,7 @@ export default function MenuBottom() {
 
   const menuItems = [
     { to: "/", label: "Inicio", icon: HiHome },
-    { to: "/services", label: "Servicios", icon: FaPaw },
+    { to: "/mypets", label: "Servicios", icon: FaPaw },
     { to: "/shopping", label: "Compras", icon: FaShoppingCart },
     { to: "/notifications", label: "Notificaciones", icon: FaBell },
     { to: "/profile", label: "Perfil", icon: FaUser },
