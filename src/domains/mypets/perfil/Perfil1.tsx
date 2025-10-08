@@ -3,15 +3,16 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Cat } from "lucide-react";
 import { TbDog } from "react-icons/tb";
 import { Link } from "react-router-dom";
+import fidel_pet from "@/assets/pets/fidel-cuadrado.png";
 // import { useState } from "react";
 
-export default function RegistermypetsPage() {
+export default function Perfil1() {
   // const [createPet, setCreatePet] = useState(false);
 
   return (
     <div className="h-full flex flex-col items-center justify-start pt-4 bg-white min-h-screen">
       <div className="w-full flex justify-start">
-        <Link to="/mypets">
+        <Link to="/mypets" className="">
           <Button
             size="back"
             variant={"back"}
@@ -22,10 +23,10 @@ export default function RegistermypetsPage() {
           </Button>
         </Link>
       </div>
-      <div className="w-full max-w-md bg-amber-100 rounded-xl shadow-md p-4 flex flex-col items-center">
+      <div className="w-full max-w-md rounded-xl p-4 flex flex-col items-center">
         {/* Peso y nombre */}
-        <div className="relative flex flex-col justify-end w-full h-[300px] mb-2 bg-red-200">
-          <span className="absolute top-0 left-0">...</span>
+        <div className="relative flex flex-col justify-end w-full h-[300px] mb-2">
+          <span className="absolute -top-3 left-0 text-2xl font-bold">...</span>
           <div className="absolute left-14 top-5 size-14 flex justify-center items-center bg-[#409BFD] text-black rounded-full text-sm font-bold z-[15]">
             12 KG
           </div>
@@ -42,7 +43,7 @@ export default function RegistermypetsPage() {
               </button>
             </div>
             <img
-              src="https://randomuser.me/api/portraits/men/5.jpg"
+              src={fidel_pet}
               alt="Fidel"
               className="size-[160px] rounded-xl object-cover z-20"
             />
@@ -67,18 +68,24 @@ export default function RegistermypetsPage() {
           </span>
         </div>
         {/* Fecha de nacimiento */}
-        <div className="w-full mb-4">
-          <label className="block text-sm font-semibold mb-1">
-            Fecha de nacimiento
-          </label>
-          <input
-            type="date"
-            className="w-full border rounded px-3 py-2"
-            defaultValue="2022-08-16"
-          />
+        <div className="w-full rounded-lg mb-4 bg-[#F3F3F3]">
+          <div className="flex flex-col gap-y-1 text-sm font-semibold mb-1 px-4 py-2">
+            <span className="text-neutral-500 text-[11px]">
+              Seleccione una fecha (dd/mm/yyyy)
+            </span>
+            <div>Fecha de nacimiento</div>
+          </div>
+          <hr className="mt-4" />
+          <div className="h-16 flex items-start px-4 py-3">
+            <input
+              type="date"
+              className="w-full border rounded px-1 text-blue-500 font-semibold"
+              defaultValue="2022-08-16"
+            />
+          </div>
         </div>
         {/* Botón Guardar */}
-        <Button className="w-full bg-black text-white py-2 rounded-lg font-semibold">
+        <Button className="bg-black text-white rounded-lg font-light px-6">
           Guardar
         </Button>
       </div>
