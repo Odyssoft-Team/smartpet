@@ -70,7 +70,7 @@ export function RegisterPhone() {
             <Button
               variant="outline"
               type="button"
-              className="flex items-center gap-1 !bg-black !text-white"
+              className="flex items-center gap-1"
               onClick={handleBack}
             >
               Atrás
