@@ -21,6 +21,7 @@ import opcion_1 from "@/assets/home/opcion-1.png";
 import opcion_2 from "@/assets/home/opcion-2.png";
 import opcion_3 from "@/assets/home/opcion-3.png";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
   return (
@@ -177,6 +178,8 @@ export default function HomePage() {
 
       <Separator />
 
+      {/* OTRAS OCIONES DE SERVICIOS */}
+
       <div className="w-full flex flex-col items-center justify-center gap-2 overflow-hidden">
         <h2 className="font-bold flex items-center gap-3 text-lg text-[#D86C00]">
           Otras opciones{" "}
@@ -191,21 +194,23 @@ export default function HomePage() {
           <CarouselContent>
             <CarouselItem className="basis-[40%]">
               <Card className="p-0 border-none shadow-none rounded-none">
-                <CardContent className="flex flex-col items-center justify-center p-0">
-                  <img
-                    className="w-full overflow-hidden object-cover"
-                    src={opcion_1}
-                    alt="asds"
-                  />
-                  <div className="w-full flex flex-col items-start gap-1 py-2">
-                    <h3 className="leading-[1] font-normal text-sm text-black/50">
-                      Grooming
-                    </h3>
-                    <p className="leading-[1] font-medium text-sm text-black">
-                      Ducha y corte de pelo
-                    </p>
-                  </div>
-                </CardContent>
+                <Link to="/services/grooming">
+                  <CardContent className="flex flex-col items-center justify-center p-0">
+                    <img
+                      className="w-full overflow-hidden object-cover"
+                      src={opcion_1}
+                      alt="asds"
+                    />
+                    <div className="w-full flex flex-col items-start gap-1 py-2">
+                      <h3 className="leading-[1] font-normal text-sm text-black/50">
+                        Grooming
+                      </h3>
+                      <p className="leading-[1] font-medium text-sm text-black">
+                        Ducha y corte de pelo
+                      </p>
+                    </div>
+                  </CardContent>
+                </Link>
               </Card>
             </CarouselItem>
 
