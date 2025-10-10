@@ -5,6 +5,29 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* En tu archivo CSS */
+.sketch-marker {
+  background: transparent;
+  border: none;
+}
+
+.sketch-popup .leaflet-popup-content-wrapper {
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #333;
+}
+
+.sketch-popup .leaflet-popup-tip {
+  background: white;
+  border: 2px solid #333;
+}
+
+/* Ocultar atribución si quieres más limpieza */
+.leaflet-control-attribution {
+  font-size: 8px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
 :root,
 .dark {
   font-family: var(--font-inter);
