@@ -17,6 +17,9 @@ const ServicesPage = lazy(
 const GroomingPage = lazy(
   () => import("../domains/services/pages/GroomingPage")
 );
+const GroomingServicesPage = lazy(
+  () => import("../domains/services/pages/GroomingServicesPage")
+);
 const ShoppingPage = lazy(
   () => import("../domains/shopping/pages/ShoppingPage")
 );
@@ -49,6 +52,7 @@ export const router = createBrowserRouter([
           { path: "/", element: <HomePage /> },
           { path: "/services", element: <ServicesPage /> },
           { path: "/services/grooming", element: <GroomingPage /> },
+          { path: "/services/grooming/2", element: <GroomingServicesPage /> },
           { path: "/shopping", element: <ShoppingPage /> },
           { path: "/notifications", element: <NotificationsPage /> },
           { path: "/profile", element: <ProfilePage /> },

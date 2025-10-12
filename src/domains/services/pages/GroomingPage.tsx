@@ -26,13 +26,22 @@ import {
 } from "@/store/grooming.store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function GroomingPage() {
   const { hairType, coatCondition, setHairType, setCoatCondition } =
     useGroomingStore();
+  const navigate = useNavigate();
 
   // ✅ Validación para el botón
   const isComplete = !!hairType && !!coatCondition;
+
+  const handleContinue = () => {
+    if (isComplete) {
+      // Redireccionar a la siguiente pantalla
+      navigate("/services/grooming/2");
+    }
+  };
   return (
     <div className="w-full flex flex-col gap-8 items-center justify-center overflow-hidden">
       <h2 className="flex items-center gap-2 font-bold text-lg w-full text-start">
@@ -153,6 +162,7 @@ export default function GroomingPage() {
             className="mt-10 flex w-fit"
             disabled={!isComplete}
             variant={isComplete ? "default" : "secondary"}
+            onClick={handleContinue}
           >
             Continuar
           </Button>
