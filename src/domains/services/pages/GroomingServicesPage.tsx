@@ -10,24 +10,37 @@ import { PiDogFill } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
 import { useGroomingStore } from "@/store/grooming.store";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function GroomingServicesPage() {
   const { service, extras, setService, toggleExtra } = useGroomingStore();
+  const navigate = useNavigate();
 
   const handleContinue = () => {
     console.log("Servicio:", service);
     console.log("Extras:", extras);
     // Aquí podrías navegar a la siguiente vista, por ejemplo:
-    // navigate("/confirmar-servicio");
+    navigate("/services/grooming/3");
   };
 
   const isContinueEnabled = !!service; // solo habilitado si eligió un servicio
+
   return (
     <div className="w-full flex flex-col gap-8 items-center justify-center overflow-hidden">
-      <h2 className="flex items-center gap-2 font-bold text-lg w-full text-start">
-        <FaChevronLeft />
-        Servicios disponibles
-      </h2>
+      <div className="w-full flex items-center justify-between">
+        <h2 className="flex items-center gap-2 font-bold text-lg w-full text-start">
+          <FaChevronLeft />
+          Servicios disponibles
+        </h2>
+
+        <Button
+          className="flex w-fit"
+          disabled={!isContinueEnabled}
+          onClick={handleContinue}
+        >
+          Continuar
+        </Button>
+      </div>
 
       <div className="w-full flex flex-col gap-4">
         <div className="w-full flex items-center justify-between">
@@ -51,7 +64,7 @@ export default function GroomingServicesPage() {
           </div>
         </div>
 
-        <div className="w-full h-[70dvh] overflow-y-auto">
+        <div className="w-full h-[80dvh] overflow-y-auto">
           <Accordion type="multiple" className="w-full">
             <AccordionItem value="services">
               <AccordionTrigger>
@@ -232,16 +245,6 @@ export default function GroomingServicesPage() {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-        </div>
-
-        <div className="w-full flex items-center justify-center">
-          <Button
-            className="flex w-fit"
-            disabled={!isContinueEnabled}
-            onClick={handleContinue}
-          >
-            Continuar
-          </Button>
         </div>
       </div>
     </div>

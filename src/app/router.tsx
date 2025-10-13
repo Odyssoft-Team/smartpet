@@ -20,6 +20,9 @@ const GroomingPage = lazy(
 const GroomingServicesPage = lazy(
   () => import("../domains/services/pages/GroomingServicesPage")
 );
+const GroomingCalendarPage = lazy(
+  () => import("../domains/services/pages/GroomingCalendarPage")
+);
 const ShoppingPage = lazy(
   () => import("../domains/shopping/pages/ShoppingPage")
 );
@@ -53,6 +56,7 @@ export const router = createBrowserRouter([
           { path: "/services", element: <ServicesPage /> },
           { path: "/services/grooming", element: <GroomingPage /> },
           { path: "/services/grooming/2", element: <GroomingServicesPage /> },
+          { path: "/services/grooming/3", element: <GroomingCalendarPage /> },
           { path: "/shopping", element: <ShoppingPage /> },
           { path: "/notifications", element: <NotificationsPage /> },
           { path: "/profile", element: <ProfilePage /> },
