@@ -38,9 +38,11 @@ const RegisterNamePage = lazy(
 const RegisterPhonePage = lazy(
   () => import("@/domains/auth/pages/RegisterPhonePage")
 );
-const RegisterSmsPage = lazy(
-  () => import("@/domains/auth/pages/RegisterSmsPage")
+const RegisterEmailVerificationPage = lazy(
+  () => import("@/domains/auth/pages/RegisterEmailVerificationPage")
 );
+
+const CallbackPage = lazy(() => import("@/domains/auth/pages/CallbackPage"));
 
 export const router = createBrowserRouter([
   {
@@ -78,7 +80,14 @@ export const router = createBrowserRouter([
       { path: "register", element: <RegisterPage /> },
       { path: "register/name", element: <RegisterNamePage /> },
       { path: "register/phone", element: <RegisterPhonePage /> },
-      { path: "register/sms", element: <RegisterSmsPage /> },
+      {
+        path: "register/verification",
+        element: <RegisterEmailVerificationPage />,
+      },
+      {
+        path: "callback",
+        element: <CallbackPage />,
+      },
     ],
   },
 ]);

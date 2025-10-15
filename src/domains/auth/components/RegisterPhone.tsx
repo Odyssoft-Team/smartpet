@@ -21,7 +21,7 @@ export function RegisterPhone() {
     }
 
     setError("");
-    navigate("/auth/register/sms");
+    navigate("/auth/register/verification");
   };
 
   const handleBack = () => {

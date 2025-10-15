@@ -28,6 +28,7 @@ import { FaPlayCircle } from "react-icons/fa";
 import fidel from "@/assets/pets/fidel-dog.png";
 import { TbDog } from "react-icons/tb";
 import { FaRegHeart } from "react-icons/fa";
+import { signOut } from "@/services/auth";
 // import AddressManager from "../components/AddressManager";
 
 // Componente del Modal/Overlay
@@ -152,10 +153,20 @@ export default function ProfilePage() {
   };
 
   // Función para manejar el logout
-  const handleLogout = () => {
-    clearAuth();
-    logout();
-    navigate("/auth/login");
+  const handleLogout = async () => {
+    try {
+      // Cierra sesión en Supabase
+      await signOut();
+
+      // Limpia tu estado local
+      clearAuth();
+      logout();
+
+      // Redirige al login
+      navigate("/auth/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
   };
 
   // Función para manejar el cambio de imagen

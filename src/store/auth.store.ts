@@ -8,6 +8,7 @@ interface AuthState {
   currentUser: string | null;
   savedUsers: string[];
   hasHydrated: boolean;
+  isLoading: boolean;
 }
 
 // ✅ Acciones del store
@@ -17,6 +18,8 @@ interface AuthActions {
   saveUser: (user: string) => void;
   removeUser: (user: string) => void;
   setHasHydrated: (state: boolean) => void;
+  startLoading: () => void;
+  stopLoading: () => void;
   logout: () => void;
   clearAuth: () => void; // 🔹 reset total (similar a clearFields)
 }
@@ -27,6 +30,7 @@ const initialState: AuthState = {
   currentUser: null,
   savedUsers: [],
   hasHydrated: false,
+  isLoading: true,
 };
 
 // ✅ Store con persistencia y tipado estricto
@@ -50,6 +54,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         set({ savedUsers: get().savedUsers.filter((u) => u !== user) }),
 
       setHasHydrated: (state) => set({ hasHydrated: state }),
+
+      startLoading: () => set({ isLoading: true }),
+
+      stopLoading: () => set({ isLoading: false }),
 
       logout: () => set({ token: null, currentUser: null }),
 
