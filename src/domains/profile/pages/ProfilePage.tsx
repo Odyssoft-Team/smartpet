@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/auth.store";
+import { useProfileStore } from "@/store/profile.store";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidEnvelope } from "react-icons/bi";
@@ -7,6 +8,7 @@ import { MdPhoneEnabled } from "react-icons/md";
 import user_demo from "@/assets/profile/user.png";
 import { FaRegClock } from "react-icons/fa";
 import { MapContainer } from "react-leaflet/MapContainer";
+import { useMapEvents } from "react-leaflet";
 import { TileLayer } from "react-leaflet/TileLayer";
 import { Marker } from "react-leaflet/Marker";
 import { Popup } from "react-leaflet";
@@ -28,7 +30,6 @@ import { FaPlayCircle } from "react-icons/fa";
 import fidel from "@/assets/pets/fidel-dog.png";
 import { TbDog } from "react-icons/tb";
 import { FaRegHeart } from "react-icons/fa";
-// import AddressManager from "../components/AddressManager";
 
 // Componente del Modal/Overlay
 const Modal = ({
@@ -44,13 +45,10 @@ const Modal = ({
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-      {/* Fondo oscuro */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
-
-      {/* Contenido del modal */}
       <div className="relative z-[10000] transform transition-all">
         {children}
       </div>
@@ -72,13 +70,51 @@ const createCustomIcon = () => {
   });
 };
 
+// Componente para manejar los eventos del mapa
+function MapEvents({
+  onMapClick,
+}: {
+  onMapClick: (lat: number, lng: number) => void;
+}) {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
+      onMapClick(lat, lng);
+    },
+  });
+  return null;
+}
+
 export default function ProfilePage() {
   const customIcon = createCustomIcon();
   const { clearAuth, logout } = useAuthStore();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Usar el store global del perfil
+  const {
+    email,
+    phone,
+    profileImage,
+    name,
+    addressLabel,
+    address,
+    coordinates,
+    cardData,
+    setEmail,
+    setPhone,
+    setProfileImage,
+    setName,
+    setAddress,
+    setCoordinates,
+    updateCardData,
+  } = useProfileStore();
+
   const [openVideos, setOpenVideos] = useState<{ [key: string]: boolean }>({});
+  const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const [isModalOpen3, setIsModalOpen3] = useState<boolean>(false);
 
   const toggleVideo = (itemId: string) => {
     setOpenVideos((prev) => ({
@@ -87,88 +123,42 @@ export default function ProfilePage() {
     }));
   };
 
-  // Estados para la información del perfil
-  const [email, setEmail] = useState("josecorreo@hotmail.com");
-  const [phone, setPhone] = useState("+51 999 989 943");
-  const [label, setLabel] = useState("Casa");
-  const [address, setAddress] = useState("Jr Paseo del Bosque 500");
-  const [profileImage, setProfileImage] = useState<string>(user_demo);
-
-  // Estado para datos de tarjeta
-  const [cardData, setCardData] = useState({
-    label: "Tarjeta 1",
-    cardNumber: "7809 0798 6506 5055",
-    cardHolder: "Jose Mendoza",
-    expiryDate: "21/25",
-    cvv: "123",
-  });
-
-  // Estado para dropdown en mapa
-  const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleSave = () => {
-    setIsModalOpen(false);
+  // Función para manejar clics en el mapa
+  const handleMapClick = (lat: number, lng: number) => {
+    setCoordinates(lat, lng);
+    console.log("Coordenadas guardadas:", { lat, lng });
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+  const handleSave = () => setIsModalOpen(false);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const handleSave2 = () => setIsModalOpen2(false);
+  const handleOpenModal2 = () => setIsModalOpen2(true);
+  const handleCloseModal2 = () => setIsModalOpen2(false);
 
-  const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const handleCardSave = () => setIsModalOpen3(false);
+  const handleOpenCard = () => setIsModalOpen3(true);
+  const handleCardClose = () => setIsModalOpen3(false);
 
-  const handleSave2 = () => {
-    setIsModalOpen2(false);
-  };
-
-  const handleOpenModal2 = () => {
-    setIsModalOpen2(true);
-  };
-
-  const handleCloseModal2 = () => {
-    setIsModalOpen2(false);
-  };
-
-  const [isModalOpen3, setIsModalOpen3] = useState<boolean>(false);
-
-  const handleCardSave = () => {
-    setIsModalOpen3(false);
-  };
-  const handleOpenCard = () => {
-    setIsModalOpen3(true);
-  };
-
-  const handleCardClose = () => {
-    setIsModalOpen3(false);
-  };
-
-  // Función para manejar el clic en la imagen de perfil
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Función para manejar el logout
   const handleLogout = () => {
     clearAuth();
     logout();
     navigate("/auth/login");
   };
 
-  // Función para manejar el cambio de imagen
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validar que sea una imagen
       if (!file.type.startsWith("image/")) {
         alert("Por favor, selecciona un archivo de imagen válido");
         return;
       }
 
-      // Validar tamaño del archivo (máximo 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert("La imagen debe ser menor a 5MB");
         return;
@@ -178,13 +168,14 @@ export default function ProfilePage() {
       reader.onload = (e) => {
         if (e.target?.result) {
           setProfileImage(e.target.result as string);
-          // Aquí podrías guardar la imagen en tu backend
           console.log("Imagen de perfil actualizada");
         }
       };
       reader.readAsDataURL(file);
     }
   };
+
+  const displayImage = profileImage || user_demo;
 
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white h-fit min-h-screen">
@@ -205,27 +196,22 @@ export default function ProfilePage() {
       <div className="w-full max-w-md rounded-xl flex flex-col mb-2">
         {/* perfil */}
         <div className="flex flex-col items-center gap-y-1">
-          <span className="text-3xl font-bold text-[#D86C00]">José</span>
+          <span className="text-3xl font-bold text-[#D86C00]">{name}</span>
 
-          {/* Contenedor de la imagen de perfil - SOLUCIÓN */}
           <div className="relative group">
             <div
               className="relative size-[160px] rounded-xl cursor-pointer overflow-hidden"
               onClick={handleImageClick}
             >
               <img
-                src={profileImage}
+                src={displayImage}
                 alt="user-img"
                 className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-75"
               />
-
-              {/* Overlay con icono de cámara - ahora es parte del mismo elemento clickeable */}
               <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 rounded-xl transition-all duration-300">
                 <IoCamera className="size-8 text-white opacity-0 group-hover:opacity-100 transition-all duration-300" />
               </div>
             </div>
-
-            {/* Input file oculto */}
             <input
               type="file"
               ref={fileInputRef}
@@ -271,7 +257,7 @@ export default function ProfilePage() {
               <FaMapMarkerAlt className="size-5 text-[#D86C00]" />
               <div>
                 <div className="flex items-center gap-x-2 text-base font-bold">
-                  {label}
+                  {addressLabel}
                   <button
                     onClick={handleOpenModal2}
                     className="size-5 flex items-center justify-center rounded-full bg-gray-200"
@@ -296,30 +282,60 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-            {/* Contenedor del mapa con z-index bajo */}
+
+            {/* Contenedor del mapa */}
             <div
               className={cn(
                 "w-full overflow-hidden rounded-xl mt-3 relative z-0 transition-all duration-300 ease-in-out",
-                isMapOpen ? "h-[145px]" : "h-0"
+                isMapOpen ? "h-[200px]" : "h-0"
               )}
             >
               <MapContainer
                 className="w-full h-full relative z-0"
-                center={[-12.111575, -77.0125695]}
+                center={[coordinates.lat, coordinates.lng]}
                 zoom={18}
-                scrollWheelZoom={false}
+                scrollWheelZoom={true}
                 style={{ position: "relative", zIndex: 0 }}
               >
                 <TileLayer
                   url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
-                <Marker position={[-12.111575, -77.0125695]} icon={customIcon}>
-                  <Popup>Av. Tomas Marsano 961, Surquillo 15036</Popup>
+
+                {/* Componente para manejar eventos de clic */}
+                <MapEvents onMapClick={handleMapClick} />
+
+                {/* Marcador en la ubicación seleccionada */}
+                <Marker
+                  position={[coordinates.lat, coordinates.lng]}
+                  icon={customIcon}
+                >
+                  <Popup>
+                    <div className="text-center">
+                      <strong>Tu ubicación seleccionada</strong>
+                      <br />
+                      Lat: {coordinates.lat.toFixed(6)}
+                      <br />
+                      Lng: {coordinates.lng.toFixed(6)}
+                    </div>
+                  </Popup>
                 </Marker>
               </MapContainer>
+
+              {/* Información de coordenadas */}
+              <div className="absolute bottom-2 left-2 right-2 z-[1000] bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg text-xs">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Coordenadas guardadas:</span>
+                  <span className="text-gray-600">
+                    {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+                  </span>
+                </div>
+              </div>
             </div>
-            {/* <AddressManager /> */}
+
+            <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-medium text-sky-500">
+              👆 Toca en el mapa para seleccionar tu ubicación
+            </div>
           </div>
 
           <hr className="mt-6 bg-gray-600" />
@@ -327,10 +343,8 @@ export default function ProfilePage() {
           {/* Medio de pago frecuente */}
           <div className="flex flex-col gap-y-2">
             <h2 className="ml-4 mt-4 text-base font-bold">Medios de pago</h2>
-
             <div className="w-full flex rounded-xl bg-gray-200 py-4">
-              <div className="w-[35%] flex justify-center items-center  ">
-                {/* tarjeta img */}
+              <div className="w-[35%] flex justify-center items-center">
                 <div className="w-12 h-8 flex flex-col rounded-[0.2rem] overflow-hidden">
                   <div className="w-full h-[20%] bg-sky-600"></div>
                   <div className="w-full h-[20%] bg-black"></div>
@@ -356,9 +370,10 @@ export default function ProfilePage() {
             </div>
           </div>
 
+          {/* Resto del código (Historial y Favoritos) se mantiene igual */}
           <hr className="mt-6 bg-gray-600" />
 
-          {/* Historial */}
+          {/* Historial - MANTENIDO IGUAL */}
           <div className="flex flex-col gap-y-2">
             <h2 className="ml-4 mt-4 text-base font-bold">Historial</h2>
             <div className="flex flex-col gap-y-3">
@@ -506,7 +521,7 @@ export default function ProfilePage() {
 
           <hr className="mt-2 bg-gray-600" />
 
-          {/* favoritos */}
+          {/* favoritos - MANTENIDO IGUAL */}
           <div className="space-y-2">
             <div className="ml-4 mt-4 flex items-center gap-x-2 text-base font-bold">
               Favoritos <FaRegHeart className="text-red-500" />
@@ -532,31 +547,31 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Modal para editar perfil */}
+      {/* Modales (se mantienen igual) */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ProfileEditForm
           email={email}
           phone={phone}
+          name={name}
           onEmailChange={setEmail}
           onPhoneChange={setPhone}
+          onNameChange={setName}
           onSave={handleSave}
           onClose={handleCloseModal}
         />
       </Modal>
 
-      {/* Modal para editar direccion */}
       <Modal isOpen={isModalOpen2} onClose={handleCloseModal2}>
         <AddressEditForm
-          label={label}
+          label={addressLabel}
           address={address}
-          onLabelChange={setLabel}
-          onAddressChange={setAddress}
+          onLabelChange={(label) => setAddress(label, address)}
+          onAddressChange={(newAddress) => setAddress(addressLabel, newAddress)}
           onSave={handleSave2}
           onClose={handleCloseModal2}
         />
       </Modal>
 
-      {/* Modal para editar Tarjeta */}
       <Modal isOpen={isModalOpen3} onClose={handleCardClose}>
         <CardEditForm
           label={cardData.label}
@@ -564,23 +579,16 @@ export default function ProfilePage() {
           cardHolder={cardData.cardHolder}
           expiryDate={cardData.expiryDate}
           cvv={cardData.cvv}
-          onLabelChange={(label) => setCardData({ ...cardData, label })}
-          onCardNumberChange={(cardNumber) =>
-            setCardData({ ...cardData, cardNumber })
-          }
-          onCardHolderChange={(cardHolder) =>
-            setCardData({ ...cardData, cardHolder })
-          }
-          onExpiryDateChange={(expiryDate) =>
-            setCardData({ ...cardData, expiryDate })
-          }
-          onCvvChange={(cvv) => setCardData({ ...cardData, cvv })}
+          onLabelChange={(label) => updateCardData({ label })}
+          onCardNumberChange={(cardNumber) => updateCardData({ cardNumber })}
+          onCardHolderChange={(cardHolder) => updateCardData({ cardHolder })}
+          onExpiryDateChange={(expiryDate) => updateCardData({ expiryDate })}
+          onCvvChange={(cvv) => updateCardData({ cvv })}
           onSave={handleCardSave}
           onClose={handleCardClose}
         />
       </Modal>
 
-      {/* cerrar sesion */}
       <Button
         variant={"destructive"}
         onClick={handleLogout}
