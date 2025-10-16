@@ -15,7 +15,8 @@ import { useState } from "react";
 
 export function RegisterForm() {
   const navigate = useNavigate();
-  const { email, setEmail, isStepComplete } = useRegisterStore();
+  const { email, setEmail, password, setPassword, isStepComplete } =
+    useRegisterStore();
   const [error, setError] = useState<string>("");
 
   const handleContinue = (e: React.FormEvent) => {
@@ -51,6 +52,18 @@ export function RegisterForm() {
               placeholder="correo@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+            />
+            {error && <p className="text-sm text-red-500">{error}</p>}
+          </Field>
+
+          <Field className="flex flex-col gap-1">
+            <FieldLabel htmlFor="pass-new">Contraseña</FieldLabel>
+            <Input
+              id="pass-new"
+              type="password"
+              placeholder=""
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             {error && <p className="text-sm text-red-500">{error}</p>}
           </Field>

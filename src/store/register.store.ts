@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 // ✅ Tipado del estado
 type RegisterState = {
   email: string;
+  password: string;
   name: string;
   phone: string;
 };
@@ -11,6 +12,7 @@ type RegisterState = {
 // ✅ Tipado de las acciones (mutadores del estado)
 interface RegisterActions {
   setEmail: (email: string) => void;
+  setPassword: (password: string) => void;
   setName: (name: string) => void;
   setPhone: (phone: string) => void;
   clearFields: () => void;
@@ -21,6 +23,7 @@ interface RegisterActions {
 // ✅ Estado inicial (útil para el reset)
 const initialState: RegisterState = {
   email: "",
+  password: "",
   name: "",
   phone: "",
 };
@@ -36,6 +39,12 @@ export const useRegisterStore = create(
         set({ email: normalized });
       },
 
+      // Normaliza y setea la contraseña
+      setPassword: (password: string) => {
+        const normalized = password.trim();
+        set({ password: normalized });
+      },
+
       // Normaliza y setea el nombre
       setName: (name: string) => {
         set({ name: name });
@@ -49,11 +58,13 @@ export const useRegisterStore = create(
 
       // Comprueba si un paso está completo (útil para guards / navegación)
       isStepComplete: (step: "email" | "name" | "phone") => {
-        const { email, name, phone } = get();
+        const { email, password, name, phone } = get();
         switch (step) {
           case "email":
             // validación mínima; puedes reemplazar por una regex si quieres
-            return email.includes("@") && email.length > 5;
+            return (
+              email.includes("@") && email.length > 5 && password.length >= 4
+            );
           case "name":
             return name.trim().length > 1;
           case "phone":
