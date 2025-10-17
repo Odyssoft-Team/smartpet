@@ -93,10 +93,10 @@ export default function ProfilePage() {
 
   // Usar el store global del perfil
   const {
+    name,
     email,
     phone,
     profileImage,
-    name,
     addressLabel,
     address,
     coordinates,

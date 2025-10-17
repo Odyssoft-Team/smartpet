@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-
+import { supabase } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,8 +15,32 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useLogin } from "@/hooks/useLogin";
+import { useAuthStore } from "@/store/auth.store";
 
 export function LoginForm() {
+  const { setCurrentUser, setToken } = useAuthStore();
+
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        const user = session.user;
+        console.log("✅ Usuario logueado:", user);
+        setCurrentUser(user.email ?? null);
+        setToken(session.access_token ?? null);
+      }
+
+      if (event === "SIGNED_OUT") {
+        setCurrentUser(null);
+        setToken(null);
+      }
+    });
+
+    // ✅ Limpieza correcta
+    return () => {
+      data.subscription.unsubscribe();
+    };
+  }, [setCurrentUser, setToken]);
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
