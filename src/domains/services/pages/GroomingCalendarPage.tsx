@@ -1,20 +1,20 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FaChevronLeft, FaMapMarkerAlt } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { es } from "react-day-picker/locale";
 import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useProfileStore } from "@/store/profile.store";
+import { renderToStaticMarkup } from "react-dom/server";
+
 import { MapContainer } from "react-leaflet/MapContainer";
 import { useMapEvents } from "react-leaflet";
 import { TileLayer } from "react-leaflet/TileLayer";
 import { Marker } from "react-leaflet/Marker";
 import { Popup } from "react-leaflet";
 import { divIcon } from "leaflet";
-import { renderToStaticMarkup } from "react-dom/server";
 import "leaflet/dist/leaflet.css";
-import { IoIosArrowDown } from "react-icons/io";
 
 function MapEvents({
   onMapClick,
@@ -45,22 +45,30 @@ const createCustomIcon = () => {
 };
 
 export default function GroomingCalendarPage() {
+  // 🗓️ Estados locales
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [period, setPeriod] = useState<"AM" | "PM" | null>(null);
   const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
+
+  // 📍 Información de dirección y coordenadas
+  const [addressLabel] = useState("Casa Principal");
+  const [address] = useState("Av. Las Camelias 123, Lima");
+  const [coordinates, setCoordinates] = useState({
+    lat: -12.046374,
+    lng: -77.042793,
+  });
+
   const customIcon = createCustomIcon();
 
-  const { addressLabel, address, coordinates, setCoordinates } =
-    useProfileStore();
-
-  // Función para manejar clics en el mapa
+  // 📍 Manejador del clic en el mapa
   const handleMapClick = (lat: number, lng: number) => {
-    setCoordinates(lat, lng);
+    setCoordinates({ lat, lng });
     console.log("Coordenadas guardadas:", { lat, lng });
   };
 
   return (
     <div className="w-full flex flex-col gap-8 items-center justify-center overflow-hidden">
+      {/* Encabezado */}
       <div className="w-full flex items-center justify-between">
         <h2 className="flex items-center gap-2 font-bold text-lg w-full text-start">
           <FaChevronLeft />
@@ -72,7 +80,9 @@ export default function GroomingCalendarPage() {
         </Button>
       </div>
 
+      {/* Contenido principal */}
       <div className="w-full flex flex-col items-center justify-center gap-4">
+        {/* Calendario */}
         <div className="w-full">
           <h2 className="text-xl font-bold">Fecha y horario</h2>
           <div className="w-full flex flex-col gap-4 mt-3">
@@ -83,7 +93,7 @@ export default function GroomingCalendarPage() {
               defaultMonth={date}
               numberOfMonths={1}
               locale={es}
-              className="w-full p-2 rounded-2xl !bg-[#f5f5f5] "
+              className="w-full p-2 rounded-2xl !bg-[#f5f5f5]"
               buttonVariant="outline"
               navLayout="after"
               disabled={(day) => {
@@ -91,7 +101,7 @@ export default function GroomingCalendarPage() {
                 today.setHours(0, 0, 0, 0);
                 const d = new Date(day);
                 d.setHours(0, 0, 0, 0);
-                return d < today || d.getDay() === 0; // domingos y días pasados
+                return d < today || d.getDay() === 0;
               }}
               modifiers={{
                 available: (day) => {
@@ -108,8 +118,6 @@ export default function GroomingCalendarPage() {
                     {children}
                   </div>
                 ),
-
-                // Botón de mes anterior
                 PreviousMonthButton: (props) => (
                   <button
                     {...props}
@@ -118,8 +126,6 @@ export default function GroomingCalendarPage() {
                     <ChevronLeft className="size-5 text-[#D86C00]" />
                   </button>
                 ),
-
-                // Botón de mes siguiente
                 NextMonthButton: (props) => (
                   <button
                     {...props}
@@ -128,37 +134,25 @@ export default function GroomingCalendarPage() {
                     <ChevronRight className="size-5 text-[#D86C00]" />
                   </button>
                 ),
-
-                // Etiqueta central (mes y año)
-                CaptionLabel: ({ children }) => {
-                  return (
-                    <div className="text-[15px] font-medium capitalize text-sky-600">
-                      {children}
-                    </div>
-                  );
-                },
-
-                // Etiqueta de los días
-                Weekday(props) {
-                  return (
-                    <div
-                      {...props}
-                      className="w-full uppercase text-center text-gray-400 text-sm"
-                    />
-                  );
-                },
-
-                Day: ({ children, ...props }) => {
-                  return (
-                    <div
-                      {...props}
-                      className="w-full flex justify-center items-center gap-[2px] h-8"
-                    >
-                      {children}
-                    </div>
-                  );
-                },
-
+                CaptionLabel: ({ children }) => (
+                  <div className="text-[15px] font-medium capitalize text-sky-600">
+                    {children}
+                  </div>
+                ),
+                Weekday: (props) => (
+                  <div
+                    {...props}
+                    className="w-full uppercase text-center text-gray-400 text-sm"
+                  />
+                ),
+                Day: ({ children, ...props }) => (
+                  <div
+                    {...props}
+                    className="w-full flex justify-center items-center gap-[2px] h-8"
+                  >
+                    {children}
+                  </div>
+                ),
                 DayButton: (props) => {
                   const { modifiers } = props;
                   const isAvailable = modifiers.available;
@@ -181,6 +175,7 @@ export default function GroomingCalendarPage() {
               }}
             />
 
+            {/* Botones AM / PM */}
             <div className="w-full flex items-start justify-between">
               <div className="flex items-center gap-2 bg-[#f5f5f5] rounded-2xl">
                 <Button
@@ -206,6 +201,8 @@ export default function GroomingCalendarPage() {
                   PM
                 </Button>
               </div>
+
+              {/* Horarios disponibles */}
               <div className="rounded-md flex items-center justify-center flex-col text-center gap-2 p-4 bg-[#f5f5f5]">
                 <h3 className="text-[#0085D8] text-sm font-semibold">
                   Horarios disponibles
@@ -226,6 +223,7 @@ export default function GroomingCalendarPage() {
 
         <hr className="w-full mt-6 bg-gray-600" />
 
+        {/* 📍 Sección de ubicación */}
         <div className="w-full">
           <h2 className="text-xl font-bold">Ubicación</h2>
 
@@ -242,16 +240,17 @@ export default function GroomingCalendarPage() {
             >
               <IoIosArrowDown
                 className={cn(
-                  "size-4 text-black",
+                  "size-4 text-black transition-transform",
                   isMapOpen ? "rotate-0" : "rotate-180"
                 )}
                 strokeWidth={12}
               />
             </button>
           </div>
+
           <div className="w-full h-[1px] mt-2 bg-gray-300" />
 
-          {/* Contenedor del mapa */}
+          {/* 🗺️ Contenedor del mapa */}
           <div
             className={cn(
               "w-full overflow-hidden rounded-xl mt-3 relative z-0 transition-all duration-300 ease-in-out",
@@ -270,10 +269,8 @@ export default function GroomingCalendarPage() {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
 
-              {/* Componente para manejar eventos de clic */}
               <MapEvents onMapClick={handleMapClick} />
 
-              {/* Marcador en la ubicación seleccionada */}
               <Marker
                 position={[coordinates.lat, coordinates.lng]}
                 icon={customIcon}
@@ -290,7 +287,6 @@ export default function GroomingCalendarPage() {
               </Marker>
             </MapContainer>
 
-            {/* Información de coordenadas */}
             <div className="absolute bottom-2 left-2 right-2 z-[1000] bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg text-xs">
               <div className="flex justify-between items-center">
                 <span className="font-medium">Coordenadas guardadas:</span>

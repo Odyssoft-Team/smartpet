@@ -2,7 +2,7 @@ const MaskedCard = ({
   cardNumber,
   visibleDigits = 4,
 }: {
-  cardNumber: string;
+  cardNumber?: string;
   visibleDigits?: number;
 }) => {
   const formatCardNumber = () => {

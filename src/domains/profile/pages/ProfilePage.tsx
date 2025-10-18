@@ -1,61 +1,55 @@
-import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/store/auth.store";
-import { useProfileStore } from "@/store/profile.store";
-import { IoIosArrowBack } from "react-icons/io";
+// 🧩 React & React Router
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BiSolidEnvelope } from "react-icons/bi";
-import { MdPhoneEnabled } from "react-icons/md";
-import user_demo from "@/assets/profile/user.png";
-import { FaRegClock } from "react-icons/fa";
+
+// 🗺️ React Leaflet
 import { MapContainer } from "react-leaflet/MapContainer";
 import { useMapEvents } from "react-leaflet";
 import { TileLayer } from "react-leaflet/TileLayer";
 import { Marker } from "react-leaflet/Marker";
 import { Popup } from "react-leaflet";
-import { renderToStaticMarkup } from "react-dom/server";
-import { FaMapMarkerAlt } from "react-icons/fa";
 import { divIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useState, useRef } from "react";
-import ProfileEditForm from "../components/ProfileEditForm";
-import { IoCamera } from "react-icons/io5";
-import { HiPencil } from "react-icons/hi";
-import { IoIosArrowDown } from "react-icons/io";
+
+import { renderToStaticMarkup } from "react-dom/server";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import AddressEditForm from "../components/AddressEditForm";
-import CardEditForm from "../components/CardEditForm";
+
+import { useAuthStore } from "@/store/auth.store";
+import { useProfiles } from "../services/servicesProfile";
+import { useCards } from "../services/cardService";
+
 import MaskedCard from "../components/MaskedCard";
+import CardCreateForm from "../components/CardCreateForm";
+import CardEditForm from "../components/CardEditForm";
+import CardDeleteDialog from "../components/CardDeleteDialog";
+import ProfileEditForm from "../components/ProfileEditForm";
+import AddressEditForm from "../components/AddressEditForm";
+import Modal from "../components/Modal";
+import { AvatarUploader } from "../components/AvatarUploader";
+
 import { ListHistorial } from "@/data/historial";
-import { FaPlayCircle } from "react-icons/fa";
+import type { ListProfile } from "../utils/Profile";
+import type { Cards } from "../utils/Card";
 import fidel from "@/assets/pets/fidel-dog.png";
+
+import {
+  FaRegTrashAlt,
+  FaPlayCircle,
+  FaMapMarkerAlt,
+  FaRegHeart,
+  FaRegClock,
+} from "react-icons/fa";
+import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
+import { BiSolidEnvelope } from "react-icons/bi";
+import { MdPhoneEnabled, MdAddCard } from "react-icons/md";
+import { HiPencil } from "react-icons/hi";
 import { TbDog } from "react-icons/tb";
-import { FaRegHeart } from "react-icons/fa";
 
-// Componente del Modal/Overlay
-const Modal = ({
-  isOpen,
-  onClose,
-  children,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
-      />
-      <div className="relative z-[10000] transform transition-all">
-        {children}
-      </div>
-    </div>
-  );
-};
-
+// Componente para manejar los eventos del mapa
 const createCustomIcon = () => {
   const iconMarkup = renderToStaticMarkup(
     <FaMapMarkerAlt className="text-[#D86C00] text-2xl" />
@@ -70,7 +64,6 @@ const createCustomIcon = () => {
   });
 };
 
-// Componente para manejar los eventos del mapa
 function MapEvents({
   onMapClick,
 }: {
@@ -89,32 +82,16 @@ export default function ProfilePage() {
   const customIcon = createCustomIcon();
   const { clearAuth, logout } = useAuthStore();
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [coordinates, setCoordinates] = useState({
+    lat: -12.0464, // valor por defecto (Lima, Perú por ejemplo)
+    lng: -77.0428,
+  });
 
-  // Usar el store global del perfil
-  const {
-    name,
-    email,
-    phone,
-    profileImage,
-    addressLabel,
-    address,
-    coordinates,
-    cardData,
-    setEmail,
-    setPhone,
-    setProfileImage,
-    setName,
-    setAddress,
-    setCoordinates,
-    updateCardData,
-  } = useProfileStore();
+  const { getCurrentUserProfile, updateProfile } = useProfiles();
+  // const { loadUserCards, updateCard } = useCards();
 
   const [openVideos, setOpenVideos] = useState<{ [key: string]: boolean }>({});
   const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpen2, setIsModalOpen2] = useState(false);
-  const [isModalOpen3, setIsModalOpen3] = useState<boolean>(false);
 
   const toggleVideo = (itemId: string) => {
     setOpenVideos((prev) => ({
@@ -123,59 +100,244 @@ export default function ProfilePage() {
     }));
   };
 
-  // Función para manejar clics en el mapa
   const handleMapClick = (lat: number, lng: number) => {
-    setCoordinates(lat, lng);
+    setCoordinates({ lat, lng });
     console.log("Coordenadas guardadas:", { lat, lng });
   };
 
-  const handleSave = () => setIsModalOpen(false);
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+  // estados y const de PROFILE
 
-  const handleSave2 = () => setIsModalOpen2(false);
-  const handleOpenModal2 = () => setIsModalOpen2(true);
-  const handleCloseModal2 = () => setIsModalOpen2(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const handleCardSave = () => setIsModalOpen3(false);
-  const handleOpenCard = () => setIsModalOpen3(true);
-  const handleCardClose = () => setIsModalOpen3(false);
+  const [listProfile, setListProfile] = useState<ListProfile>({
+    id: "",
+    full_name: "",
+    email: "",
+    phone: "",
+    avatar_url: "",
+    label_address: "",
+    address: "",
+  });
 
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const data = await getCurrentUserProfile();
+
+        if (data) {
+          setListProfile({
+            id: data.id,
+            full_name: data.full_name || "",
+            email: data.email || "",
+            phone: data.phone || "",
+            avatar_url: data.avatar_url || "",
+            label_address: data.label_address || "",
+            address: data.address || "",
+          });
+        } else {
+          toast.error("No se pudo cargar el perfil del usuario");
+        }
+      } catch (error) {
+        console.error("Error cargando perfil:", error);
+        toast.error("Error al cargar el perfil");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const [openProfile, setOpenProfile] = useState<boolean>(false);
+
+  // manejadores para editar INFORMACION
+  const handleCloseProfile = () => {
+    // cierras el modal
+    setOpenProfile(false);
   };
 
+  const handleEditProfile = async (updatedProfile: ListProfile) => {
+    const result = await updateProfile({
+      full_name: updatedProfile.full_name,
+      email: updatedProfile.email,
+      phone: updatedProfile.phone,
+    });
+
+    if (result) {
+      setListProfile((prev) => ({
+        ...prev,
+        full_name: result.full_name,
+        email: result.email,
+        phone: result.phone,
+        avatar_url: result.avatar_url ?? prev.avatar_url,
+      }));
+
+      handleCloseProfile();
+    }
+  };
+
+  // manejadores para editar DIRECCION
+  const [openAddress, setOpenAddress] = useState<boolean>(false);
+
+  const handleCloseAddress = () => {
+    setOpenAddress(false);
+  };
+
+  const handleSaveAddress = async (updatedAddress: {
+    label_address: string;
+    address: string;
+  }) => {
+    try {
+      if (
+        updatedAddress.label_address === listProfile.label_address &&
+        updatedAddress.address === listProfile.address
+      ) {
+        toast.info("No hay cambios en la dirección");
+        return;
+      }
+
+      const result = await updateProfile({
+        label_address: updatedAddress.label_address,
+        address: updatedAddress.address,
+      });
+
+      if (!result) {
+        throw new Error("No se recibió respuesta del servidor");
+      }
+
+      setListProfile((prev) => ({
+        ...prev,
+        label_address: result.label_address || "",
+        address: result.address || "",
+      }));
+
+      toast.success("Dirección actualizada correctamente");
+      handleCloseAddress();
+    } catch (error) {
+      console.error("Error al actualizar la dirección:", error);
+      toast.error("No se pudo actualizar la dirección");
+    }
+  };
+
+  // estados y GET de CARDS
+  const { getCards, addCard, updateCard, deleteCard } = useCards();
+
+  const [listCards, setListCards] = useState<Cards[]>([]);
+
+  const fetchCards = useCallback(async () => {
+    try {
+      const data = await getCards();
+      if (data) {
+        setListCards(data);
+      } else {
+        toast.error("No se pudieron cargar las tarjetas");
+      }
+    } catch (error) {
+      console.error("Error obteniendo las cards:", error);
+      toast.error("No se pudieron cargar las tarjetas");
+    }
+  }, [getCards]);
+
+  useEffect(() => {
+    fetchCards();
+  }, [fetchCards]);
+
+  // estados y const de CREATE Card
+  const [openCreateCard, setOpenCreateCard] = useState<boolean>(false);
+
+  const handleCardClose = () => {
+    setOpenCreateCard(false);
+  };
+
+  const handleCardSave = async (
+    newCard: Omit<Cards, "id" | "created_at" | "update_at">
+  ) => {
+    try {
+      const created = await addCard(newCard);
+      if (created) {
+        toast.success("Tarjeta guardada correctamente");
+        setListCards((prev) => [...prev, created]);
+        handleCardClose();
+        await fetchCards();
+      }
+    } catch (error) {
+      console.error("Error al guardar tarjeta:", error);
+      toast.error("No se pudo guardar la tarjeta");
+    }
+  };
+
+  // estados y const de EDIT Card
+  const [openEditCard, setOpenEditCard] = useState<boolean>(false);
+  const [selectedCard, setSelectedCard] = useState<Cards | null>(null);
+
+  const handleOpenEditCard = (card: Cards) => {
+    setSelectedCard(card);
+    setOpenEditCard(true);
+  };
+
+  const handleCloseEditCard = () => {
+    setSelectedCard(null);
+    setOpenEditCard(false);
+  };
+
+  const handleEditCardSave = async (updatedCard: Cards) => {
+    try {
+      const edited = await updateCard(updatedCard.id, {
+        label: updatedCard.label,
+        card_number: updatedCard.card_number,
+        card_holder_name: updatedCard.card_holder_name,
+        expiry_month: updatedCard.expiry_month,
+        expiry_year: updatedCard.expiry_year,
+        is_default: updatedCard.is_default,
+      });
+
+      toast.success("Tarjeta actualizada correctamente");
+
+      // Actualizar lista local sin volver a pedir todo
+      setListCards((prev) =>
+        prev.map((card) => (card.id === edited.id ? edited : card))
+      );
+
+      handleCloseEditCard();
+    } catch (error) {
+      console.error("Error al editar tarjeta:", error);
+      toast.error("No se pudo actualizar la tarjeta");
+    }
+  };
+
+  // estados y const de DELETE Card
+  const [openDeleteCard, setOpenDeleteCard] = useState(false);
+
+  const handleOpenDeleteCard = (card: Cards) => {
+    setSelectedCard(card);
+    setOpenDeleteCard(true);
+  };
+
+  const handleCloseDeleteCard = () => {
+    setOpenEditCard(false);
+    setOpenDeleteCard(false);
+    setSelectedCard(null);
+  };
+
+  const handleDeleteCard = async (cardId: string) => {
+    try {
+      await deleteCard(cardId);
+      toast.success("Tarjeta eliminada correctamente");
+      await fetchCards();
+      handleCloseDeleteCard();
+    } catch (error) {
+      console.error("Error al eliminar tarjeta:", error);
+      toast.error("No se pudo eliminar la tarjeta");
+    }
+  };
+
+  // LOGGOUT----------------------
   const handleLogout = () => {
     clearAuth();
     logout();
     navigate("/auth/login");
   };
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        alert("Por favor, selecciona un archivo de imagen válido");
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        alert("La imagen debe ser menor a 5MB");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setProfileImage(e.target.result as string);
-          console.log("Imagen de perfil actualizada");
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const displayImage = profileImage || user_demo;
 
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white h-fit min-h-screen">
@@ -196,34 +358,20 @@ export default function ProfilePage() {
       <div className="w-full max-w-md rounded-xl flex flex-col mb-2">
         {/* perfil */}
         <div className="flex flex-col items-center gap-y-1">
-          <span className="text-3xl font-bold text-[#D86C00]">{name}</span>
-
-          <div className="relative group">
-            <div
-              className="relative size-[160px] rounded-xl cursor-pointer overflow-hidden"
-              onClick={handleImageClick}
-            >
-              <img
-                src={displayImage}
-                alt="user-img"
-                className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-75"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 rounded-xl transition-all duration-300">
-                <IoCamera className="size-8 text-white opacity-0 group-hover:opacity-100 transition-all duration-300" />
-              </div>
-            </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleImageChange}
-              accept="image/*"
-              className="hidden"
-            />
-          </div>
-
-          <span className="text-[10px] text-gray-500 mt-2">
-            Toca para añadir una foto de perfil
+          <span className="text-3xl font-bold text-[#D86C00]">
+            {loading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              listProfile.full_name || ""
+            )}
           </span>
+
+          <AvatarUploader
+            avatarUrl={listProfile.avatar_url}
+            onAvatarChange={(newUrl) =>
+              setListProfile((prev) => ({ ...prev, avatar_url: newUrl }))
+            }
+          />
         </div>
 
         {/* datos */}
@@ -234,16 +382,26 @@ export default function ProfilePage() {
             <div className="w-[65%] space-y-2 pl-4">
               <div className="text-xs flex items-center gap-x-2">
                 <BiSolidEnvelope className="size-6" />
-                {email}
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <span className="truncate w-[22ch]">
+                    {listProfile.email || ""}
+                  </span>
+                )}
               </div>
               <div className="text-xs flex items-center gap-x-2 ml-1">
                 <MdPhoneEnabled className="size-[17px] rotate-225" />
-                {phone}
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  listProfile.phone || "sin número"
+                )}
               </div>
             </div>
             <div className="w-[35%] flex justify-center items-center border-l-[2px] border-gray-500 ">
               <Button
-                onClick={handleOpenModal}
+                onClick={() => setOpenProfile(true)}
                 className="bg-black text-white rounded-lg font-light px-6"
               >
                 Editar
@@ -257,16 +415,24 @@ export default function ProfilePage() {
               <FaMapMarkerAlt className="size-5 text-[#D86C00]" />
               <div>
                 <div className="flex items-center gap-x-2 text-base font-bold">
-                  {addressLabel}
+                  {loading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <span>{listProfile.label_address || "label"}</span>
+                  )}
                   <button
-                    onClick={handleOpenModal2}
+                    onClick={() => setOpenAddress(true)}
                     className="size-5 flex items-center justify-center rounded-full bg-gray-200"
                   >
                     <HiPencil className="size-3" />
                   </button>
                 </div>
                 <div className="flex items-center gap-x-2 text-xs text-gray-500">
-                  {address}
+                  {loading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <span>{listProfile.address || "sin dirección"}</span>
+                  )}
                   <button
                     onClick={() => setIsMapOpen(!isMapOpen)}
                     className="size-5 flex items-center justify-center rounded-full bg-gray-200"
@@ -342,38 +508,74 @@ export default function ProfilePage() {
 
           {/* Medio de pago frecuente */}
           <div className="flex flex-col gap-y-2">
-            <h2 className="ml-4 mt-4 text-base font-bold">Medios de pago</h2>
-            <div className="w-full flex rounded-xl bg-gray-200 py-4">
-              <div className="w-[35%] flex justify-center items-center">
-                <div className="w-12 h-8 flex flex-col rounded-[0.2rem] overflow-hidden">
-                  <div className="w-full h-[20%] bg-sky-600"></div>
-                  <div className="w-full h-[20%] bg-black"></div>
-                  <div className="w-full h-[60%] bg-sky-600"></div>
-                </div>
-              </div>
-              <div className="w-[65%] flex items-center justify-between pl-4 pr-5 border-l-[2px] border-gray-500">
-                <div className="space-y-2">
-                  <div className="text-xs font-bold text-[#D86C00]">
-                    Tarjeta de débito:
-                  </div>
-                  <div className="text-xs flex items-center gap-x-2 ml-1">
-                    VISA <MaskedCard cardNumber={cardData.cardNumber} />
-                  </div>
-                </div>
-                <button
-                  onClick={handleOpenCard}
-                  className="size-5 flex items-center justify-center rounded-full bg-black"
-                >
-                  <HiPencil className="size-3 text-gray-200" />
-                </button>
-              </div>
+            <div className="ml-4 mt-4 text-base font-bold flex justify-between">
+              Medios de pago
+              <button
+                onClick={() => setOpenCreateCard(true)}
+                className="flex items-center gap-x-1 text-[11px] font-semibold"
+              >
+                <MdAddCard className="size-6" /> Añadir
+              </button>
             </div>
+
+            {listCards.length > 0 ? (
+              <div className="w-full max-h-[120px] flex flex-col gap-y-3 overflow-y-scroll">
+                {listCards.map((card) => (
+                  <div key={card.id} className="flex items-center gap-x-2">
+                    <div className="w-full flex rounded-xl bg-gray-200 py-4">
+                      <div className="w-[35%] flex justify-center items-center">
+                        <div className="w-12 h-8 flex flex-col rounded-[0.2rem] overflow-hidden">
+                          <div className="w-full h-[20%] bg-sky-600"></div>
+                          <div className="w-full h-[20%] bg-black"></div>
+                          <div className="w-full h-[60%] bg-sky-600"></div>
+                        </div>
+                      </div>
+                      <div className="w-[65%] flex items-center justify-between pl-4 pr-5 border-l-[2px] border-gray-500">
+                        <div className="space-y-2">
+                          <div className="text-xs font-bold text-[#D86C00]">
+                            {card.label}
+                          </div>
+                          <div className="text-xs flex items-center gap-x-2 ml-1">
+                            VISA <MaskedCard cardNumber={card.card_number} />
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleOpenEditCard(card)}
+                          className="size-5 flex items-center justify-center rounded-full bg-black"
+                        >
+                          <HiPencil className="size-3 text-gray-200" />
+                        </button>
+                      </div>
+                    </div>
+                    <button onClick={() => handleOpenDeleteCard(card)}>
+                      <FaRegTrashAlt className="size-4 text-red-500" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="w-full flex rounded-xl bg-gray-200 opacity-90 py-4">
+                <div className="w-[35%] flex justify-center items-center">
+                  <div className="w-12 h-8 flex flex-col rounded-[0.2rem] overflow-hidden grayscale">
+                    <div className="w-full h-[20%] bg-sky-600"></div>
+                    <div className="w-full h-[20%] bg-black"></div>
+                    <div className="w-full h-[60%] bg-sky-600"></div>
+                  </div>
+                </div>
+                <div className="w-[65%] flex items-center justify-between pl-4 pr-5 border-l-[2px] border-gray-500">
+                  <div className="space-y-2">
+                    <div className="w-20 h-4 rounded-2xl bg-gray-300" />
+                    <div className="w-40 h-4 rounded-2xl bg-gray-300" />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Resto del código (Historial y Favoritos) se mantiene igual */}
           <hr className="mt-6 bg-gray-600" />
 
-          {/* Historial - MANTENIDO IGUAL */}
+          {/* Historial */}
           <div className="flex flex-col gap-y-2">
             <h2 className="ml-4 mt-4 text-base font-bold">Historial</h2>
             <div className="flex flex-col gap-y-3">
@@ -521,7 +723,7 @@ export default function ProfilePage() {
 
           <hr className="mt-2 bg-gray-600" />
 
-          {/* favoritos - MANTENIDO IGUAL */}
+          {/* favoritos */}
           <div className="space-y-2">
             <div className="ml-4 mt-4 flex items-center gap-x-2 text-base font-bold">
               Favoritos <FaRegHeart className="text-red-500" />
@@ -547,47 +749,51 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Modales (se mantienen igual) */}
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+      {/* Modal de edición de perfil */}
+      <Modal isOpen={openProfile} onClose={handleCloseProfile}>
         <ProfileEditForm
-          email={email}
-          phone={phone}
-          name={name}
-          onEmailChange={setEmail}
-          onPhoneChange={setPhone}
-          onNameChange={setName}
-          onSave={handleSave}
-          onClose={handleCloseModal}
+          profileData={listProfile}
+          onEdit={handleEditProfile}
+          onClose={handleCloseProfile}
         />
       </Modal>
 
-      <Modal isOpen={isModalOpen2} onClose={handleCloseModal2}>
+      <Modal isOpen={openAddress} onClose={handleCloseAddress}>
         <AddressEditForm
-          label={addressLabel}
-          address={address}
-          onLabelChange={(label) => setAddress(label, address)}
-          onAddressChange={(newAddress) => setAddress(addressLabel, newAddress)}
-          onSave={handleSave2}
-          onClose={handleCloseModal2}
+          addressData={{
+            label_address: listProfile.label_address,
+            address: listProfile.address,
+          }}
+          onSave={handleSaveAddress}
+          onClose={handleCloseAddress}
         />
       </Modal>
 
-      <Modal isOpen={isModalOpen3} onClose={handleCardClose}>
-        <CardEditForm
-          label={cardData.label}
-          cardNumber={cardData.cardNumber}
-          cardHolder={cardData.cardHolder}
-          expiryDate={cardData.expiryDate}
-          cvv={cardData.cvv}
-          onLabelChange={(label) => updateCardData({ label })}
-          onCardNumberChange={(cardNumber) => updateCardData({ cardNumber })}
-          onCardHolderChange={(cardHolder) => updateCardData({ cardHolder })}
-          onExpiryDateChange={(expiryDate) => updateCardData({ expiryDate })}
-          onCvvChange={(cvv) => updateCardData({ cvv })}
-          onSave={handleCardSave}
-          onClose={handleCardClose}
-        />
+      {/* Modal para CREAR tarjeta - usa newCardData */}
+      <Modal isOpen={openCreateCard} onClose={handleCardClose}>
+        <CardCreateForm onSave={handleCardSave} onClose={handleCardClose} />
       </Modal>
+
+      {/* Modal para EDITAR tarjeta - usa editingCardData */}
+      {selectedCard && (
+        <Modal isOpen={openEditCard} onClose={handleCloseEditCard}>
+          <CardEditForm
+            cardData={selectedCard}
+            onEdit={handleEditCardSave}
+            onClose={handleCloseEditCard}
+          />
+        </Modal>
+      )}
+
+      {selectedCard && openDeleteCard && (
+        <Modal isOpen={openDeleteCard} onClose={handleCloseDeleteCard}>
+          <CardDeleteDialog
+            selectedCard={selectedCard}
+            onClose={handleCloseDeleteCard}
+            onDelete={handleDeleteCard}
+          />
+        </Modal>
+      )}
 
       <Button
         variant={"destructive"}

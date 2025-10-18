@@ -1,30 +1,59 @@
 import { Button } from "@/components/ui/button";
 import { IoClose } from "react-icons/io5";
+import { useState, useEffect } from "react";
+import { useProfiles } from "../services/servicesProfile";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import type { ListProfile } from "../utils/Profile";
 
 interface ProfileEditFormProps {
-  email: string;
-  phone: string;
-  name: string;
-  onEmailChange: (email: string) => void;
-  onPhoneChange: (phone: string) => void;
-  onNameChange: (name: string) => void;
-  onSave: () => void;
+  profileData: ListProfile;
+  onEdit: (data: ListProfile) => Promise<void> | void;
   onClose: () => void;
 }
 
 const ProfileEditForm = ({
-  email,
-  phone,
-  name,
-  onEmailChange,
-  onPhoneChange,
-  onNameChange,
-  onSave,
+  profileData,
+  onEdit,
   onClose,
 }: ProfileEditFormProps) => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const { updateProfile, loading } = useProfiles();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Estado local editable (evita mutar directamente los datos del padre)
+  const [formData, setFormData] = useState<ListProfile>(profileData);
+
+  useEffect(() => {
+    setFormData(profileData);
+  }, [profileData]);
+
+  const handleChange = (field: keyof ListProfile, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave();
+    setIsSubmitting(true);
+
+    try {
+      const updatedProfile = await updateProfile({
+        full_name: formData.full_name,
+        email: formData.email,
+        phone: formData.phone,
+      });
+
+      if (updatedProfile) {
+        await onEdit(formData); // notifica al padre con los nuevos datos
+        toast.success("Perfil actualizado correctamente");
+        onClose();
+      }
+    } catch {
+      toast.error("Error", {
+        description: "Error inesperado al guardar los cambios",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,6 +63,7 @@ const ProfileEditForm = ({
         <button
           onClick={onClose}
           className="text-gray-500 hover:text-gray-700 transition-colors"
+          disabled={isSubmitting}
         >
           <IoClose className="size-6" />
         </button>
@@ -46,10 +76,11 @@ const ProfileEditForm = ({
           </label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => onNameChange(e.target.value)}
+            value={formData.full_name}
+            onChange={(e) => handleChange("full_name", e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D86C00] focus:border-transparent"
             placeholder="Ingresa tu nombre completo"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -59,10 +90,11 @@ const ProfileEditForm = ({
           </label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => onEmailChange(e.target.value)}
+            value={formData.email}
+            onChange={(e) => handleChange("email", e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D86C00] focus:border-transparent"
             placeholder="Ingresa tu correo"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -70,10 +102,11 @@ const ProfileEditForm = ({
           <label className="text-sm font-medium text-gray-700">Teléfono</label>
           <input
             type="tel"
-            value={phone}
-            onChange={(e) => onPhoneChange(e.target.value)}
+            value={formData.phone}
+            onChange={(e) => handleChange("phone", e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D86C00] focus:border-transparent"
             placeholder="Ingresa tu teléfono"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -83,14 +116,23 @@ const ProfileEditForm = ({
             onClick={onClose}
             variant="outline"
             className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+            disabled={isSubmitting}
           >
             Cancelar
           </Button>
           <Button
             type="submit"
-            className="flex-1 bg-[#D86C00] hover:bg-[#b35900] text-white"
+            className="flex-1 bg-[#D86C00] hover:bg-[#b35900] text-white disabled:opacity-50 flex items-center justify-center"
+            disabled={isSubmitting || loading}
           >
-            Guardar Cambios
+            {isSubmitting || loading ? (
+              <span className="flex items-center gap-x-1">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Guardando...
+              </span>
+            ) : (
+              "Guardar Cambios"
+            )}
           </Button>
         </div>
       </form>
