@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FaChevronLeft, FaMapMarkerAlt } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
+import { FaCheck } from "react-icons/fa";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { es } from "react-day-picker/locale";
 import { Calendar } from "@/components/ui/calendar";
@@ -15,6 +16,8 @@ import { Marker } from "react-leaflet/Marker";
 import { Popup } from "react-leaflet";
 import { divIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useProfileStore } from "@/store/profile.store";
+import { Link } from "react-router-dom";
 
 function MapEvents({
   onMapClick,
@@ -45,14 +48,25 @@ const createCustomIcon = () => {
 };
 
 export default function GroomingCalendarPage() {
+  const getInitialDate = () => {
+    const today = new Date();
+    const day = today.getDay();
+    if (day === 0) {
+      today.setDate(today.getDate() + 1);
+    }
+    return today;
+  };
+
   // 🗓️ Estados locales
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(getInitialDate());
   const [period, setPeriod] = useState<"AM" | "PM" | null>(null);
   const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
+  const [isReserving, setIsReserving] = useState<boolean>(false);
+  const [isReserved, setIsReserved] = useState<boolean>(false);
 
   // 📍 Información de dirección y coordenadas
-  const [addressLabel] = useState("Casa Principal");
-  const [address] = useState("Av. Las Camelias 123, Lima");
+  const { label_address, address } = useProfileStore();
+
   const [coordinates, setCoordinates] = useState({
     lat: -12.046374,
     lng: -77.042793,
@@ -63,8 +77,42 @@ export default function GroomingCalendarPage() {
   // 📍 Manejador del clic en el mapa
   const handleMapClick = (lat: number, lng: number) => {
     setCoordinates({ lat, lng });
-    console.log("Coordenadas guardadas:", { lat, lng });
   };
+
+  // 🎯 Función para manejar la reserva
+  const handleReserve = async () => {
+    if (!date || !period || isReserved) {
+      alert("Por favor, complete todos los campos.");
+      return;
+    }
+
+    setIsReserving(true);
+
+    // Crear objeto con toda la información
+    const reservationData = {
+      date: date,
+      period: period,
+      address: {
+        label: label_address,
+        fullAddress: address,
+        coordinates: coordinates,
+      },
+    };
+
+    // Simular loading de 2 segundos
+    setTimeout(() => {
+      console.log("📋 DATOS DE RESERVA GUARDADOS:", reservationData);
+
+      setIsReserving(false);
+      setIsReserved(true); // ✅ Esta línea se mantiene permanentemente
+    }, 2000);
+  };
+
+  // Habilitar botón Continuar solo si hay reserva exitosa
+  const isContinueEnabled = isReserved;
+
+  // Deshabilitar botón Reservar si ya está reservado
+  const isReserveDisabled = isReserving || !date || !period || isReserved;
 
   return (
     <div className="w-full flex flex-col gap-8 items-center justify-center overflow-hidden">
@@ -75,9 +123,11 @@ export default function GroomingCalendarPage() {
           Horarios disponibles
         </h2>
 
-        <Button className="flex w-fit" disabled>
-          Continuar
-        </Button>
+        <Link to={"/shopping"}>
+          <Button className="flex w-fit" disabled={!isContinueEnabled}>
+            Continuar
+          </Button>
+        </Link>
       </div>
 
       {/* Contenido principal */}
@@ -96,12 +146,22 @@ export default function GroomingCalendarPage() {
               className="w-full p-2 rounded-2xl !bg-[#f5f5f5]"
               buttonVariant="outline"
               navLayout="after"
-              disabled={(day) => {
+              showOutsideDays
+              disabled={(day: Date) => {
                 const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const d = new Date(day);
-                d.setHours(0, 0, 0, 0);
-                return d < today || d.getDay() === 0;
+                const todayLocal = new Date(
+                  today.getFullYear(),
+                  today.getMonth(),
+                  today.getDate()
+                );
+                const dayLocal = new Date(
+                  day.getFullYear(),
+                  day.getMonth(),
+                  day.getDate()
+                );
+
+                // Deshabilitar domingos y días pasados
+                return dayLocal < todayLocal || dayLocal.getDay() === 0;
               }}
               modifiers={{
                 available: (day) => {
@@ -140,18 +200,18 @@ export default function GroomingCalendarPage() {
                   </div>
                 ),
                 Weekday: (props) => (
-                  <div
+                  <th
                     {...props}
                     className="w-full uppercase text-center text-gray-400 text-sm"
                   />
                 ),
                 Day: ({ children, ...props }) => (
-                  <div
+                  <td
                     {...props}
                     className="w-full flex justify-center items-center gap-[2px] h-8"
                   >
                     {children}
-                  </div>
+                  </td>
                 ),
                 DayButton: (props) => {
                   const { modifiers } = props;
@@ -174,7 +234,6 @@ export default function GroomingCalendarPage() {
                 },
               }}
             />
-
             {/* Botones AM / PM */}
             <div className="w-full flex items-start justify-between">
               <div className="flex items-center gap-2 bg-[#f5f5f5] rounded-2xl">
@@ -219,7 +278,27 @@ export default function GroomingCalendarPage() {
           </div>
         </div>
 
-        <Button>Reservar</Button>
+        {/* Botón Reservar */}
+        <Button
+          onClick={handleReserve}
+          disabled={isReserveDisabled}
+          className={cn(
+            "w-full transition-all duration-300",
+            isReserved
+              ? "bg-[#2EA937] hover:bg-[#2EA937] text-white"
+              : "bg-[#D86C00] hover:bg-[#D86C00] text-white"
+          )}
+        >
+          {isReserving ? (
+            "Reservando..."
+          ) : isReserved ? (
+            <span className="flex items-center gap-x-2">
+              Reservado <FaCheck />{" "}
+            </span>
+          ) : (
+            "Reservar"
+          )}
+        </Button>
 
         <hr className="w-full mt-6 bg-gray-600" />
 
@@ -230,13 +309,17 @@ export default function GroomingCalendarPage() {
           <div className="w-full flex items-center justify-between mt-4">
             <div>
               <div className="flex items-center gap-x-2 text-base font-bold">
-                {addressLabel} <FaMapMarkerAlt className="size-4 text-black" />
+                {label_address} <FaMapMarkerAlt className="size-4 text-black" />
               </div>
               <p className="text-sm text-gray-500">{address}</p>
             </div>
             <button
-              onClick={() => setIsMapOpen(!isMapOpen)}
-              className="size-5 flex items-center justify-center rounded-full bg-gray-200"
+              onClick={() => !isReserved && setIsMapOpen(!isMapOpen)}
+              disabled={isReserved}
+              className={cn(
+                "size-5 flex items-center justify-center rounded-full bg-gray-200",
+                isReserved && "opacity-50 cursor-not-allowed"
+              )}
             >
               <IoIosArrowDown
                 className={cn(

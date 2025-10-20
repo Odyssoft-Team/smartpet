@@ -8,25 +8,33 @@ import {
 import { CiClock2 } from "react-icons/ci";
 import { PiDogFill } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
-import { useGroomingStore } from "@/store/grooming.store";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useServiceStore } from "@/store/service.store";
+import {
+  ADDITIONAL_SERVICE_GROMMING,
+  TYPE_SERVICE_GROMMING,
+} from "@/domains/home/utils/Services";
+import { cn } from "@/lib/utils";
 
 export default function GroomingServicesPage() {
-  const { service, extras, setService, toggleExtra } = useGroomingStore();
   const navigate = useNavigate();
 
+  const { selectedService, setSelectedService, toggleAdditionalService } =
+    useServiceStore();
+
+  const service = selectedService?.type_service;
+  const extras = selectedService?.additional_services ?? [];
+
   const handleContinue = () => {
-    console.log("Servicio:", service);
-    console.log("Extras:", extras);
-    // Aquí podrías navegar a la siguiente vista, por ejemplo:
     navigate("/services/grooming/3");
   };
 
-  const isContinueEnabled = !!service; // solo habilitado si eligió un servicio
+  const isContinueEnabled = !!service;
 
   return (
-    <div className="w-full flex flex-col gap-8 items-center justify-center overflow-hidden">
+    <div className="w-full flex flex-col gap-8 items-center justify-center">
+      {/* HEADER */}
       <div className="w-full flex items-center justify-between">
         <h2 className="flex items-center gap-2 font-bold text-lg w-full text-start">
           <FaChevronLeft />
@@ -42,6 +50,7 @@ export default function GroomingServicesPage() {
         </Button>
       </div>
 
+      {/* INFO GENERAL */}
       <div className="w-full flex flex-col gap-4">
         <div className="w-full flex items-center justify-between">
           <h2 className="flex items-center gap-2 font-bold">
@@ -49,11 +58,11 @@ export default function GroomingServicesPage() {
           </h2>
           <div className="flex items-center gap-2">
             {service && (
-              <span className="text-xs text-[#2EA937]">Servicio ({1})</span>
+              <span className="text-xs text-[#2EA937]">Servicio (1)</span>
             )}
             {extras.length > 0 && (
               <span className="text-xs text-[#2EA937]">
-                {"- "} Adicionales ({extras?.length})
+                {"- "} Adicionales ({extras.length})
               </span>
             )}
             {!service && extras.length === 0 && (
@@ -64,93 +73,61 @@ export default function GroomingServicesPage() {
           </div>
         </div>
 
-        <div className="w-full h-[80dvh] overflow-y-auto">
-          <Accordion type="multiple" className="w-full">
+        {/* LISTA DE SERVICIOS */}
+        <div className="w-full h-full">
+          <Accordion type="single" collapsible className="w-full">
+            {/* SERVICIOS PRINCIPALES */}
             <AccordionItem value="services">
               <AccordionTrigger>
                 <div className="flex flex-col gap-1">
                   <h3 className="flex items-center gap-2 font-normal text-lg leading-[1]">
-                    Ducha y corte de pelo{" "}
+                    {selectedService?.service_name}
                     <span className="flex items-center gap-1 text-[10px] text-black/50">
-                      <CiClock2 /> 30-45 min
+                      <CiClock2 />
+                      {selectedService?.time}
                     </span>
                   </h3>
-                  <p className="text-black/50 leading-[1]">Grooming</p>
+                  <p className="text-black/50 leading-[1]">
+                    {selectedService?.sub}
+                  </p>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="flex flex-col gap-4 text-balance">
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Baño clásico</h3>
-                    <p className="text-xs text-black">
-                      🛁🐾 Baño clásico: shampoo/acond. hipoalergénico 🧴,
-                      recorte ✂️, uñas 🐾, orejas 👂, dental 🪥, humectante 💧 y
-                      perfume 🌸
-                    </p>
-                  </div>
 
-                  <Button
-                    className="bg-[#D86C00] hover:bg-[#D86C00] text-white hover:text-white text-xs min-w-[75px]"
-                    onClick={() => setService("clasico")}
+              <AccordionContent className="w-full h-[320px] overflow-y-scroll flex flex-col gap-4 text-balance">
+                {TYPE_SERVICE_GROMMING.map((item, index) => (
+                  <div
+                    key={index}
+                    className="rounded-md border p-2 flex items-center justify-between"
                   >
-                    {service === "clasico" ? <Check /> : "90.00"}
-                  </Button>
-                </div>
+                    <div className="flex flex-col gap-1 leading-[1]">
+                      <h3 className="font-medium">{item.type_service}</h3>
+                      <p className="text-xs text-black">{item.description}</p>
+                    </div>
 
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Baño medicado</h3>
-                    <p className="text-xs text-black">
-                      🧼🐕 Baño medicado: shampoo hipocloroso 💊, recorte ✂️,
-                      uñas ✋, orejas 👂, dental 🦷, humectante 💧 y perfume 🌿
-                    </p>
+                    <Button
+                      className={cn(
+                        index === 3 && "pointer-events-none opacity-50",
+                        "bg-[#D86C00] hover:bg-[#D86C00] text-white hover:text-white text-xs min-w-[75px]"
+                      )}
+                      onClick={() =>
+                        setSelectedService({
+                          type_service: item.type_service,
+                          price: item.price,
+                        })
+                      }
+                    >
+                      {selectedService?.type_service === item.type_service ? (
+                        <Check />
+                      ) : (
+                        <span>{item.price}</span>
+                      )}
+                    </Button>
                   </div>
-
-                  <Button
-                    className="bg-[#D86C00] hover:bg-[#D86C00] text-white hover:text-white text-xs min-w-[75px]"
-                    onClick={() => setService("medicado")}
-                  >
-                    {service === "medicado" ? <Check /> : "95.00"}
-                  </Button>
-                </div>
-
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Baño premium</h3>
-                    <p className="text-xs text-black">
-                      🌟🐾 Baño premium: shampoo intensivo 🧴, recorte ✂️, uñas
-                      🐾, orejas 👂, dental 🪥, mascarilla hidratante 💧, brillo
-                      de pelaje ✨ y perfume 🌸
-                    </p>
-                  </div>
-
-                  <Button
-                    className="bg-[#D86C00] hover:bg-[#D86C00] text-white hover:text-white text-xs min-w-[75px]"
-                    onClick={() => setService("premium")}
-                  >
-                    {service === "premium" ? <Check /> : "99.00"}
-                  </Button>
-                </div>
-
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Baño seco</h3>
-                    <p className="text-xs text-black">
-                      🌬️🐕 Baño seco: shampoo en seco 🧴, recorte ✂️, uñas 🐾,
-                      orejas 👂, dental 🪥, brillo de pelaje ✨ y perfume 🌸
-                    </p>
-                  </div>
-
-                  <Button
-                    className="bg-[#D86C00] hover:bg-[#D86C00] text-white hover:text-white text-xs min-w-[75px]"
-                    disabled
-                  >
-                    -
-                  </Button>
-                </div>
+                ))}
               </AccordionContent>
             </AccordionItem>
 
+            {/* SERVICIOS ADICIONALES */}
             <AccordionItem value="extras">
               <AccordionTrigger>
                 <div className="flex flex-col gap-1">
@@ -159,89 +136,46 @@ export default function GroomingServicesPage() {
                   </h3>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="flex flex-col gap-4 text-balance">
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Deslanado</h3>
-                    <p className="text-xs text-black">
-                      🪮🐾 Deslanado: cepillado intensivo para retirar exceso de
-                      pelo
-                    </p>
-                  </div>
 
-                  <Button
-                    className="bg-[#0085D8] hover:bg-[#0085D8] text-white hover:text-white text-xs min-w-[75px]"
-                    disabled
-                  >
-                    -
-                  </Button>
-                </div>
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Desmotado</h3>
-                    <p className="text-xs text-black">
-                      🧶🐾 Desmotado: retiro de motas y nudos del pelaje ✂️🪮
-                    </p>
-                  </div>
+              <AccordionContent className="w-full h-[320px] overflow-y-scroll flex flex-col gap-4 text-balance">
+                {ADDITIONAL_SERVICE_GROMMING.map((addItem, index) => {
+                  const isSelected =
+                    selectedService?.additional_services?.some(
+                      (s) => s.name === addItem.name
+                    ) ?? false;
 
-                  <Button
-                    className="bg-[#0085D8] hover:bg-[#0085D8] text-white hover:text-white text-xs min-w-[75px]"
-                    disabled
-                  >
-                    -
-                  </Button>
-                </div>
+                  return (
+                    <div
+                      key={index}
+                      className={`rounded-md border p-2 flex items-center justify-between ${
+                        isSelected ? "border-[#0085D8]" : ""
+                      }`}
+                    >
+                      <div className="flex flex-col gap-1 leading-[1]">
+                        <h3 className="font-medium">{addItem.name}</h3>
+                        <p className="text-xs text-black">
+                          {addItem.description}
+                        </p>
+                      </div>
 
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Pipetas antipulgas</h3>
-                    <p className="text-xs text-black">
-                      💊🐾 Pipetas antipulgas: eliminan y previenen pulgas 🦟,
-                      protegiendo la piel y pelaje ✨
-                    </p>
-                  </div>
-
-                  <Button
-                    className="bg-[#0085D8] hover:bg-[#0085D8] text-white hover:text-white text-xs min-w-[75px]"
-                    onClick={() => toggleExtra("pipetas")}
-                  >
-                    {extras.includes("pipetas") ? <Check /> : "25.00"}
-                  </Button>
-                </div>
-
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Cortes</h3>
-                    <p className="text-xs text-black">
-                      ✂️🐾 Cortes: estilo personalizado según raza 🐶🐱, con
-                      acabado prolijo, suave y brillante ✨
-                    </p>
-                  </div>
-
-                  <Button
-                    className="bg-[#0085D8] hover:bg-[#0085D8] text-white hover:text-white text-xs min-w-[75px]"
-                    onClick={() => toggleExtra("cortes")}
-                  >
-                    {extras.includes("cortes") ? <Check /> : "40.00"}
-                  </Button>
-                </div>
-
-                <div className="rounded-md border p-2 flex items-center justify-between">
-                  <div className="flex flex-col gap-1 leading-[1]">
-                    <h3 className="font-medium">Cepillo</h3>
-                    <p className="text-xs text-black">
-                      🪮🐾 Cepillado: elimina nudos y pelo suelto 💨, dejando el
-                      pelaje suave, limpio y brillante ✨
-                    </p>
-                  </div>
-
-                  <Button
-                    className="bg-[#0085D8] hover:bg-[#0085D8] text-white hover:text-white text-xs min-w-[75px]"
-                    onClick={() => toggleExtra("cepillo")}
-                  >
-                    {extras.includes("cepillo") ? <Check /> : "25.00"}
-                  </Button>
-                </div>
+                      <Button
+                        className={cn(
+                          index < 2 ? "pointer-events-none opacity-50" : "",
+                          isSelected ? "bg-[#006bb3]" : "bg-[#0085D8]",
+                          "hover:bg-[#0085D8] text-white text-xs min-w-[75px]"
+                        )}
+                        onClick={() =>
+                          toggleAdditionalService({
+                            name: addItem.name,
+                            price: addItem.price,
+                          })
+                        }
+                      >
+                        {isSelected ? <Check /> : <span>{addItem.price}</span>}
+                      </Button>
+                    </div>
+                  );
+                })}
               </AccordionContent>
             </AccordionItem>
           </Accordion>

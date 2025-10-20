@@ -48,6 +48,8 @@ import { BiSolidEnvelope } from "react-icons/bi";
 import { MdPhoneEnabled, MdAddCard } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { TbDog } from "react-icons/tb";
+import { useProfileStore } from "@/store/profile.store";
+import { useCardsStore } from "@/store/card.store";
 
 // Componente para manejar los eventos del mapa
 const createCustomIcon = () => {
@@ -109,6 +111,9 @@ export default function ProfilePage() {
 
   const [loading, setLoading] = useState<boolean>(true);
 
+  // ESTADOS GLOBALES para DIRECCION
+  const { label_address, address, setAddress } = useProfileStore();
+
   const [listProfile, setListProfile] = useState<ListProfile>({
     id: "",
     full_name: "",
@@ -135,6 +140,10 @@ export default function ProfilePage() {
             label_address: data.label_address || "",
             address: data.address || "",
           });
+          // ✅ Actualizar el store global con la dirección
+          if (data.label_address && data.address) {
+            setAddress(data.label_address, data.address);
+          }
         } else {
           toast.error("No se pudo cargar el perfil del usuario");
         }
@@ -212,6 +221,8 @@ export default function ProfilePage() {
         address: result.address || "",
       }));
 
+      setAddress(result.label_address || "", result.address || "");
+
       toast.success("Dirección actualizada correctamente");
       handleCloseAddress();
     } catch (error) {
@@ -220,16 +231,22 @@ export default function ProfilePage() {
     }
   };
 
-  // estados y GET de CARDS
-  const { getCards, addCard, updateCard, deleteCard } = useCards();
+  // estados GLOBALES y GET de CARDS
+  const {
+    listCards,
+    setCards,
+    addCard: addCardToStore,
+    updateCard: updateCardInStore,
+    deleteCard: deleteCardFromStore,
+  } = useCardsStore();
 
-  const [listCards, setListCards] = useState<Cards[]>([]);
+  const { getCards, addCard, updateCard, deleteCard } = useCards();
 
   const fetchCards = useCallback(async () => {
     try {
       const data = await getCards();
       if (data) {
-        setListCards(data);
+        setCards(data);
       } else {
         toast.error("No se pudieron cargar las tarjetas");
       }
@@ -257,9 +274,8 @@ export default function ProfilePage() {
       const created = await addCard(newCard);
       if (created) {
         toast.success("Tarjeta guardada correctamente");
-        setListCards((prev) => [...prev, created]);
+        addCardToStore(created);
         handleCardClose();
-        await fetchCards();
       }
     } catch (error) {
       console.error("Error al guardar tarjeta:", error);
@@ -293,11 +309,8 @@ export default function ProfilePage() {
       });
 
       toast.success("Tarjeta actualizada correctamente");
-
-      // Actualizar lista local sin volver a pedir todo
-      setListCards((prev) =>
-        prev.map((card) => (card.id === edited.id ? edited : card))
-      );
+      updateCardInStore(updatedCard.id, edited);
+      handleCloseEditCard();
 
       handleCloseEditCard();
     } catch (error) {
@@ -323,8 +336,8 @@ export default function ProfilePage() {
   const handleDeleteCard = async (cardId: string) => {
     try {
       await deleteCard(cardId);
+      deleteCardFromStore(cardId);
       toast.success("Tarjeta eliminada correctamente");
-      await fetchCards();
       handleCloseDeleteCard();
     } catch (error) {
       console.error("Error al eliminar tarjeta:", error);
@@ -418,7 +431,7 @@ export default function ProfilePage() {
                   {loading ? (
                     <Loader2 className="animate-spin" />
                   ) : (
-                    <span>{listProfile.label_address || "label"}</span>
+                    <span>{label_address || "label"}</span>
                   )}
                   <button
                     onClick={() => setOpenAddress(true)}
@@ -431,7 +444,7 @@ export default function ProfilePage() {
                   {loading ? (
                     <Loader2 className="animate-spin" />
                   ) : (
-                    <span>{listProfile.address || "sin dirección"}</span>
+                    <span>{address || "sin dirección"}</span>
                   )}
                   <button
                     onClick={() => setIsMapOpen(!isMapOpen)}
@@ -440,7 +453,7 @@ export default function ProfilePage() {
                     <IoIosArrowDown
                       className={cn(
                         "size-4 text-black",
-                        isMapOpen ? "rotate-0" : "rotate-180"
+                        isMapOpen ? "rotate-180" : "rotate-0"
                       )}
                       strokeWidth={12}
                     />
@@ -523,19 +536,19 @@ export default function ProfilePage() {
                 {listCards.map((card) => (
                   <div key={card.id} className="flex items-center gap-x-2">
                     <div className="w-full flex rounded-xl bg-gray-200 py-4">
-                      <div className="w-[35%] flex justify-center items-center">
+                      <div className="w-[28%] flex justify-center items-center">
                         <div className="w-12 h-8 flex flex-col rounded-[0.2rem] overflow-hidden">
                           <div className="w-full h-[20%] bg-sky-600"></div>
                           <div className="w-full h-[20%] bg-black"></div>
                           <div className="w-full h-[60%] bg-sky-600"></div>
                         </div>
                       </div>
-                      <div className="w-[65%] flex items-center justify-between pl-4 pr-5 border-l-[2px] border-gray-500">
-                        <div className="space-y-2">
-                          <div className="text-xs font-bold text-[#D86C00]">
+                      <div className="w-[72%] flex items-center justify-between pl-3 pr-5 border-l-[2px] border-gray-500">
+                        <div className="space-y-1">
+                          <div className="text-sm font-bold text-[#D86C00]">
                             {card.label}
                           </div>
-                          <div className="text-xs flex items-center gap-x-2 ml-1">
+                          <div className="text-sm flex items-center gap-x-2 ml-1">
                             VISA <MaskedCard cardNumber={card.card_number} />
                           </div>
                         </div>

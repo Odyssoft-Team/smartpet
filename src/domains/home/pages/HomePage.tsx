@@ -17,11 +17,11 @@ import { LuDog } from "react-icons/lu";
 
 import fidel from "@/assets/home/fidel.png";
 import fidel_circle from "@/assets/home/fidel-circle.png";
-import opcion_1 from "@/assets/home/opcion-1.png";
-import opcion_2 from "@/assets/home/opcion-2.png";
-import opcion_3 from "@/assets/home/opcion-3.png";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
+import { SERVICES } from "../utils/Services";
+import { cn } from "@/lib/utils";
+import { useServiceStore } from "@/store/service.store";
 
 export default function HomePage() {
   return (
@@ -192,67 +192,54 @@ export default function HomePage() {
           className="w-full"
         >
           <CarouselContent>
-            <CarouselItem className="basis-[40%]">
-              <Card className="p-0 border-none shadow-none rounded-none">
-                <Link to="/services/grooming">
-                  <CardContent className="flex flex-col items-center justify-center p-0">
-                    <img
-                      className="w-full overflow-hidden object-cover"
-                      src={opcion_1}
-                      alt="asds"
-                    />
-                    <div className="w-full flex flex-col items-start gap-1 py-2">
-                      <h3 className="leading-[1] font-normal text-sm text-black/50">
-                        Grooming
-                      </h3>
-                      <p className="leading-[1] font-medium text-sm text-black">
-                        Ducha y corte de pelo
-                      </p>
-                    </div>
-                  </CardContent>
-                </Link>
-              </Card>
-            </CarouselItem>
+            {SERVICES.map((item, index) => (
+              <CarouselItem key={index} className="basis-[40%]">
+                <Card className="p-0 border-none shadow-none rounded-none">
+                  <Link
+                    to="/services/grooming"
+                    onClick={() => {
+                      if (index === 0) {
+                        useServiceStore.getState().setSelectedService({
+                          service_name: item.service_name,
+                          sub: item.sub,
+                          time: item.time,
+                        });
+                      }
+                    }}
+                    className={cn(
+                      index === 0
+                        ? "pointer-events-auto"
+                        : "pointer-events-none opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    <CardContent className="flex flex-col items-center justify-center p-0">
+                      <div className="w-full h-fit relative">
+                        <img
+                          className="w-full h-auto object-cover"
+                          src={item.img}
+                          alt="asds"
+                        />
+                        <div
+                          className={cn(
+                            "w-full h-full inset-0 bg-white/50 absolute z-10",
+                            index === 0 && "hidden"
+                          )}
+                        />
+                      </div>
 
-            <CarouselItem className="basis-[40%]">
-              <Card className="p-0 border-none shadow-none rounded-none">
-                <CardContent className="flex flex-col items-center justify-center p-0">
-                  <img
-                    className="w-full overflow-hidden object-cover"
-                    src={opcion_2}
-                    alt="asds"
-                  />
-                  <div className="w-full flex flex-col items-start gap-1 py-2">
-                    <h3 className="leading-[1] font-normal text-sm text-black/50">
-                      Caring
-                    </h3>
-                    <p className="leading-[1] font-medium text-sm text-black">
-                      Paseo de mascota
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-
-            <CarouselItem className="basis-[40%]">
-              <Card className="p-0 border-none shadow-none rounded-none">
-                <CardContent className="flex flex-col items-center justify-center p-0">
-                  <img
-                    className="w-full overflow-hidden object-cover"
-                    src={opcion_3}
-                    alt="asds"
-                  />
-                  <div className="w-full flex flex-col items-start gap-1 py-2">
-                    <h3 className="leading-[1] font-normal text-sm text-black/50">
-                      Caring
-                    </h3>
-                    <p className="leading-[1] font-medium text-sm text-black">
-                      Estadía
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </CarouselItem>
+                      <div className="w-full flex flex-col items-start gap-1 py-2">
+                        <h3 className="leading-[1] font-normal text-sm text-black/50">
+                          {item.sub}
+                        </h3>
+                        <p className="leading-[1] font-medium text-sm text-black">
+                          {item.service_name}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Link>
+                </Card>
+              </CarouselItem>
+            ))}
           </CarouselContent>
           <CarouselPrevious />
           <CarouselNext />
