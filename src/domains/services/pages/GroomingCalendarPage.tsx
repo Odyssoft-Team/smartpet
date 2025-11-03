@@ -65,7 +65,7 @@ export default function GroomingCalendarPage() {
   const [isReserved, setIsReserved] = useState<boolean>(false);
 
   // 📍 Información de dirección y coordenadas
-  const { label_address, address } = useProfileStore();
+  const { profile } = useProfileStore();
 
   const [coordinates, setCoordinates] = useState({
     lat: -12.046374,
@@ -93,8 +93,8 @@ export default function GroomingCalendarPage() {
       date: date,
       period: period,
       address: {
-        label: label_address,
-        fullAddress: address,
+        label: profile.label_address,
+        fullAddress: profile.address,
         coordinates: coordinates,
       },
     };
@@ -309,9 +309,10 @@ export default function GroomingCalendarPage() {
           <div className="w-full flex items-center justify-between mt-4">
             <div>
               <div className="flex items-center gap-x-2 text-base font-bold">
-                {label_address} <FaMapMarkerAlt className="size-4 text-black" />
+                {profile.label_address}{" "}
+                <FaMapMarkerAlt className="size-4 text-black" />
               </div>
-              <p className="text-sm text-gray-500">{address}</p>
+              <p className="text-sm text-gray-500">{profile.address}</p>
             </div>
             <button
               onClick={() => !isReserved && setIsMapOpen(!isMapOpen)}

@@ -112,26 +112,22 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   // ESTADOS GLOBALES para DIRECCION
-  const { label_address, address, setAddress } = useProfileStore();
-
-  const [listProfile, setListProfile] = useState<ListProfile>({
-    id: "",
-    full_name: "",
-    email: "",
-    phone: "",
-    avatar_url: "",
-    label_address: "",
-    address: "",
-  });
+  const { profile, setProfile, clearProfile } = useProfileStore();
 
   useEffect(() => {
     const fetchProfile = async () => {
+      if (profile.id && profile.full_name) {
+        console.log("✅ Ya hay datos en el store, omitiendo fetch");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         const data = await getCurrentUserProfile();
 
         if (data) {
-          setListProfile({
+          setProfile({
             id: data.id,
             full_name: data.full_name || "",
             email: data.email || "",
@@ -140,10 +136,6 @@ export default function ProfilePage() {
             label_address: data.label_address || "",
             address: data.address || "",
           });
-          // ✅ Actualizar el store global con la dirección
-          if (data.label_address && data.address) {
-            setAddress(data.label_address, data.address);
-          }
         } else {
           toast.error("No se pudo cargar el perfil del usuario");
         }
@@ -156,7 +148,7 @@ export default function ProfilePage() {
     };
 
     fetchProfile();
-  }, []);
+  }, [setProfile]);
 
   const [openProfile, setOpenProfile] = useState<boolean>(false);
 
@@ -174,13 +166,12 @@ export default function ProfilePage() {
     });
 
     if (result) {
-      setListProfile((prev) => ({
-        ...prev,
+      setProfile({
         full_name: result.full_name,
         email: result.email,
         phone: result.phone,
-        avatar_url: result.avatar_url ?? prev.avatar_url,
-      }));
+        avatar_url: result.avatar_url ?? undefined,
+      });
 
       handleCloseProfile();
     }
@@ -199,8 +190,8 @@ export default function ProfilePage() {
   }) => {
     try {
       if (
-        updatedAddress.label_address === listProfile.label_address &&
-        updatedAddress.address === listProfile.address
+        updatedAddress.label_address === profile.label_address &&
+        updatedAddress.address === profile.address
       ) {
         toast.info("No hay cambios en la dirección");
         return;
@@ -215,13 +206,11 @@ export default function ProfilePage() {
         throw new Error("No se recibió respuesta del servidor");
       }
 
-      setListProfile((prev) => ({
-        ...prev,
+      // ✅ Actualizar directamente el store global del perfil
+      setProfile({
         label_address: result.label_address || "",
         address: result.address || "",
-      }));
-
-      setAddress(result.label_address || "", result.address || "");
+      });
 
       toast.success("Dirección actualizada correctamente");
       handleCloseAddress();
@@ -243,6 +232,10 @@ export default function ProfilePage() {
   const { getCards, addCard, updateCard, deleteCard } = useCards();
 
   const fetchCards = useCallback(async () => {
+    if (listCards.length > 0) {
+      console.log("✅ Ya hay datos en el store, omitiendo fetch card");
+      return;
+    }
     try {
       const data = await getCards();
       if (data) {
@@ -348,6 +341,9 @@ export default function ProfilePage() {
   // LOGGOUT----------------------
   const handleLogout = () => {
     clearAuth();
+    clearProfile();
+    localStorage.removeItem("profile-storage");
+    localStorage.removeItem("cards-storage");
     logout();
     navigate("/auth/login");
   };
@@ -375,15 +371,13 @@ export default function ProfilePage() {
             {loading ? (
               <Loader2 className="animate-spin" />
             ) : (
-              listProfile.full_name || ""
+              profile.full_name || ""
             )}
           </span>
 
           <AvatarUploader
-            avatarUrl={listProfile.avatar_url}
-            onAvatarChange={(newUrl) =>
-              setListProfile((prev) => ({ ...prev, avatar_url: newUrl }))
-            }
+            avatarUrl={profile.avatar_url}
+            onAvatarChange={(newUrl) => setProfile({ avatar_url: newUrl })}
           />
         </div>
 
@@ -399,7 +393,7 @@ export default function ProfilePage() {
                   <Loader2 className="animate-spin" />
                 ) : (
                   <span className="truncate w-[22ch]">
-                    {listProfile.email || ""}
+                    {profile.email || ""}
                   </span>
                 )}
               </div>
@@ -408,7 +402,7 @@ export default function ProfilePage() {
                 {loading ? (
                   <Loader2 className="animate-spin" />
                 ) : (
-                  listProfile.phone || "sin número"
+                  profile.phone || "sin número"
                 )}
               </div>
             </div>
@@ -431,7 +425,7 @@ export default function ProfilePage() {
                   {loading ? (
                     <Loader2 className="animate-spin" />
                   ) : (
-                    <span>{label_address || "label"}</span>
+                    <span>{profile.label_address || "label"}</span>
                   )}
                   <button
                     onClick={() => setOpenAddress(true)}
@@ -444,7 +438,7 @@ export default function ProfilePage() {
                   {loading ? (
                     <Loader2 className="animate-spin" />
                   ) : (
-                    <span>{address || "sin dirección"}</span>
+                    <span>{profile.address || "sin dirección"}</span>
                   )}
                   <button
                     onClick={() => setIsMapOpen(!isMapOpen)}
@@ -765,7 +759,7 @@ export default function ProfilePage() {
       {/* Modal de edición de perfil */}
       <Modal isOpen={openProfile} onClose={handleCloseProfile}>
         <ProfileEditForm
-          profileData={listProfile}
+          profileData={profile}
           onEdit={handleEditProfile}
           onClose={handleCloseProfile}
         />
@@ -774,8 +768,8 @@ export default function ProfilePage() {
       <Modal isOpen={openAddress} onClose={handleCloseAddress}>
         <AddressEditForm
           addressData={{
-            label_address: listProfile.label_address,
-            address: listProfile.address,
+            label_address: profile.label_address,
+            address: profile.address,
           }}
           onSave={handleSaveAddress}
           onClose={handleCloseAddress}
