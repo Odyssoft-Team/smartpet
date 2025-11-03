@@ -8,10 +8,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { FaRegClock, FaRegHeart } from "react-icons/fa";
+import { FaCircle, FaRegClock, FaRegHeart } from "react-icons/fa";
 import { PiClockCounterClockwiseBold } from "react-icons/pi";
 import { TbUserCheck } from "react-icons/tb";
-import { CiViewList } from "react-icons/ci";
+import { CiRoute, CiViewList } from "react-icons/ci";
 import { IoChevronForward } from "react-icons/io5";
 import { LuDog } from "react-icons/lu";
 
@@ -126,6 +126,57 @@ export default function HomePage() {
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
+      </div>
+
+      <Separator />
+
+      <div className="w-full flex flex-col gap-2">
+        <h2 className="font-bold flex items-center gap-3 text-base">
+          <span className="flex items-center gap-2 ">
+            <FaCircle className="text-green-500 size-4" />
+            En curso{" "}
+          </span>
+          <span className="bg-[#F5F5F5] rounded-full p-1">
+            <IoChevronForward />
+          </span>
+        </h2>
+
+        <div className="flex flex-col gap-1">
+          <Card className="p-0 rounded-md overflow-hidden shadow-none border-none bg-[#F5F5F5]">
+            <CardContent className="flex items-center justify-between pl-2 pr-4 w-full h-[6.5rem]">
+              <div className="flex items-center gap-3">
+                <figure className="relative flex">
+                  <img
+                    className="size-21 rounded-full overflow-hidden object-cover"
+                    src={fidel_circle}
+                    alt="asds"
+                  />
+                  <span className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
+                    <FaRegClock className="size-7" />
+                  </span>
+                </figure>
+                <div className="flex flex-col gap-1">
+                  <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
+                    Fidel <LuDog className="size-6" />
+                  </h3>
+                  <p className="font-medium text-sm leading-[1]">
+                    Ducha y corte de pelo
+                  </p>
+                  <span className="text-muted-foreground text-sm flex items-center gap-1">
+                    <CiRoute className="size-5" /> En camino
+                  </span>
+                </div>
+              </div>
+
+              <Link
+                to={"/activities"}
+                className="bg-primary text-white px-3 rounded-md py-1"
+              >
+                Ver
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <Separator />

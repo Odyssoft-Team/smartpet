@@ -102,7 +102,7 @@ export function LoginForm() {
 
           <FieldSeparator>O</FieldSeparator>
 
-          <Field className="grid gap-2 sm:grid-cols-3">
+          <Field className="grid gap-2 xl:grid-cols-3">
             <Button variant="outline" type="button" onClick={loginWithGoogle}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

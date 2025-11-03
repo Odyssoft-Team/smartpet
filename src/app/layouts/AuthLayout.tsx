@@ -3,7 +3,7 @@ import { Toaster } from "sonner";
 
 export default function AuthLayout() {
   return (
-    <div className="h-screen w-screen flex items-center justify-start bg-white">
+    <div className="h-screen w-screen flex items-center justify-center bg-white">
       <Toaster richColors visibleToasts={1} theme="light" />
       <Outlet />
     </div>

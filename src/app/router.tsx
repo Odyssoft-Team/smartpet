@@ -29,6 +29,9 @@ const ShoppingPage = lazy(
 const NotificationsPage = lazy(
   () => import("../domains/notifications/pages/NotificationsPage")
 );
+const ActivitiesPage = lazy(
+  () => import("../domains/activities/pages/ActivitiesPage")
+);
 const ProfilePage = lazy(() => import("../domains/profile/pages/ProfilePage"));
 const LoginPage = lazy(() => import("@/domains/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/domains/auth/pages/RegisterPage"));
@@ -61,6 +64,7 @@ export const router = createBrowserRouter([
           { path: "/services/grooming/3", element: <GroomingCalendarPage /> },
           { path: "/shopping", element: <ShoppingPage /> },
           { path: "/notifications", element: <NotificationsPage /> },
+          { path: "/activities", element: <ActivitiesPage /> },
           { path: "/profile", element: <ProfilePage /> },
           { path: "/mypets", element: <MypetsPage /> },
           { path: "/registermypets", element: <RegistermypetsPage /> },
