@@ -81,7 +81,14 @@ export function useProfiles() {
       }
 
       // 3️⃣ Construir objeto de actualización sin perder campos vacíos
-      const updateData: Record<string, any> = {};
+      const updateData: Partial<{
+        full_name: string;
+        email: string;
+        phone: string;
+        avatar_url: string;
+        label_address: string;
+        address: string;
+      }> = {};
 
       if (updates.full_name !== undefined)
         updateData.full_name = updates.full_name;

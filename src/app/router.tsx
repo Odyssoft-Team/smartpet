@@ -6,9 +6,6 @@ import ErrorPage from "@/shared/pages/ErrorPage";
 import AppLayout from "./layouts/AppLayout";
 import MypetsPage from "@/domains/mypets/pages/MypetsPage";
 import RegistermypetsPage from "@/domains/mypets/pages/RegisterPage";
-import Perfil1 from "@/domains/mypets/perfil/Perfil1";
-import Perfil2 from "@/domains/mypets/perfil/Perfil2";
-import Perfil3 from "@/domains/mypets/perfil/Perfil3";
 
 const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
 const ServicesPage = lazy(
@@ -45,6 +42,8 @@ const RegisterEmailVerificationPage = lazy(
   () => import("@/domains/auth/pages/RegisterEmailVerificationPage")
 );
 
+const EditmypetsPage = lazy(() => import("../domains/mypets/pages/EditPage"));
+
 const CallbackPage = lazy(() => import("@/domains/auth/pages/CallbackPage"));
 
 export const router = createBrowserRouter([
@@ -68,9 +67,7 @@ export const router = createBrowserRouter([
           { path: "/profile", element: <ProfilePage /> },
           { path: "/mypets", element: <MypetsPage /> },
           { path: "/registermypets", element: <RegistermypetsPage /> },
-          { path: "/perfil-fidel", element: <Perfil1 /> },
-          { path: "/perfil-trufa", element: <Perfil2 /> },
-          { path: "/perfil-olivia", element: <Perfil3 /> },
+          { path: "/editmypets", element: <EditmypetsPage /> },
         ],
       },
     ],

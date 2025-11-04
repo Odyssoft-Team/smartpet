@@ -35,6 +35,7 @@ import { ListHistorial } from "@/data/historial";
 import type { ListProfile } from "../utils/Profile";
 import type { Cards } from "../utils/Card";
 import fidel from "@/assets/pets/fidel-dog.png";
+import user_demo from "@/assets/profile/user-profile.jpg";
 
 import {
   FaRegTrashAlt,
@@ -376,6 +377,7 @@ export default function ProfilePage() {
           </span>
 
           <AvatarUploader
+            defaultImage={user_demo}
             avatarUrl={profile.avatar_url}
             onAvatarChange={(newUrl) => setProfile({ avatar_url: newUrl })}
           />

@@ -1,41 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { z } from "zod";
+import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { Cat } from "lucide-react";
-import { TbDog } from "react-icons/tb";
-import { Link } from "react-router-dom";
-// import fidel_pet from "@/assets/pets/fidel-cuadrado.png";
-import pet_default from "@/assets/pets/pet-default.jpg";
-import { TbCalendarEvent } from "react-icons/tb";
+import { TbDog, TbCalendarEvent } from "react-icons/tb";
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
+  PopoverContent,
 } from "@/components/ui/popover";
+
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { usePetSchema } from "../validation/usePetSchema";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectItem,
+  SelectContent,
 } from "@/components/ui/select";
-import BREEDS from "../utils/breeds";
-import { Label } from "@/components/ui/label";
-import { AvatarUploader } from "@/domains/profile/components/AvatarUploader";
-import { usePets } from "../services/servicesPet";
-import { toast } from "sonner";
-import type { Pet } from "../utils/Pet";
 import {
   Dialog,
   DialogContent,
@@ -44,73 +31,92 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import pet_default from "@/assets/pets/pet-default.jpg";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { Pet } from "../utils/Pet";
+import { usePets } from "../services/servicesPet";
+import { AvatarUploader } from "@/domains/profile/components/AvatarUploader";
+import BREEDS from "../utils/breeds";
+import { usePetSchema } from "../validation/usePetSchema";
 import { usePetStore } from "@/store/pets.store";
 
 type PetFormValues = z.infer<ReturnType<typeof usePetSchema>>;
 
-export default function RegistermypetsPage() {
+export default function EditPetForm() {
+  const { updatePet, uploadPetPhoto } = usePets();
+  const { selectedPet } = usePetStore(); // ✅ Solo usamos el store
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedSpecies, setSelectedSpecies] = useState<string>("");
+  const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
+
   const schema = usePetSchema();
   const form = useForm<PetFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      photo_url: "",
       name: "",
       weight: "",
-      species: undefined,
+      species: "Perro",
       breed: "",
       birth_date: undefined,
+      photo_url: "",
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    formState: { errors },
-  } = form;
+  const { register, handleSubmit, setValue, control, watch } = form;
 
-  const { listPets, setListPets } = usePetStore();
-
-  const { addPet, uploadPetPhoto } = usePets();
-
-  const [openDialog, setOpenDialog] = useState(false);
-
-  async function handleUploadAvatar(file: File) {
-    const petName = watch("name");
-    const url = await uploadPetPhoto(file, petName);
-    return url;
-  }
-
-  const onSubmit = async (data: PetFormValues) => {
-    const formattedData: Omit<Pet, "id" | "user_id"> = {
-      ...data,
-      species: data.species as "Perro" | "Gato" | "Otro",
-      birth_date: data.birth_date ? data.birth_date.toISOString() : undefined,
-    };
-
-    const newPet = await addPet(formattedData);
-
-    if (newPet) {
-      setListPets([...listPets, newPet]); // 👈 actualiza el store global
-      toast.success("Mascota registrada con éxito 🐾");
-      form.reset();
-      setOpenDialog(true);
+  // 🐾 Prellenar el formulario cuando haya mascota seleccionada
+  useEffect(() => {
+    console.log("Selected Pet:", selectedPet);
+    if (selectedPet) {
+      setValue("name", selectedPet.name);
+      setValue("weight", selectedPet.weight);
+      setValue("species", selectedPet.species);
+      setValue("breed", selectedPet.breed); // 👈 ya está, pero...
+      setValue("photo_url", selectedPet.photo_url ?? undefined);
+      const birth = selectedPet.birth_date
+        ? new Date(selectedPet.birth_date)
+        : undefined;
+      setValue("birth_date", birth);
+      setSelectedSpecies(selectedPet.species);
+      setSelectedDate(birth);
+      console.log("Pet breed:", selectedPet.breed);
     }
+  }, [selectedPet, setValue]);
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setValue("birth_date", date);
   };
 
-  const selectedSpecies = watch("species");
-  const selectedDate = watch("birth_date");
+  const handleUploadAvatar = async (file: File) => {
+    const url = await uploadPetPhoto(file, watch("name"));
+    setValue("photo_url", url);
+    return url;
+  };
 
-  const handleDateSelect = (selectedDate: Date | undefined) => {
-    setValue("birth_date", selectedDate);
-    setOpen(false);
+  const onSubmit = async (data: PetFormValues) => {
+    if (!selectedPet) {
+      console.warn("No hay mascota seleccionada para editar");
+      return;
+    }
+
+    const payload: Partial<Pet> = {
+      ...data,
+      birth_date: data.birth_date
+        ? data.birth_date.toISOString().split("T")[0]
+        : null,
+    };
+
+    await updatePet(selectedPet.id, payload);
+    setOpenDialog(true);
   };
 
   const formatDateForInput = (date: Date | undefined) =>
-    date ? format(date, "yyyy-MM-dd") : "";
+    date ? date.toISOString().split("T")[0] : "";
 
   const onlyNumbers = (value: string) => value.replace(/\D/g, "");
 
@@ -129,7 +135,7 @@ export default function RegistermypetsPage() {
                 className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
               >
                 <IoIosArrowBack className="size-8" />
-                <span className="-ml-2">Registro</span>
+                <span className="-ml-2">Editar</span>
               </Button>
             </Link>
           </div>
@@ -137,13 +143,14 @@ export default function RegistermypetsPage() {
           <div className="w-full max-w-md rounded-xl p-4 flex flex-col items-center gap-y-3">
             {/* 🐾 Peso y nombre */}
             <div className="relative flex flex-col justify-end w-full h-[300px] mb-2">
+              {/* Peso */}
               <div
                 className={cn(
-                  "absolute left-1/2 -translate-x-1/2 -top-4 size-14 flex justify-center items-center bg-gray-100 text-black rounded-full text-sm font-bold z-[15] transition-all duration-300",
+                  "absolute left-1/2 -translate-x-1/2 -top-4 size-14 flex justify-center items-center bg-gray-100 text-black rounded-full text-sm font-bold z-[15]",
                   watch("weight") ? "bg-[#409BFD]" : "bg-gray-100"
                 )}
               >
-                <div className="w-fit flex items-center gap-2 relative top-0 transition-all duration-300 text-center">
+                <div className="w-fit flex items-center gap-2 relative top-0">
                   <Input
                     type="text"
                     placeholder="kg ?"
@@ -153,11 +160,8 @@ export default function RegistermypetsPage() {
                       watch("weight") ? "w-[63px] pr-5" : "w-[56px]"
                     )}
                     onChange={(e) => {
-                      const cleanValue = onlyNumbers(e.target.value).slice(
-                        0,
-                        2
-                      );
-                      setValue("weight", cleanValue);
+                      const clean = onlyNumbers(e.target.value).slice(0, 2);
+                      setValue("weight", clean);
                     }}
                   />
                   {watch("weight") && (
@@ -166,68 +170,64 @@ export default function RegistermypetsPage() {
                 </div>
               </div>
 
+              {/* Círculo decorativo */}
               <div
                 className={cn(
-                  "size-64 rounded-full border-[25px] border-gray-200 flex items-center justify-center mb-2 mt-4 absolute -top-3 left-1/2 -translate-x-1/2 z-10 transition-all duration-300",
+                  "size-64 rounded-full border-[25px] border-gray-200 flex items-center justify-center absolute -top-3 left-1/2 -translate-x-1/2 z-10",
                   watch("name") && watch("species")
                     ? "border-blue-200"
                     : "border-gray-200"
                 )}
               />
 
+              {/* Nombre + Especie + Avatar */}
               <div className="flex flex-col items-center z-20">
                 <Input
                   placeholder="Ingrese un nombre"
                   maxLength={15}
-                  {...register("name", {
-                    required: "El nombre es obligatorio",
-                  })}
+                  {...register("name")}
                   className="max-w-[170px] text-blue-600 text-lg font-bold text-center border-none shadow-none placeholder:text-gray-400 placeholder:text-sm"
                 />
 
-                {watch("name") ? "" : <div className="w-10 h-1 bg-gray-200" />}
+                {!watch("name") && <div className="w-10 h-1 bg-gray-200" />}
 
-                {/* botones especie */}
                 <div className="rounded-full flex gap-x-6 border border-neutral-200 bg-gray-100 py-1 px-2 mb-2 mt-1">
                   <button
                     type="button"
-                    onClick={() => setValue("species", "Gato")}
-                    className={`${
+                    onClick={() => {
+                      setValue("species", "Gato");
+                      setSelectedSpecies("Gato");
+                    }}
+                    className={
                       selectedSpecies === "Gato"
                         ? "text-black"
                         : "text-gray-500"
-                    }`}
+                    }
                   >
                     <Cat className="size-5" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => setValue("species", "Perro")}
-                    className={`${
+                    onClick={() => {
+                      setValue("species", "Perro");
+                      setSelectedSpecies("Perro");
+                    }}
+                    className={
                       selectedSpecies === "Perro"
                         ? "text-black"
                         : "text-gray-500"
-                    }`}
+                    }
                   >
                     <TbDog className="size-5" />
                   </button>
                 </div>
+
                 <AvatarUploader
                   defaultImage={pet_default}
                   avatarUrl={watch("photo_url")}
-                  onAvatarChange={(url) => setValue("photo_url", url)}
                   uploadFn={handleUploadAvatar}
+                  onAvatarChange={(url) => setValue("photo_url", url)}
                 />
-                {errors.name && (
-                  <span className="text-xs text-red-500 absolute bottom-[-20px]">
-                    {errors.name.message}
-                  </span>
-                )}
-                {errors.species && (
-                  <span className="text-xs text-red-500 absolute bottom-[-20px]">
-                    {errors.species.message}
-                  </span>
-                )}
               </div>
             </div>
 
@@ -239,7 +239,11 @@ export default function RegistermypetsPage() {
                 name="breed"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      key={field.value || "empty"} // 👈 fuerza re-render al cambiar breed
+                      onValueChange={field.onChange}
+                      value={field.value || ""} // 👈 asegura que no sea undefined
+                    >
                       <FormControl>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecciona una raza" />
@@ -256,19 +260,9 @@ export default function RegistermypetsPage() {
                   </FormItem>
                 )}
               />
-              {errors.breed && (
-                <span className="text-xs text-red-500 absolute bottom-[-20px]">
-                  {errors.breed.message}
-                </span>
-              )}
-              {errors.birth_date && (
-                <span className="text-xs text-red-500 absolute bottom-[-20px]">
-                  {errors.birth_date.message}
-                </span>
-              )}
             </div>
 
-            {/* 📅 Fecha de nacimiento */}
+            {/* 📅 Fecha */}
             <div className="w-full rounded-lg mb-4 bg-[#F3F3F3]">
               <div className="flex flex-col gap-y-1 text-sm font-semibold mb-1 px-4 py-2">
                 <span className="text-neutral-500 text-[11px]">
@@ -282,11 +276,7 @@ export default function RegistermypetsPage() {
                         <TbCalendarEvent size={18} />
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent
-                      align="center"
-                      side="bottom"
-                      className="w-auto p-0 -translate-x-14"
-                    >
+                    <PopoverContent className="w-auto p-0 -translate-x-14">
                       <Calendar
                         mode="single"
                         selected={selectedDate}
@@ -318,12 +308,12 @@ export default function RegistermypetsPage() {
               </div>
             </div>
 
-            {/* 🧡 Botón Guardar */}
+            {/* 💾 Guardar */}
             <Button
               type="submit"
               className="bg-black text-white rounded-lg font-light px-6"
             >
-              Guardar
+              Guardar cambios
             </Button>
           </div>
         </form>
@@ -333,10 +323,10 @@ export default function RegistermypetsPage() {
         <DialogContent className="text-center py-6">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold text-green-600">
-              ¡Mascota registrada! 🎉
+              ¡Mascota actualizada! 🎉
             </DialogTitle>
             <DialogDescription className="text-gray-500">
-              Tu mascota ha sido añadida correctamente.
+              Los cambios han sido guardados correctamente.
             </DialogDescription>
           </DialogHeader>
 
