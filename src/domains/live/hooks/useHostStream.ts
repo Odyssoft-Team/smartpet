@@ -13,6 +13,7 @@ export function useHostStream(room: string) {
   const localVideo = useRef<HTMLVideoElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
+  const messageQueue = useRef<string[]>([]); // 🧩 Cola de mensajes
 
   useEffect(() => {
     async function startStreaming(): Promise<void> {
@@ -42,13 +43,34 @@ export function useHostStream(room: string) {
           `${env.SIGNALING_URL}?room=${room}&role=host`,
           (msg: SignalingMessage) => {
             if (msg.answer) {
-              pc.setRemoteDescription(new RTCSessionDescription(msg.answer));
+              void pc.setRemoteDescription(
+                new RTCSessionDescription(msg.answer)
+              );
             } else if (msg.iceCandidate) {
-              pc.addIceCandidate(new RTCIceCandidate(msg.iceCandidate));
+              void pc.addIceCandidate(new RTCIceCandidate(msg.iceCandidate));
             }
           }
         );
         wsRef.current = ws;
+
+        // ✅ Enviar mensajes (usa cola si el socket aún no está abierto)
+        const sendQueued = (msg: object): void => {
+          const json = JSON.stringify(msg);
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(json);
+          } else {
+            messageQueue.current.push(json);
+          }
+        };
+
+        ws.onopen = () => {
+          console.log("🔌 WebSocket conectado (Host)");
+          // Enviar cualquier mensaje pendiente
+          while (messageQueue.current.length > 0) {
+            const msg = messageQueue.current.shift();
+            if (msg) ws.send(msg);
+          }
+        };
 
         // 📤 Enviar candidatos ICE
         pc.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
@@ -57,7 +79,7 @@ export function useHostStream(room: string) {
               iceCandidate: event.candidate.toJSON(),
               room,
             };
-            ws.send(JSON.stringify(payload));
+            sendQueued(payload);
           }
         };
 
@@ -66,13 +88,14 @@ export function useHostStream(room: string) {
         await pc.setLocalDescription(offer);
 
         const payload: SignalingMessage = { offer, room };
-        ws.send(JSON.stringify(payload));
+        sendQueued(payload);
+        console.log("📤 Host envió offer");
       } catch (error) {
         console.error("🚫 Error al iniciar transmisión:", error);
       }
     }
 
-    startStreaming();
+    void startStreaming();
 
     return () => {
       wsRef.current?.close();
