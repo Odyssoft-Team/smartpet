@@ -46,6 +46,11 @@ const EditmypetsPage = lazy(() => import("../domains/mypets/pages/EditPage"));
 
 const CallbackPage = lazy(() => import("@/domains/auth/pages/CallbackPage"));
 
+// ------------------ LIVE STREAM ------------------
+const LiveHomePage = lazy(() => import("@/domains/live/pages/HomePage"));
+const LiveHostPage = lazy(() => import("@/domains/live/pages/HostPage"));
+const LiveViewerPage = lazy(() => import("@/domains/live/pages/ViewerPage"));
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -68,8 +73,25 @@ export const router = createBrowserRouter([
           { path: "/mypets", element: <MypetsPage /> },
           { path: "/registermypets", element: <RegistermypetsPage /> },
           { path: "/editmypets", element: <EditmypetsPage /> },
+          // {
+          //   path: "/live",
+          //   element: <LiveHomePage />,
+          //   children: [
+          //     { path: "host", element: <LiveHostPage /> },
+          //     { path: "viewer", element: <LiveViewerPage /> },
+          //   ],
+          // },
         ],
       },
+    ],
+  },
+  {
+    path: "/live",
+    errorElement: <ErrorPage />,
+    children: [
+      { path: "", element: <LiveHomePage /> },
+      { path: "host", element: <LiveHostPage /> },
+      { path: "viewer", element: <LiveViewerPage /> },
     ],
   },
   {

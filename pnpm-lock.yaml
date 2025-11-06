@@ -101,6 +101,9 @@ importers:
       workbox-window:
         specifier: ^7.3.0
         version: 7.3.0
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
       zod:
         specifier: ^4.1.12
         version: 4.1.12
@@ -123,6 +126,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.1.9
         version: 19.2.0(@types/react@19.2.0)
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.45.0
         version: 8.45.0(@typescript-eslint/parser@8.45.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
