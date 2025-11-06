@@ -95,11 +95,12 @@ export function useViewerStream(room: string) {
           remoteVideo.current.srcObject = e.streams[0];
           const playPromise = remoteVideo.current.play();
           if (playPromise !== undefined) {
-            playPromise
-              .then(() => console.log("▶️ Reproducción iniciada"))
-              .catch((err) =>
-                console.warn("⚠️ Error al reproducir video:", err)
+            playPromise.catch(() => {
+              // ⚠️ Si el navegador bloquea el autoplay, lo manejamos desde el botón
+              console.warn(
+                "🔇 Autoplay bloqueado, se requiere interacción del usuario"
               );
+            });
           }
         }
       };
