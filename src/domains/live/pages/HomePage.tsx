@@ -15,7 +15,7 @@ export default function LiveHome() {
 
   return (
     <div className="p-10 text-center bg-gray-100 min-h-screen">
-      <h1 className="text-2xl mb-4">🐾 Streaming Demo (PET)</h1>
+      <h1 className="text-2xl mb-4">🐾 Streaming Demo (Smart PET)</h1>
 
       <p className="mb-2">
         <strong>Código de reunión:</strong> {room}
