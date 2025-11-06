@@ -6,6 +6,7 @@ export function useViewerStream(room: string) {
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeout = useRef<number | null>(null);
+  const messageQueue = useRef<string[]>([]); // 🧩 Cola de mensajes
 
   useEffect(() => {
     if (!room) return;
@@ -13,12 +14,35 @@ export function useViewerStream(room: string) {
     const signalingUrl = env.SIGNALING_URL;
     const stunServer = env.STUN_SERVER;
 
+    const sendQueued = (msg: object): void => {
+      const json = JSON.stringify(msg);
+      const ws = wsRef.current;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(json);
+      } else {
+        messageQueue.current.push(json);
+      }
+    };
+
+    const flushQueue = (): void => {
+      const ws = wsRef.current;
+      while (
+        ws &&
+        ws.readyState === WebSocket.OPEN &&
+        messageQueue.current.length > 0
+      ) {
+        const msg = messageQueue.current.shift();
+        if (msg) ws.send(msg);
+      }
+    };
+
     const setupWebSocket = () => {
-      const ws = new WebSocket(`${signalingUrl}?room=${room}`);
+      const ws = new WebSocket(`${signalingUrl}?room=${room}&role=viewer`);
       wsRef.current = ws;
 
       ws.onopen = () => {
         console.log("🔌 WebSocket conectado (Viewer)");
+        flushQueue();
       };
 
       ws.onclose = () => {
@@ -29,7 +53,7 @@ export function useViewerStream(room: string) {
       ws.onmessage = async (ev) => {
         const msg = JSON.parse(ev.data);
 
-        if (msg.type === "offer") {
+        if (msg.offer) {
           console.log("📩 Viewer recibió offer del Host");
 
           if (pcRef.current) {
@@ -37,17 +61,20 @@ export function useViewerStream(room: string) {
           }
 
           const pc = await createPeerConnection();
-          await pc.setRemoteDescription(new RTCSessionDescription(msg.data));
+          await pc.setRemoteDescription(new RTCSessionDescription(msg.offer));
 
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
-          ws.send(JSON.stringify({ type: "answer", data: answer }));
+
+          sendQueued({ answer, room });
           console.log("📤 Viewer envió answer");
         }
 
-        if (msg.type === "ice") {
+        if (msg.iceCandidate) {
           try {
-            await pcRef.current?.addIceCandidate(msg.data);
+            await pcRef.current?.addIceCandidate(
+              new RTCIceCandidate(msg.iceCandidate)
+            );
             console.log("🧊 Viewer agregó ICE remoto");
           } catch (e) {
             console.warn("⚠️ Error al agregar ICE:", e);
@@ -56,23 +83,22 @@ export function useViewerStream(room: string) {
       };
     };
 
-    const createPeerConnection = async () => {
+    const createPeerConnection = async (): Promise<RTCPeerConnection> => {
       const pc = new RTCPeerConnection({
         iceServers: [{ urls: stunServer }],
       });
       pcRef.current = pc;
 
       pc.ontrack = (e) => {
+        console.log("🎬 Viewer recibió stream remoto");
         if (remoteVideo.current) {
           remoteVideo.current.srcObject = e.streams[0];
         }
       };
 
       pc.onicecandidate = (e) => {
-        if (e.candidate && wsRef.current?.readyState === WebSocket.OPEN) {
-          wsRef.current.send(
-            JSON.stringify({ type: "ice", data: e.candidate })
-          );
+        if (e.candidate) {
+          sendQueued({ iceCandidate: e.candidate.toJSON(), room });
         }
       };
 
