@@ -8,7 +8,16 @@ export default function ViewerPage() {
   return (
     <div className="p-6">
       <h1>👀 Viewer (Dueño)</h1>
-      <video ref={remoteVideo} autoPlay playsInline width={640} />
+      {/* <video ref={remoteVideo} autoPlay playsInline width={640} /> */}
+      <video
+        ref={remoteVideo}
+        autoPlay
+        playsInline
+        muted={false} // puede probarse true si el navegador bloquea autoplay
+        width={640}
+        className="bg-black rounded-xl"
+        style={{ maxWidth: "100%", height: "auto" }}
+      />
     </div>
   );
 }

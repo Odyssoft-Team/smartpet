@@ -93,6 +93,14 @@ export function useViewerStream(room: string) {
         console.log("🎬 Viewer recibió stream remoto");
         if (remoteVideo.current) {
           remoteVideo.current.srcObject = e.streams[0];
+          const playPromise = remoteVideo.current.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => console.log("▶️ Reproducción iniciada"))
+              .catch((err) =>
+                console.warn("⚠️ Error al reproducir video:", err)
+              );
+          }
         }
       };
 
