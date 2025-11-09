@@ -33,7 +33,7 @@ export default function MypetsPage() {
   const { listPets, setListPets, setSelectedPet } = usePetStore();
   const { getPets } = usePets();
 
-  const fetchCards = useCallback(async () => {
+  const fetchPets = useCallback(async () => {
     if (listPets.length > 0) {
       console.log("✅ Ya hay datos en el store, omitiendo fetch");
       return;
@@ -53,8 +53,8 @@ export default function MypetsPage() {
   }, [getPets, listPets.length, setListPets]);
 
   useEffect(() => {
-    fetchCards();
-  }, [fetchCards]);
+    fetchPets();
+  }, [fetchPets]);
 
   return (
     <div className="h-full">
