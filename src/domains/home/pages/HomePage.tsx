@@ -248,7 +248,7 @@ export default function HomePage() {
         >
           <CarouselContent>
             {SERVICES.map((item, index) => (
-              <CarouselItem key={index} className="basis-[40%]">
+              <CarouselItem key={index} className="basis-[80%]">
                 <Card className="p-0 border-none shadow-none rounded-none">
                   <Link
                     to="/services/grooming"
@@ -264,13 +264,13 @@ export default function HomePage() {
                     className={cn(
                       index === 0
                         ? "pointer-events-auto"
-                        : "pointer-events-none opacity-50 cursor-not-allowed"
+                        : "pointer-events-none opacity-80 cursor-not-allowed"
                     )}
                   >
                     <CardContent className="flex flex-col items-center justify-center p-0">
                       <div className="w-full h-fit relative">
                         <img
-                          className="w-full h-auto object-cover"
+                          className="w-full h-auto object-cover rounded-2xl"
                           src={item.img}
                           alt="asds"
                         />
