@@ -43,14 +43,18 @@ import {
   FaMapMarkerAlt,
   FaRegHeart,
   FaRegClock,
+  FaPaw,
 } from "react-icons/fa";
-import { IoIosArrowBack, IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+//import { FiArrowRightCircle } from "react-icons/fi";
+//import { IoIosArrowForward } from "react-icons/io";
 import { BiSolidEnvelope } from "react-icons/bi";
 import { MdPhoneEnabled, MdAddCard } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { TbDog } from "react-icons/tb";
 import { useProfileStore } from "@/store/profile.store";
 import { useCardsStore } from "@/store/card.store";
+import { LuMapPin } from "react-icons/lu";
 
 // Componente para manejar los eventos del mapa
 const createCustomIcon = () => {
@@ -351,7 +355,7 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white h-fit min-h-screen">
-      <div className="w-full flex justify-start max-w-md">
+      {/* <div className="w-full flex justify-start max-w-md">
         <Link to="/" className="!text-black">
           <Button
             size="back"
@@ -362,20 +366,22 @@ export default function ProfilePage() {
             <span className="-ml-2 font-bold">Tú Perfil</span>
           </Button>
         </Link>
-      </div>
+      </div> */}
 
       {/* Body */}
       <div className="w-full max-w-md rounded-xl flex flex-col mb-2">
         {/* perfil */}
         <div className="flex flex-col items-center gap-y-1">
-          <span className="text-3xl font-bold text-[#D86C00]">
+
+          <span className="text-xl font-bold text-[#D86C00]">
+            ¡Hola,{" "}
             {loading ? (
               <Loader2 className="animate-spin" />
             ) : (
               profile.full_name || ""
             )}
+            !
           </span>
-
           <AvatarUploader
             defaultImage={user_demo}
             avatarUrl={profile.avatar_url}
@@ -511,6 +517,25 @@ export default function ProfilePage() {
             <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-medium text-sky-500">
               👆 Toca en el mapa para seleccionar tu ubicación
             </div>
+          </div>
+
+          <hr className="mt-6 bg-gray-600" />
+          <div className="flex justify-between items-center px-4 py-3 cursor-pointer">
+            <div className="flex items-center gap-x-2">
+              <FaPaw /> Mis mascotas
+            </div>
+            <IoIosArrowForward />
+
+          </div>
+
+
+          <hr className="mt-6 bg-gray-600" />
+          <div className="flex justify-between items-center px-4 py-3 cursor-pointer">
+            <div className="flex items-center gap-x-2">
+              <LuMapPin /> Direcciones
+            </div>
+            <IoIosArrowForward />
+
           </div>
 
           <hr className="mt-6 bg-gray-600" />
