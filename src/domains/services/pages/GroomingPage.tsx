@@ -20,13 +20,14 @@ import { toast } from "sonner";
 import { MdOutlinePets } from "react-icons/md";
 import { PiPlusBold } from "react-icons/pi";
 import { useDetailStore } from "@/store/detail";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function GroomingPage() {
   const { listPets, setListPets } = usePetStore();
   const { setPetAndUser } = useDetailStore();
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
-  const { getPets } = usePets();
+  const { getPets, loading } = usePets();
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -116,6 +117,18 @@ export default function GroomingPage() {
                   </Link>
                 </CarouselItem>
 
+                {/* skeleton */}
+                {loading && (
+                  <div className="flex gap-4 basis-[30%] ml-5">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex flex-col items-center gap-2">
+                        <Skeleton className="size-22 rounded-full" />
+                        <Skeleton className="h-4 w-16" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Lista de mascotas */}
                 {listPets.map((item) => (
                   <CarouselItem
@@ -141,7 +154,7 @@ export default function GroomingPage() {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                            <MdOutlinePets className="size-8 text-gray-600" />
+                            <MdOutlinePets className="size-10 text-gray-600" />
                           </div>
                         )}
                       </CardContent>

@@ -16,6 +16,7 @@ import {
   TYPE_SERVICE_GROMMING,
 } from "@/domains/home/utils/Services";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export default function GroomingServicesPage() {
   const navigate = useNavigate();
@@ -77,19 +78,30 @@ export default function GroomingServicesPage() {
         <div className="w-full h-full">
           <Accordion type="single" collapsible className="w-full">
             {/* SERVICIOS PRINCIPALES */}
-            <AccordionItem value="services">
-              <AccordionTrigger>
-                <div className="flex flex-col gap-1">
-                  <h3 className="flex items-center gap-2 font-normal text-lg leading-[1]">
-                    {selectedService?.service_name}
-                    <span className="flex items-center gap-1 text-[10px] text-black/50">
-                      <CiClock2 />
-                      {selectedService?.time}
-                    </span>
-                  </h3>
-                  <p className="text-black/50 leading-[1]">
-                    {selectedService?.sub}
-                  </p>
+            <AccordionItem value="services" className="group">
+              <AccordionTrigger
+                extraContent={
+                  <div
+                    className={cn(
+                      "hidden group-data-[state=closed]:block",
+                      "w-full px-5 py-2 rounded-[0.5rem] border border-[#D86C00] text-[#D86C00] text-sm"
+                    )}
+                  >
+                    Presione sin Servicio seleccionado
+                  </div>
+                }
+              >
+                <div className="flex flex-col gap-y-1">
+                  <div className="flex flex-col gap-1">
+                    <h3 className="flex items-center gap-2 font-normal text-lg leading-[1]">
+                      Baño & Estética
+                      <span className="flex items-center gap-1 text-[10px] text-black/50">
+                        <CiClock2 />
+                        30-45 min
+                      </span>
+                    </h3>
+                    <p className="text-black/50 leading-[1]">AllquSpa</p>
+                  </div>
                 </div>
               </AccordionTrigger>
 
