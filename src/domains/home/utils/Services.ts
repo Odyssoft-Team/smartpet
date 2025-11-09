@@ -1,4 +1,4 @@
-import opcion_1 from "@/assets/home/opcion-1.png";
+import opcion_1 from "@/assets/home/serv-bano.png";
 import opcion_2 from "@/assets/home/opcion-2.png";
 import opcion_3 from "@/assets/home/opcion-3.png";
 

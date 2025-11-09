@@ -26,8 +26,12 @@ import { useServiceStore } from "@/store/service.store";
 export default function HomePage() {
   return (
     <div className="w-full flex flex-col gap-4">
+      <div className="bg-red-700 fixed top-0 left-0 right-0 p-4 z-50 justify-between flex items-center">
+        <span className="text-white">Alameda El Alba 110</span>
+        
+        <div className="bg-white w-8 h-8 rounded-full">:)</div></div>
       {/* Carrusel de botones */}
-      <div className="w-full overflow-hidden">
+      {/* <div className="w-full overflow-hidden">
         <Carousel
           opts={{
             align: "start",
@@ -79,10 +83,10 @@ export default function HomePage() {
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
-      </div>
+      </div> */}
 
       {/* Listado de mascotas */}
-      <div className="w-full flex flex-col gap-2 overflow-hidden">
+      <div className="w-full flex flex-col gap-2 overflow-hidden mt-14">
         <h2 className="font-bold flex items-center gap-3 text-base">
           Mascotas{" "}
           <span className="bg-[#F5F5F5] rounded-full p-1">
@@ -233,7 +237,7 @@ export default function HomePage() {
 
       <div className="w-full flex flex-col items-center justify-center gap-2 overflow-hidden">
         <h2 className="font-bold flex items-center gap-3 text-lg text-[#D86C00]">
-          Otras opciones{" "}
+          Otras opciones
         </h2>
 
         <Carousel
