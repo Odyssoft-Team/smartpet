@@ -1,5 +1,6 @@
-import { Button } from "@/components/ui/button";
+"use client";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -8,10 +9,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { FaCircle, FaRegClock, FaRegHeart } from "react-icons/fa";
-import { PiClockCounterClockwiseBold } from "react-icons/pi";
-import { TbUserCheck } from "react-icons/tb";
-import { CiRoute, CiViewList } from "react-icons/ci";
+import { FaCircle, FaRegClock } from "react-icons/fa";
+import { CiRoute } from "react-icons/ci";
 import { IoChevronForward } from "react-icons/io5";
 import { LuDog } from "react-icons/lu";
 
@@ -22,68 +21,54 @@ import { Link } from "react-router-dom";
 import { SERVICES } from "../utils/Services";
 import { cn } from "@/lib/utils";
 import { useServiceStore } from "@/store/service.store";
+import { useEffect, useState } from "react";
+import { useServices } from "../services/useServices";
+import { toast } from "sonner";
+
+type Service = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  duration: number;
+  created_at: string;
+  is_active: boolean;
+};
 
 export default function HomePage() {
+  const [service, setService] = useState<Service[]>([]);
+  const { getServices } = useServices(); //tengo un loading aqui, puedes usarlo para mostrar un spinner
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      if (service.length > 0) {
+        console.log("✅ Ya hay datos, omitiendo fetch");
+        return;
+      }
+      try {
+        const data = await getServices();
+
+        if (data) {
+          setService(data);
+          console.log("✅ Servicios cargados:", data);
+        } else {
+          toast.error("No se pudo cargar el perfil del usuario");
+        }
+      } catch (error) {
+        console.error("Error cargando perfil:", error);
+        toast.error("Error al cargar el perfil");
+      }
+    };
+
+    fetchServices();
+  }, [setService]);
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="bg-red-700 fixed top-0 left-0 right-0 p-4 z-50 justify-between flex items-center">
         <span className="text-white">Alameda El Alba 110</span>
-        
-        <div className="bg-white w-8 h-8 rounded-full">:)</div></div>
-      {/* Carrusel de botones */}
-      {/* <div className="w-full overflow-hidden">
-        <Carousel
-          opts={{
-            align: "start",
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="gap-2">
-            <CarouselItem className="basis-[27%]">
-              <Card className="p-0 rounded-md">
-                <CardContent className="flex items-center justify-center p-1 gap-1">
-                  <button className="flex items-center gap-1">
-                    <FaRegHeart className="size-4" />
-                    <span className="text-sm font-medium">Favoritos</span>
-                  </button>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-            <CarouselItem className="basis-[27%] pl-0">
-              <Card className="p-0 rounded-md">
-                <CardContent className="flex items-center justify-center p-1 gap-1">
-                  <button className="flex items-center gap-1">
-                    <PiClockCounterClockwiseBold className="size-4" />
-                    <span className="text-sm font-medium">Historial</span>
-                  </button>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-            <CarouselItem className="basis-[27%] pl-0">
-              <Card className="p-0 rounded-md">
-                <CardContent className="flex items-center justify-center p-1 gap-1">
-                  <button className="flex items-center gap-1">
-                    <TbUserCheck className="size-4" />
-                    <span className="text-sm font-medium">Consultas</span>
-                  </button>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-            <CarouselItem className="basis-[27%] pl-0">
-              <Card className="p-0 rounded-md">
-                <CardContent className="flex items-center justify-center p-1 gap-1">
-                  <button className="flex items-center gap-1">
-                    <CiViewList className="size-4" />
-                    <span className="text-sm font-medium">Pedidos</span>
-                  </button>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </div> */}
+
+        <div className="bg-white w-8 h-8 rounded-full">:)</div>
+      </div>
 
       {/* Listado de mascotas */}
       <div className="w-full flex flex-col gap-2 overflow-hidden mt-14">
