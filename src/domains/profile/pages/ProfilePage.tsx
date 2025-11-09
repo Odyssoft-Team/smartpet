@@ -56,7 +56,6 @@ import { HiPencil } from "react-icons/hi";
 import { TbDog } from "react-icons/tb";
 import { useProfileStore } from "@/store/profile.store";
 import { useCardsStore } from "@/store/card.store";
-import { LuMapPin } from "react-icons/lu";
 import { HiMapPin } from "react-icons/hi2";
 
 // Componente para manejar los eventos del mapa
