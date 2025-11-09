@@ -41,13 +41,13 @@ export default function GroomingServicesPage() {
           <FaChevronLeft />
           Servicios disponibles
         </h2>
-
+        {/* Botón: Comprar */}
         <Button
-          className="flex w-fit"
+          className="fixed bottom-20 flex w-fit items-center bg-green-600 rounded-full px-5"
           disabled={!isContinueEnabled}
           onClick={handleContinue}
         >
-          Continuar
+          Continuar1
         </Button>
       </div>
 

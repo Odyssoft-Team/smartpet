@@ -44,8 +44,10 @@ import {
   FaRegHeart,
   FaRegClock,
   FaPaw,
+  FaCreditCard,
+  FaBook,
 } from "react-icons/fa";
-import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 //import { FiArrowRightCircle } from "react-icons/fi";
 //import { IoIosArrowForward } from "react-icons/io";
 import { BiSolidEnvelope } from "react-icons/bi";
@@ -55,6 +57,7 @@ import { TbDog } from "react-icons/tb";
 import { useProfileStore } from "@/store/profile.store";
 import { useCardsStore } from "@/store/card.store";
 import { LuMapPin } from "react-icons/lu";
+import { HiMapPin } from "react-icons/hi2";
 
 // Componente para manejar los eventos del mapa
 const createCustomIcon = () => {
@@ -353,6 +356,12 @@ export default function ProfilePage() {
     navigate("/auth/login");
   };
 
+  const linkItems = [
+    //{ to: "/", label: "Inicio", icon: HiHome },
+    { to: "/mypets", label: "Mis Mascotas", icon: FaPaw },
+    { to: "/address", label: "Mis Direcciones", icon: HiMapPin },
+  ];
+
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white h-fit min-h-screen">
       {/* <div className="w-full flex justify-start max-w-md">
@@ -520,24 +529,61 @@ export default function ProfilePage() {
           </div>
 
           <hr className="mt-6 bg-gray-600" />
-          <div className="flex justify-between items-center px-4 py-3 cursor-pointer">
+
+          {linkItems.map(({ to, label, icon: Icon }) => {
+            return (
+              <Link
+                key={to}
+                to={to}
+                className={cn(
+                  "flex justify-between items-center py-3 cursor-pointer"
+                )}
+              >
+                <div className="flex items-center gap-x-2">
+                  <Icon /> 
+                  <span className="text-base font-normal">{label}</span>
+                </div>
+                <IoIosArrowForward />
+
+              </Link>
+
+            );
+          })}
+
+
+
+
+
+
+
+
+
+
+
+          <div className="flex justify-between items-center py-3 cursor-pointer">
             <div className="flex items-center gap-x-2">
-              <FaPaw /> Mis mascotas
+              <HiMapPin /> Direcciones
             </div>
             <IoIosArrowForward />
 
           </div>
 
-
-          <hr className="mt-6 bg-gray-600" />
-          <div className="flex justify-between items-center px-4 py-3 cursor-pointer">
+          <div className="flex justify-between items-center py-3 cursor-pointer">
             <div className="flex items-center gap-x-2">
-              <LuMapPin /> Direcciones
+              <FaCreditCard /> Métodos de pago
             </div>
             <IoIosArrowForward />
 
           </div>
 
+          <div className="flex justify-between items-center py-3 cursor-pointer">
+            <div className="flex items-center gap-x-2">
+              <FaBook />
+              Libro de reclamaciones
+            </div>
+            <IoIosArrowForward />
+
+          </div>
           <hr className="mt-6 bg-gray-600" />
 
           {/* Medio de pago frecuente */}

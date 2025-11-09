@@ -252,7 +252,7 @@ export default function HomePage() {
                         : "pointer-events-none opacity-80 cursor-not-allowed"
                     )}
                   >
-                    <CardContent className="flex flex-col items-center justify-center p-0">
+                    <CardContent className="flex flex-col justify-center p-0 gap-2">
                       <div className="w-full h-fit relative">
                         <img
                           className="w-full h-auto object-cover rounded-2xl"
@@ -266,7 +266,14 @@ export default function HomePage() {
                           )}
                         />
                       </div>
-
+                      <div className="flex gap-1">
+                      <div className="w-15">
+                        <img
+                          className="size-12 rounded-full overflow-hidden object-cover"
+                          src={fidel_circle}
+                          alt="asds"
+                          />
+                      </div>
                       <div className="w-full flex flex-col items-start gap-1 py-2">
                         <h3 className="leading-[1] font-normal text-sm text-black/50">
                           {item.sub}
@@ -274,6 +281,7 @@ export default function HomePage() {
                         <p className="leading-[1] font-medium text-sm text-black">
                           {item.service_name}
                         </p>
+                      </div>
                       </div>
                     </CardContent>
                   </Link>
