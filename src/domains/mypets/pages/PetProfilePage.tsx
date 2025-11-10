@@ -11,7 +11,20 @@ import { HiPencil } from "react-icons/hi";
 
 export default function PetProfilePage() {
   const { selectedPet, setSelectedPet } = usePetStore();
+  const { deletePet } = usePets();
   const navigate = useNavigate();
+
+  const handleDelete = async () => {
+    if (!selectedPet || !window.confirm('¿Estás seguro de eliminar esta mascota?')) {
+      return;
+    }
+
+    const success = await deletePet(selectedPet.id);
+    if (success) {
+      toast.success('Mascota eliminada con éxito');
+      navigate('/mypets');
+    }
+  };
 
   if (!selectedPet) {
     navigate("/mypets");
@@ -95,16 +108,7 @@ export default function PetProfilePage() {
             <Button 
               variant="destructive" 
               className="w-full"
-              onClick={async () => {
-                if (window.confirm('¿Estás seguro de eliminar esta mascota?')) {
-                  const { deletePet } = usePets();
-                  const success = await deletePet(selectedPet.id);
-                  if (success) {
-                    toast.success('Mascota eliminada con éxito');
-                    navigate('/mypets');
-                  }
-                }
-              }}
+              onClick={handleDelete}
             >
               Eliminar mascota
             </Button>
