@@ -13,10 +13,10 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
-import type { Pet } from "../utils/Pet";
-import { usePets } from "../services/servicesPet";
 import { usePetStore } from "@/store/pets.store";
 import { toast } from "sonner";
+import type { Pet } from "../services/getPetsByUser";
+import { updatePet } from "../services/updatePet";
 
 type EditPetFormValues = {
   name: string;
@@ -29,7 +29,6 @@ type EditPetFormValues = {
 };
 
 export default function EditPage() {
-  const { updatePet } = usePets();
   const { selectedPet } = usePetStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);

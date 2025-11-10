@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PetFormLayout from "../components/PetFormLayout";
 import { useRegisterPetStore } from "../store/registerPet.store";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { usePets } from "../services/servicesPet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { getAllSpecies } from "../services/getAllSpecies";
+import { getBreedsBySpecies } from "../services/getBreedsBySpecies";
 
 interface Species {
   id: number;
@@ -18,26 +25,27 @@ interface Breed {
 
 export default function RegisterPetStep2() {
   const { species_id, breed_id, setField, nextStep } = useRegisterPetStore();
-  const { getSpecies, getBreedsBySpecies } = usePets();
   const navigate = useNavigate();
-  
+
   const [species, setSpecies] = useState<Species[]>([]);
   const [breeds, setBreeds] = useState<Breed[]>([]);
   const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(null);
 
   useEffect(() => {
     const fetchSpecies = async () => {
-      const data = await getSpecies();
+      const data = await getAllSpecies();
       if (data) {
         setSpecies(data);
         // Si ya hay una especie seleccionada, encontrarla
         if (species_id) {
-          const found = data.find(s => s.id === species_id);
+          const found = data.find((s) => s.id === species_id);
           if (found) setSelectedSpecies(found);
         }
       }
     };
+
     fetchSpecies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -63,7 +71,7 @@ export default function RegisterPetStep2() {
   };
 
   const handleSelectSpecies = (speciesId: number) => {
-    const selected = species.find(s => s.id === speciesId);
+    const selected = species.find((s) => s.id === speciesId);
     if (selected) {
       setSelectedSpecies(selected);
       setField("species_id", speciesId);
@@ -98,12 +106,12 @@ export default function RegisterPetStep2() {
               onClick={() => handleSelectSpecies(sp.id)}
               className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
                 species_id === sp.id
-                  ? 'bg-blue-100 text-blue-600'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  ? "bg-blue-100 text-blue-600"
+                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
               }`}
             >
               <span className="text-3xl">
-                {sp.id === 1 ? '🐕' : sp.id === 2 ? '🐈' : '🐾'}
+                {sp.id === 1 ? "🐕" : sp.id === 2 ? "🐈" : "🐾"}
               </span>
               <span className="font-medium">{sp.name}</span>
             </button>
@@ -113,7 +121,10 @@ export default function RegisterPetStep2() {
         {selectedSpecies && breeds.length > 0 && (
           <div className="space-y-2">
             <p className="text-center font-medium">Selecciona la raza</p>
-            <Select value={breed_id?.toString() || ""} onValueChange={(value) => handleSelectBreed(parseInt(value))}>
+            <Select
+              value={breed_id?.toString() || ""}
+              onValueChange={(value) => handleSelectBreed(parseInt(value))}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona una raza" />
               </SelectTrigger>

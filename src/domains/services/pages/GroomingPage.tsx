@@ -13,9 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { usePetStore } from "@/store/pets.store";
-import { usePets } from "@/domains/mypets/services/servicesPet";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { MdOutlinePets } from "react-icons/md";
 import { PiPlusBold } from "react-icons/pi";
@@ -23,22 +21,43 @@ import { useDetailStore } from "@/store/detail";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import opcion_1 from "@/assets/home/serv-bano.png";
+import {
+  getPetsByUser,
+  type Pet,
+} from "@/domains/mypets/services/getPetsByUser";
 
 export default function GroomingPage() {
-  const { listPets, setListPets } = usePetStore();
   const { setPetAndUser } = useDetailStore();
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const { getPets, loading } = usePets();
+  const [listPets, setListPets] = useState<Pet[]>([]);
+
+  const fetchPets = useCallback(async () => {
+    try {
+      const data = await getPetsByUser();
+      if (data && Array.isArray(data)) {
+        setListPets(data);
+      }
+    } catch (error) {
+      console.error("Error obteniendo las mascotas:", error);
+      toast.error("No se pudieron cargar las mascotas");
+    }
+  }, [setListPets]);
+
+  useEffect(() => {
+    fetchPets();
+  }, [fetchPets]);
 
   useEffect(() => {
     const fetchPets = async () => {
+      setLoading(true);
       if (listPets.length > 0) {
         return;
       }
 
       try {
-        const data = await getPets();
+        const data = await getPetsByUser();
 
         if (data) {
           setListPets(data);
@@ -50,10 +69,11 @@ export default function GroomingPage() {
         console.error("Error cargando perfil:", error);
         toast.error("Error al cargar el perfil");
       }
+      setLoading(false);
     };
 
     fetchPets();
-  }, [getPets]);
+  }, [listPets, setListPets]);
 
   const navigate = useNavigate();
 
@@ -88,9 +108,6 @@ export default function GroomingPage() {
       <h2>Baño y corte</h2>
       <Separator />
       <div className="w-full flex flex-col gap-8 items-center justify-center overflow-hidden bg-white z-20">
-
-
-
         <div className="w-full flex flex-col gap-4">
           <div className="w-full flex flex-col items-center justify-center gap-1 leading-[1]">
             {/* Estoy ocultando este campo para simplicar la UI */}
@@ -136,7 +153,10 @@ export default function GroomingPage() {
                   {loading && (
                     <div className="flex gap-4 basis-[30%] ml-5">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex flex-col items-center gap-2">
+                        <div
+                          key={i}
+                          className="flex flex-col items-center gap-2"
+                        >
                           <Skeleton className="size-22 rounded-full" />
                           <Skeleton className="h-4 w-16" />
                         </div>

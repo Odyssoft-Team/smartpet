@@ -3,13 +3,13 @@ import PetFormLayout from "../components/PetFormLayout";
 import { useRegisterPetStore } from "../store/registerPet.store";
 import { AvatarUploader } from "../../profile/components/AvatarUploader";
 import pet_default from "@/assets/pets/pet-default.jpg";
-import { usePets } from "../services/servicesPet";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { uploadPetPhoto } from "../services/uploadPetPhoto";
+import { addPet } from "../services/addPet";
 
 export default function RegisterPetStep5() {
   const store = useRegisterPetStore();
-  const { addPet, uploadPetPhoto } = usePets();
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -78,7 +78,7 @@ export default function RegisterPetStep5() {
             uploadFn={handleUploadAvatar}
           />
 
-          <Button 
+          <Button
             onClick={handleFinish}
             className="w-full max-w-[200px] bg-black text-white"
           >

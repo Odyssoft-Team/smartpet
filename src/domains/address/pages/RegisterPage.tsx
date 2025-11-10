@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,9 +33,7 @@ import {
 import BREEDS from "../utils/breeds";
 import { Label } from "@/components/ui/label";
 import { AvatarUploader } from "@/domains/profile/components/AvatarUploader";
-import { usePets } from "../services/servicesPet";
 import { toast } from "sonner";
-import type { Pet } from "../utils/Pet";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +42,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { usePetStore } from "@/store/pets.store";
+import {
+  getPetsByUser,
+  type Pet,
+} from "@/domains/mypets/services/getPetsByUser";
+import { uploadPetPhoto } from "@/domains/mypets/services/uploadPetPhoto";
+import { addPet } from "@/domains/mypets/services/addPet";
 
 type PetFormValues = z.infer<ReturnType<typeof usePetSchema>>;
 
@@ -72,9 +75,23 @@ export default function RegistermypetsPage() {
     formState: { errors },
   } = form;
 
-  const { listPets, setListPets } = usePetStore();
+  const [listPets, setListPets] = useState<Pet[]>([]);
 
-  const { addPet, uploadPetPhoto } = usePets();
+  const fetchPets = useCallback(async () => {
+    try {
+      const data = await getPetsByUser();
+      if (data && Array.isArray(data)) {
+        setListPets(data);
+      }
+    } catch (error) {
+      console.error("Error obteniendo las mascotas:", error);
+      toast.error("No se pudieron cargar las mascotas");
+    }
+  }, [setListPets]);
+
+  useEffect(() => {
+    fetchPets();
+  }, [fetchPets]);
 
   const [openDialog, setOpenDialog] = useState(false);
 
