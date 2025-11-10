@@ -3,53 +3,79 @@ import opcion_2 from "@/assets/home/serv-paseo.png";
 import opcion_3 from "@/assets/home/serv-comida.png";
 
 type Services = {
+  id: number;
   img: string;
-  service_name: string;
-  sub?: string;
-  time?: string;
 };
 
 export const SERVICES: Services[] = [
   {
+    id: 1,
     img: opcion_1,
-    service_name: "Ducha y corte de pelo",
-    sub: "Grooming",
-    time: "30-45 min",
   },
-  { img: opcion_2, service_name: "Paseo de mascota", sub: "Caring" },
-  { img: opcion_3, service_name: "Estadia", sub: "Caring" },
+  { id: 2, img: opcion_2 },
+  { id: 3, img: opcion_3 },
 ];
 
 type TypeService = {
-  type_service: "Baño clásico" | "Baño medicado" | "Baño premium" | "Baño seco";
+  id: number;
+  type_service: "Clásico" | "Medicado" | "Premium" | "Seco";
+  commend: string;
   description: string;
-  price: string;
+  includes: string[];
 };
 
 export const TYPE_SERVICE_GROMMING: TypeService[] = [
   {
-    type_service: "Baño clásico",
+    id: 1,
+    type_service: "Clásico",
+    commend: "Ideal para perros activos",
     description:
-      "🛁🐾 Baño clásico: shampoo/acond. hipoalergénico 🧴, recorte ✂️, uñas 🐾, orejas 👂, dental 🪥, humectante 💧 y perfume 🌸",
-    price: "90.00",
+      " Ofrece una limpieza completa y cuidadosa para tu mascota, utilizando productos suaves que eliminan la suciedad y mantienen su pelaje brillante y saludable.",
+    includes: [
+      "Shampoo y acondicionador hipoalergénicos.",
+      "Recorte de uñas.",
+      "Limpieza de orejas y dental.",
+      "Aplicación de humectante y perfume.",
+    ],
   },
   {
-    type_service: "Baño medicado",
+    id: 2,
+    type_service: "Medicado",
+    commend: "Cuidado especial",
     description:
-      "🧼🐕 Baño medicado: shampoo hipocloroso 💊, recorte ✂️, uñas ✋, orejas 👂, dental 🦷, humectante 💧 y perfume 🌿",
-    price: "95.00",
+      " Diseñado para mascotas con piel sensible, alergias o irritaciones. Utiliza productos dermatológicos especiales que favorecen la recuperación de la piel.",
+    includes: [
+      "Shampoo y acondicionador hipoclorosos.",
+      "Recorte de uñas.",
+      "Limpieza de orejas y dental.",
+      "Aplicación de humectante y perfume.",
+    ],
   },
   {
-    type_service: "Baño premium",
+    id: 3,
+    type_service: "Premium",
+    commend: "Experiencia premium",
     description:
-      "🌟🐾 Baño premium: shampoo intensivo 🧴, recorte ✂️, uñas 🐾, orejas 👂, dental 🪥, mascarilla hidratante 💧, brillo de pelaje ✨ y perfume 🌸",
-    price: "99.00",
+      "Brinda una experiencia de spa para tu mascota, con productos de alta calidad, mascarillas y cuidados que dejan su piel revitalizada.",
+    includes: [
+      "Shampoo intensivo.",
+      "Recorte de uñas.",
+      "Limpieza de orejas y dental.",
+      "Aplicación de humectante, brillo de pelaje y perfume.",
+    ],
   },
   {
-    type_service: "Baño seco",
+    id: 4,
+    type_service: "Seco",
+    commend: "",
     description:
-      "🌬️🐕 Baño seco: shampoo en seco 🧴, recorte ✂️, uñas 🐾, orejas 👂, dental 🪥, brillo de pelaje ✨ y perfume 🌸",
-    price: "-",
+      "La opción perfecta para mantener limpia a tu mascota sin necesidad de agua. Se aplican productos especiales que eliminan la suciedad y los malos olores.",
+    includes: [
+      "Shampoo en seco.",
+      "Recorte de uñas.",
+      "Limpieza de orejas y dental.",
+      "Aplicación de humectante, brillo de pelaje y perfume.",
+    ],
   },
 ];
 

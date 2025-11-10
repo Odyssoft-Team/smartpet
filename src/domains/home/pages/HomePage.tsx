@@ -24,7 +24,13 @@ import { useServiceStore } from "@/store/service.store";
 import { useEffect, useState } from "react";
 import { useServices } from "../services/useServices";
 import { toast } from "sonner";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useDetailStore } from "@/store/detail";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { IoIosArrowDown } from "react-icons/io";
 import { HiMapPin } from "react-icons/hi2";
 
@@ -76,11 +82,22 @@ export default function HomePage() {
         ></div> */}
         {/* <span className="text-white"></span> */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="text-white flex items-center gap-2">Alameda El Alba 110 <IoIosArrowDown /></DropdownMenuTrigger>
-          <DropdownMenuContent className="bg-black text-white w-full border-0" align="start">
-            <DropdownMenuItem><HiMapPin /> Paseo de la Republica 2179 - San Isidro</DropdownMenuItem>
-            <DropdownMenuItem><HiMapPin /> Juan de Aliaga 488 - Magdalena del Mar</DropdownMenuItem>
-            <DropdownMenuItem><HiMapPin /> Jr Felipe Gil B7 - Santiago de Surco</DropdownMenuItem>
+          <DropdownMenuTrigger className="text-white flex items-center gap-2">
+            Alameda El Alba 110 <IoIosArrowDown />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="bg-black text-white w-full border-0"
+            align="start"
+          >
+            <DropdownMenuItem>
+              <HiMapPin /> Paseo de la Republica 2179 - San Isidro
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <HiMapPin /> Juan de Aliaga 488 - Magdalena del Mar
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <HiMapPin /> Jr Felipe Gil B7 - Santiago de Surco
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -249,62 +266,76 @@ export default function HomePage() {
           className="w-full"
         >
           <CarouselContent>
-            {SERVICES.map((item, index) => (
-              <CarouselItem key={index} className="basis-[80%]">
-                <Card className="p-0 border-none shadow-none rounded-none">
-                  <Link
-                    to="/services/grooming"
-                    onClick={() => {
-                      if (index === 0) {
-                        useServiceStore.getState().setSelectedService({
-                          service_name: item.service_name,
-                          sub: item.sub,
-                          time: item.time,
-                        });
-                      }
-                    }}
-                    className={cn(
-                      index === 0
-                        ? "pointer-events-auto"
-                        : "pointer-events-none opacity-80 cursor-not-allowed"
-                    )}
-                  >
-                    <CardContent className="flex flex-col justify-center p-0 gap-2">
-                      <div className="w-full h-fit relative">
-                        <img
-                          className="w-full h-auto object-cover rounded-2xl"
-                          src={item.img}
-                          alt="asds"
-                        />
-                        <div
-                          className={cn(
-                            "w-full h-full inset-0 bg-white/50 absolute z-10",
-                            index === 0 && "hidden"
-                          )}
-                        />
-                      </div>
-                      <div className="flex gap-1">
-                      <div className="w-15">
-                        <img
-                          className="size-12 rounded-full overflow-hidden object-cover"
-                          src={fidel_circle}
-                          alt="asds"
+            {service.map((item, index) => {
+              const typeService = SERVICES.find((s) => s.id === item.id);
+
+              const mergedItem = {
+                ...item,
+                ...typeService,
+              };
+
+              return (
+                <CarouselItem key={item.id} className="basis-[80%]">
+                  <Card className="p-0 border-none shadow-none rounded-none">
+                    <Link
+                      to="/services/grooming"
+                      onClick={() => {
+                        if (index === 0) {
+                          useServiceStore.getState().setSelectedService({
+                            id: item.id,
+                            service_name: item.name,
+                            sub: item.description,
+                            time: item.duration,
+                          });
+                        }
+
+                        if (index === 0) {
+                          useDetailStore.getState().setServicePrice(item.price);
+                        }
+                      }}
+                      className={cn(
+                        index === 0
+                          ? "pointer-events-auto"
+                          : "pointer-events-none opacity-80 cursor-not-allowed"
+                      )}
+                    >
+                      <CardContent className="flex flex-col justify-center p-0 gap-2">
+                        <div className="w-full h-fit relative">
+                          <img
+                            className="w-full h-auto object-cover rounded-2xl"
+                            src={mergedItem.img}
+                            alt="asds"
                           />
-                      </div>
-                      <div className="w-full flex flex-col items-start gap-1 py-2">
-                        <h3 className="leading-[1] font-normal text-sm text-black/50">
-                          {item.sub}
-                        </h3>
-                        <p className="leading-[1] font-medium text-sm text-black">
-                          {item.service_name}
-                        </p>
-                      </div>
-                      </div>
-                    </CardContent>
-                  </Link>
-                </Card>
-              </CarouselItem>
-            ))}
+                          <div
+                            className={cn(
+                              "w-full h-full inset-0 bg-white/50 absolute z-10",
+                              index === 0 && "hidden"
+                            )}
+                          />
+                        </div>
+                        <div className="flex gap-1">
+                          <div className="w-15">
+                            <img
+                              className="size-12 rounded-full overflow-hidden object-cover"
+                              src={fidel_circle}
+                              alt="asds"
+                            />
+                          </div>
+                          <div className="w-full flex flex-col items-start gap-1 py-2">
+                            <h3 className="leading-[1] font-normal text-sm text-black/50">
+                              {item.name}
+                            </h3>
+                            <p className="leading-[1] font-medium text-sm text-black">
+                              {item.description}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Link>
+                  </Card>
+                </CarouselItem>
+              );
+            })}
           </CarouselContent>
           <CarouselPrevious />
           <CarouselNext />

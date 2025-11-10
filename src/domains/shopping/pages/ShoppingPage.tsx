@@ -14,21 +14,22 @@ import { Link, useNavigate } from "react-router-dom";
 import { PaymentSuccess } from "../components/DialogSucessPay";
 
 export default function ShoppingPage() {
-  const { selectedService, setSelectedService } = useServiceStore();
+  // const { selectedService, setSelectedService } = useServiceStore();
+  const { selectedService } = useServiceStore();
   const navigate = useNavigate();
 
   const hasService = selectedService && Object.keys(selectedService).length > 0;
 
-  const service = selectedService?.type_service;
-  const extras = selectedService?.additional_services ?? [];
+  // const service = selectedService?.type_service;
+  // const extras = selectedService?.additional_services ?? [];
 
   // 🧮 Calcular total
-  const basePrice = parseFloat(selectedService?.price ?? "0");
-  const extrasTotal = extras.reduce(
-    (acc, add) => acc + parseFloat(add.price ?? "0"),
-    0
-  );
-  const total = (basePrice + extrasTotal).toFixed(2);
+  // const basePrice = parseFloat(selectedService?.price ?? "0");
+  // const extrasTotal = extras.reduce(
+  //   (acc, add) => acc + parseFloat(add.price ?? "0"),
+  //   0
+  // );
+  // const total = (basePrice + extrasTotal).toFixed(2);
 
   const { listCards } = useCardsStore();
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
@@ -58,7 +59,7 @@ export default function ShoppingPage() {
 
       // Limpiar el estado global después de mostrar el diálogo
       setTimeout(() => {
-        setSelectedService(null);
+        // setSelectedService(null);
         setShowSuccessDialog(false);
         navigate("/");
       }, 5500);
@@ -67,7 +68,7 @@ export default function ShoppingPage() {
 
   const handleCloseSuccessDialog = () => {
     setShowSuccessDialog(false);
-    setSelectedService(null);
+    // setSelectedService(null);
     navigate("/");
   };
 
@@ -91,7 +92,7 @@ export default function ShoppingPage() {
               </h2>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2">
-                  {service && (
+                  {/* {service && (
                     <span className="text-xs text-[#2EA937]">Servicio (1)</span>
                   )}
                   {extras.length > 0 && (
@@ -103,7 +104,7 @@ export default function ShoppingPage() {
                     <span className="text-xs text-[#D86C00]">
                       Sin opciones seleccionadas
                     </span>
-                  )}
+                  )} */}
                 </div>
                 <Link
                   to={"/services/grooming/2"}
@@ -127,12 +128,12 @@ export default function ShoppingPage() {
                 </span>
               </div>
 
-              <h3 className="w-fit font-bold text-sm text-[#D86C00]">
+              {/* <h3 className="w-fit font-bold text-sm text-[#D86C00]">
                 S/.{selectedService.price}
-              </h3>
+              </h3> */}
             </div>
 
-            <div>
+            {/* <div>
               <h3 className="text-sky-500">Adicionales+</h3>
               {extras.length > 0 ? (
                 <ul className="list-disc list-inside ml-4">
@@ -150,14 +151,14 @@ export default function ShoppingPage() {
               ) : (
                 <p className="text-sm text-gray-400 italic">Sin adicionales</p>
               )}
-            </div>
+            </div> */}
 
             <div className="w-full h-[1px] bg-gray-300 mt-2" />
 
             <div className="w-full flex justify-end">
-              <h3 className="w-fit font-bold text-green-500 tracking-wider">
+              {/* <h3 className="w-fit font-bold text-green-500 tracking-wider">
                 Total: S/.{total}
-              </h3>
+              </h3> */}
             </div>
           </div>
         ) : (
