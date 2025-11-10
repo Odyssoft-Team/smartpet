@@ -101,7 +101,7 @@ export default function HomePage() {
   return (
     <div className="w-full flex flex-col gap-4">
       {/* HEADER */}
-      <div className="bg-black fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
         <DropdownMenu>
           <DropdownMenuTrigger
             className="text-white flex items-center gap-2"
