@@ -109,7 +109,7 @@ export default function HomePage() {
           >
             <Button
               size="lg"
-              className="px-3 max-w-[12rem] bg-transparent hover:bg-transparent !p-0"
+              className="px-3 max-w-[13rem] bg-transparent hover:bg-transparent !p-0"
             >
               <MapPinCheck />{" "}
               <span className="truncate font-medium text-sm">{address}</span>
