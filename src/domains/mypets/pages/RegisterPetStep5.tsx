@@ -23,13 +23,23 @@ export default function RegisterPetStep5() {
 
   const handleFinish = async () => {
     try {
+      // Calcular birth_date a partir de birthDate o ageInYears
+      let birth_date: string | undefined;
+      if (store.birthDate) {
+        birth_date = store.birthDate.toISOString().split("T")[0];
+      } else if (store.ageInYears !== undefined) {
+        const now = new Date();
+        const birthYear = now.getFullYear() - store.ageInYears;
+        birth_date = `${birthYear}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      }
+
       const petData = {
         name: store.name,
-        species: store.species!,
-        breed: store.breed,
-        weight: store.weight,
-        birth_date: store.birthDate?.toISOString(),
-        photo_url: store.photoUrl
+        species_id: store.species_id,
+        breed_id: store.breed_id,
+        weight: store.weight ? parseFloat(store.weight) : null,
+        birth_date: birth_date || null,
+        photo_url: store.photoUrl,
       };
 
       const newPet = await addPet(petData);

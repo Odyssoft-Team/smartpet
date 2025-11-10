@@ -3,7 +3,9 @@ import { create } from 'zustand';
 interface RegisterPetStore {
   name: string;
   species: 'Perro' | 'Gato' | undefined;
+  species_id?: number;
   breed: string;
+  breed_id?: number;
   weight: string;
   birthDate?: Date;
   ageInYears?: number;
@@ -18,7 +20,9 @@ interface RegisterPetStore {
 export const useRegisterPetStore = create<RegisterPetStore>((set) => ({
   name: '',
   species: undefined,
+  species_id: undefined,
   breed: '',
+  breed_id: undefined,
   weight: '',
   birthDate: undefined,
   ageInYears: undefined,
@@ -30,7 +34,9 @@ export const useRegisterPetStore = create<RegisterPetStore>((set) => ({
   reset: () => set({
     name: '',
     species: undefined,
+    species_id: undefined,
     breed: '',
+    breed_id: undefined,
     weight: '',
     birthDate: undefined,
     ageInYears: undefined,
