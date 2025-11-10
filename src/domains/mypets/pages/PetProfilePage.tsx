@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { usePets } from "../services/servicesPet";
 import { toast } from "sonner";
 import { usePetStore } from "@/store/pets.store";
@@ -26,10 +27,13 @@ export default function PetProfilePage() {
     }
   };
 
-  if (!selectedPet) {
-    navigate("/mypets");
-    return null;
-  }
+  useEffect(() => {
+    if (!selectedPet) {
+      navigate("/mypets");
+    }
+  }, [selectedPet, navigate]);
+
+  if (!selectedPet) return null;
 
   function getAge(birthDateString: string): number {
     const birthDate = new Date(birthDateString);
@@ -104,7 +108,19 @@ export default function PetProfilePage() {
             </div>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-8 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Link to={`/pets/${selectedPet.id}/vaccines`}>
+                <Button variant="outline" className="w-full">
+                  Registrar Vacuna
+                </Button>
+              </Link>
+              <Link to={`/pets/${selectedPet.id}/deworming`}>
+                <Button variant="outline" className="w-full">
+                  Registrar Desparasitación
+                </Button>
+              </Link>
+            </div>
             <Button 
               variant="destructive" 
               className="w-full"

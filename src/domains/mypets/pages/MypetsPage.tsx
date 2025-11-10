@@ -36,23 +36,16 @@ export default function MypetsPage() {
   const { getPets } = usePets();
 
   const fetchPets = useCallback(async () => {
-    if (listPets.length > 0) {
-      console.log("✅ Ya hay datos en el store, omitiendo fetch");
-      return;
-    }
-
     try {
       const data = await getPets();
       if (data && Array.isArray(data)) {
         setListPets(data);
-      } else {
-        toast.error("No se pudieron cargar las mascotas");
       }
     } catch (error) {
       console.error("Error obteniendo las mascotas:", error);
       toast.error("No se pudieron cargar las mascotas");
     }
-  }, [getPets, listPets.length, setListPets]);
+  }, [getPets, setListPets]);
 
   useEffect(() => {
     fetchPets();
