@@ -10,7 +10,8 @@ export function useServices() {
 
     const { data: services, error } = await supabase
       .from("services")
-      .select("*");
+      .select("*")
+      .order("id", { ascending: true });
 
     setLoading(false);
 
@@ -23,5 +24,24 @@ export function useServices() {
     return services; // array de servicios
   };
 
-  return { getServices, loading };
+  const getServiceVariants = async (serviceId: number) => {
+    setLoading(true);
+
+    const { data: serviceVariants, error } = await supabase
+      .from("service_variants")
+      .select("*")
+      .eq("service_id", serviceId)
+      .order("id", { ascending: true });
+
+    setLoading(false);
+
+    if (error) {
+      console.error("Error fetching variants:", error.message);
+      return [];
+    }
+
+    return serviceVariants;
+  };
+
+  return { getServices, getServiceVariants, loading };
 }
