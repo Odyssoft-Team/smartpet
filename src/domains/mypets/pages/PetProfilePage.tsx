@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
+import { usePets } from "../services/servicesPet";
+import { toast } from "sonner";
 import { usePetStore } from "@/store/pets.store";
 import { TbDog } from "react-icons/tb";
 import { Cat } from "lucide-react";
@@ -87,6 +89,25 @@ export default function PetProfilePage() {
               <p className="text-sm text-gray-500">Peso</p>
               <p className="text-lg font-semibold">{selectedPet.weight} kg</p>
             </div>
+          </div>
+
+          <div className="mt-8">
+            <Button 
+              variant="destructive" 
+              className="w-full"
+              onClick={async () => {
+                if (window.confirm('¿Estás seguro de eliminar esta mascota?')) {
+                  const { deletePet } = usePets();
+                  const success = await deletePet(selectedPet.id);
+                  if (success) {
+                    toast.success('Mascota eliminada con éxito');
+                    navigate('/mypets');
+                  }
+                }
+              }}
+            >
+              Eliminar mascota
+            </Button>
           </div>
         </div>
       </div>

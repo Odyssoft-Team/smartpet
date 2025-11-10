@@ -139,5 +139,35 @@ export function usePets() {
     return urlData.publicUrl;
   }
 
-  return { pets, loading, getPets, addPet, updatePet, uploadPetPhoto };
+  // 🗑️ Eliminar mascota
+  const deletePet = async (petId: string) => {
+    try {
+      const { error } = await supabase
+        .from("pets")
+        .delete()
+        .eq("id", petId);
+
+      if (error) throw error;
+
+      // 🔄 Actualiza el estado local
+      setPets((prev) => prev.filter((pet) => pet.id !== petId));
+
+      toast.success("Mascota eliminada correctamente 🗑️");
+      return true;
+    } catch (error) {
+      console.error("Error eliminando mascota:", error);
+      toast.error("No se pudo eliminar la mascota");
+      return false;
+    }
+  };
+
+  return {
+    pets,
+    loading,
+    getPets,
+    addPet,
+    updatePet,
+    uploadPetPhoto,
+    deletePet,
+  };
 }
