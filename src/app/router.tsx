@@ -6,6 +6,8 @@ import ErrorPage from "@/shared/pages/ErrorPage";
 import AppLayout from "./layouts/AppLayout";
 import MypetsPage from "@/domains/mypets/pages/MypetsPage";
 import AddressPage from "@/domains/address/pages/AddressPage";
+import AddressRegisterPage from "@/domains/address/pages/RegisterPage";
+import AddressEditPage from "@/domains/address/pages/EditPage";
 
 const RegisterPetStep1 = lazy(() =>
   import("@/domains/mypets/pages/RegisterPetStep1")
@@ -90,6 +92,8 @@ export const router = createBrowserRouter([
           { path: "/activities", element: <ActivitiesPage /> },
           { path: "/profile", element: <ProfilePage /> },
           { path: "/address", element: <AddressPage /> },
+          { path: "/address/register", element: <AddressRegisterPage /> },
+          { path: "/address/edit/:id", element: <AddressEditPage /> },
           { path: "/mypets", element: <MypetsPage /> },
           { path: "/editmypets", element: <EditmypetsPage /> },
           { path: "/pet-profile", element: <PetProfilePage /> },
