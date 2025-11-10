@@ -8,6 +8,22 @@ import MypetsPage from "@/domains/mypets/pages/MypetsPage";
 import RegistermypetsPage from "@/domains/mypets/pages/RegisterPage";
 import AddressPage from "@/domains/address/pages/AddressPage";
 
+const RegisterPetStep1 = lazy(() =>
+  import("@/domains/mypets/pages/RegisterPetStep1")
+);
+const RegisterPetStep2 = lazy(() =>
+  import("@/domains/mypets/pages/RegisterPetStep2")
+);
+const RegisterPetStep3 = lazy(() =>
+  import("@/domains/mypets/pages/RegisterPetStep3")
+);
+const RegisterPetStep4 = lazy(() =>
+  import("@/domains/mypets/pages/RegisterPetStep4")
+);
+const RegisterPetStep5 = lazy(() =>
+  import("@/domains/mypets/pages/RegisterPetStep5")
+);
+
 const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
 const ServicesPage = lazy(
   () => import("../domains/services/pages/ServicesPage")
@@ -44,6 +60,7 @@ const RegisterEmailVerificationPage = lazy(
 );
 
 const EditmypetsPage = lazy(() => import("../domains/mypets/pages/EditPage"));
+const PetProfilePage = lazy(() => import("../domains/mypets/pages/PetProfilePage"));
 
 const CallbackPage = lazy(() => import("@/domains/auth/pages/CallbackPage"));
 
@@ -75,6 +92,12 @@ export const router = createBrowserRouter([
           { path: "/mypets", element: <MypetsPage /> },
           { path: "/registermypets", element: <RegistermypetsPage /> },
           { path: "/editmypets", element: <EditmypetsPage /> },
+          { path: "/pet-profile", element: <PetProfilePage /> },
+          { path: "/register-pet/step1", element: <RegisterPetStep1 /> },
+          { path: "/register-pet/step2", element: <RegisterPetStep2 /> },
+          { path: "/register-pet/step3", element: <RegisterPetStep3 /> },
+          { path: "/register-pet/step4", element: <RegisterPetStep4 /> },
+          { path: "/register-pet/step5", element: <RegisterPetStep5 /> },
           // {
           //   path: "/live",
           //   element: <LiveHomePage />,

@@ -25,6 +25,14 @@ import { useEffect, useState } from "react";
 import { useServices } from "../services/useServices";
 import { toast } from "sonner";
 import { useDetailStore } from "@/store/detail";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { IoIosArrowDown } from "react-icons/io";
+import { HiMapPin } from "react-icons/hi2";
 
 type Service = {
   id: number;
@@ -65,8 +73,33 @@ export default function HomePage() {
   }, [setService]);
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="bg-red-700 fixed top-0 left-0 right-0 p-4 z-50 justify-between flex items-center">
-        <span className="text-white">Alameda El Alba 110</span>
+      <div className="bg-black fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+        {/* <div
+          className={cn(
+            "w-full flex flex-col gap-y-3 overflow-y-scroll transition-all duration-300 ease-in-out ",
+            openCard ? "h-[120px]" : "h-[0px]"
+          )}
+        ></div> */}
+        {/* <span className="text-white"></span> */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="text-white flex items-center gap-2">
+            Alameda El Alba 110 <IoIosArrowDown />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="bg-black text-white w-full border-0"
+            align="start"
+          >
+            <DropdownMenuItem>
+              <HiMapPin /> Paseo de la Republica 2179 - San Isidro
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <HiMapPin /> Juan de Aliaga 488 - Magdalena del Mar
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <HiMapPin /> Jr Felipe Gil B7 - Santiago de Surco
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <div className="bg-white w-8 h-8 rounded-full">:)</div>
       </div>
