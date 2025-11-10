@@ -42,7 +42,6 @@ type detailStore = {
   setDate: (date: string) => void;
   setTime: (time: string) => void;
   setServicePrice: (price_service: number) => void;
-  setVariantPrice: (price_delta: number) => void;
   setOptionsPrice: (options: ServiceOption[]) => void;
   reset: () => void;
 };
@@ -72,13 +71,18 @@ export const useDetailStore = create<detailStore>((set) => ({
     })),
   setService: (service) => set({ selectedService: service }),
   setVariant: (id: number, price_delta: number) =>
-    set((state) => ({
-      selectedVariant: {
-        ...state.selectedVariant,
-        id,
+    set((state) => {
+      const updated = {
+        ...state.selectedService,
         price_delta,
-      } as ServiceVariant,
-    })),
+      } as Service;
+      updated.total = calculateTotal(updated);
+
+      return {
+        selectedService: updated,
+        selectedVariant: { id, price_delta } as ServiceVariant,
+      };
+    }),
   setOptions: (options) => set({ selectedOptions: options }),
   setDate: (date) => set({ scheduledDate: date }),
   setTime: (time) => set({ scheduledTime: time }),
@@ -87,16 +91,6 @@ export const useDetailStore = create<detailStore>((set) => ({
       const updated = {
         ...state.selectedService,
         price_service,
-      } as Service;
-      updated.total = calculateTotal(updated);
-      return { selectedService: updated };
-    }),
-
-  setVariantPrice: (price_delta) =>
-    set((state) => {
-      const updated = {
-        ...state.selectedService,
-        price_delta,
       } as Service;
       updated.total = calculateTotal(updated);
       return { selectedService: updated };

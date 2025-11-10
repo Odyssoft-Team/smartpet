@@ -1,6 +1,10 @@
 import opcion_1 from "@/assets/home/serv-bano.png";
 import opcion_2 from "@/assets/home/serv-paseo.png";
 import opcion_3 from "@/assets/home/serv-comida.png";
+import groming_1 from "@/assets/grooming/clasico.png";
+import groming_2 from "@/assets/grooming/medicado.png";
+import groming_3 from "@/assets/grooming/premium.png";
+import groming_4 from "@/assets/grooming/seco.png";
 
 type Services = {
   id: number;
@@ -19,6 +23,7 @@ export const SERVICES: Services[] = [
 type TypeService = {
   id: number;
   type_service: "Clásico" | "Medicado" | "Premium" | "Seco";
+  icon: string;
   commend: string;
   description: string;
   includes: string[];
@@ -28,6 +33,7 @@ export const TYPE_SERVICE_GROMMING: TypeService[] = [
   {
     id: 1,
     type_service: "Clásico",
+    icon: groming_1,
     commend: "Ideal para perros activos",
     description:
       " Ofrece una limpieza completa y cuidadosa para tu mascota, utilizando productos suaves que eliminan la suciedad y mantienen su pelaje brillante y saludable.",
@@ -41,6 +47,7 @@ export const TYPE_SERVICE_GROMMING: TypeService[] = [
   {
     id: 2,
     type_service: "Medicado",
+    icon: groming_2,
     commend: "Cuidado especial",
     description:
       " Diseñado para mascotas con piel sensible, alergias o irritaciones. Utiliza productos dermatológicos especiales que favorecen la recuperación de la piel.",
@@ -55,6 +62,7 @@ export const TYPE_SERVICE_GROMMING: TypeService[] = [
     id: 3,
     type_service: "Premium",
     commend: "Experiencia premium",
+    icon: groming_3,
     description:
       "Brinda una experiencia de spa para tu mascota, con productos de alta calidad, mascarillas y cuidados que dejan su piel revitalizada.",
     includes: [
@@ -67,7 +75,8 @@ export const TYPE_SERVICE_GROMMING: TypeService[] = [
   {
     id: 4,
     type_service: "Seco",
-    commend: "",
+    commend: "Limpieza en seco",
+    icon: groming_4,
     description:
       "La opción perfecta para mantener limpia a tu mascota sin necesidad de agua. Se aplican productos especiales que eliminan la suciedad y los malos olores.",
     includes: [

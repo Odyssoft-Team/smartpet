@@ -17,9 +17,13 @@ import { useEffect, useState } from "react";
 import { useServices } from "@/domains/home/services/useServices";
 import { toast } from "sonner";
 import { useDetailStore, type ServiceVariant } from "@/store/detail";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Check } from "lucide-react";
 
 export default function GroomingServicesPage() {
   const navigate = useNavigate();
+  // const [selectedVariant, setSelectedVariant] = useState(null);
+  const [selectedVariant] = useState(null);
 
   const { selectedService } = useServiceStore();
   const { getServiceVariants } = useServices();
@@ -70,7 +74,7 @@ export default function GroomingServicesPage() {
       </div>
 
       {/* INFO GENERAL */}
-      <div className="w-full h-full flex flex-col gap-4 justify-between">
+      <div className="w-full h-full flex flex-col justify-between">
         <div className="w-full flex items-center justify-between">
           <h2 className="flex items-center gap-2 font-bold">
             Fidel <PiDogFill className="size-5" />
@@ -99,14 +103,22 @@ export default function GroomingServicesPage() {
             <AccordionItem value="services" className="group">
               <AccordionTrigger
                 extraContent={
-                  <div
-                    className={cn(
-                      "hidden group-data-[state=closed]:block",
-                      "w-full px-5 py-2 rounded-[0.5rem] border border-[#D86C00] text-[#D86C00] text-sm"
-                    )}
-                  >
-                    Sin Servicio seleccionado
-                  </div>
+                  <>
+                    <div
+                      className={cn(
+                        "group-data-[state=open]:hidden group-data-[state=closed]:flex justify-between",
+                        "w-full px-2 py-2 rounded-[0.5rem] border border-gray-500 text-black text-sm",
+                        "flex justify-between items-center"
+                      )}
+                    >
+                      <div className="w-[25%] h-full border-r-2 px-2 font-bold text-gray-500">
+                        Sin servicio
+                      </div>
+                      <div className="w-[75%] h-full text-gray-500">
+                        Presione para realizar cambios
+                      </div>
+                    </div>
+                  </>
                 }
               >
                 <div className="flex flex-col gap-y-1">
@@ -125,45 +137,122 @@ export default function GroomingServicesPage() {
                 </div>
               </AccordionTrigger>
 
-              <AccordionContent className="w-full h-[320px] overflow-y-scroll flex flex-col gap-4 text-balance">
-                {variants.slice(3, 7).map((item, index) => {
-                  const typeService = TYPE_SERVICE_GROMMING.find(
-                    (s) => s.id === item.id
-                  );
+              <AccordionContent className="w-full h-fit flex flex-col text-balance mt-2">
+                <Tabs defaultValue="item-0" className="w-full gap-0 !bg-none">
+                  <TabsList className="w-full flex h-fit !bg-transparent p-0">
+                    {variants.slice(3, 7).map((item, index) => {
+                      const typeService = TYPE_SERVICE_GROMMING[index];
+                      const mergedItem = { ...item, ...typeService };
+                      return (
+                        <TabsTrigger
+                          key={item.id}
+                          value={`item-${index}`}
+                          className={cn(
+                            "relative rounded-t-[1rem] rounded-b-none !shadow-none border-x-2 border-t-2 border-b-0 border-gray-300 transition-colors duration-200 flex flex-col items-center justify-center",
+                            "py-2 h-16 text-xs font-bold",
+                            // Efecto "carpeta": cuando está activo, sin borde inferior visible
+                            "data-[state=active]:-mb-[2px] data-[state=active]:bg-white z-20",
+                            index === 0 &&
+                              "data-[state=active]:font-bold data-[state=active]:text-[#D86C00] data-[state=active]:border-t-[#D86C00] data-[state=active]:border-x-[#D86C00]",
+                            index === 1 &&
+                              "data-[state=active]:font-bold data-[state=active]:text-sky-500 data-[state=active]:border-t-sky-500 data-[state=active]:border-x-sky-500",
+                            index === 2 &&
+                              "data-[state=active]:font-bold data-[state=active]:text-yellow-500 data-[state=active]:border-t-yellow-500 data-[state=active]:border-x-yellow-500",
+                            index === 3 &&
+                              "data-[state=active]:font-bold data-[state=active]:text-neutral-500 data-[state=active]:border-t-neutral-500 data-[state=active]:border-x-neutral-500"
+                          )}
+                        >
+                          {item.name}
+                          <img
+                            src={mergedItem.icon}
+                            alt={`icon-${item.name}`}
+                            className="h-8 w-auto -mt-1"
+                          />
+                        </TabsTrigger>
+                      );
+                    })}
+                  </TabsList>
 
-                  const mergedItem = {
-                    ...item,
-                    ...typeService,
-                  };
+                  {variants.slice(3, 7).map((item, index) => {
+                    const typeService = TYPE_SERVICE_GROMMING[index];
+                    const mergedItem = { ...item, ...typeService };
 
-                  return (
-                    <div
-                      key={item.id}
-                      className="rounded-md border p-2 flex items-center justify-between"
-                    >
-                      <div className="flex flex-col gap-1 leading-[1]">
-                        <h3 className="font-medium">{item.name}</h3>
-                        <p className="text-xs text-black">
-                          {mergedItem.description}
-                        </p>
-                      </div>
-
-                      <Button
+                    return (
+                      <TabsContent
+                        key={item.id}
+                        value={`item-${index}`}
                         className={cn(
-                          index === 3 && "pointer-events-none opacity-50",
-                          "bg-[#D86C00] hover:bg-[#D86C00] text-white hover:text-white text-xs min-w-[75px]"
+                          "py-4 px-4 border-2 flex flex-col gap-y-2 items-center text-center rounded-b-[1rem] transition-colors duration-200 border-gray-300",
+                          // Hace que el borde superior “se una” con el tab activo
+                          "-mt-[2px]",
+                          index === 0 && "data-[state=active]:border-[#D86C00]",
+                          index === 1 && "data-[state=active]:border-sky-500",
+                          index === 2 &&
+                            "data-[state=active]:border-yellow-500",
+                          index === 3 &&
+                            "data-[state=active]:border-neutral-500"
                         )}
-                        onClick={() => setVariant(item.id, item.price_delta)}
                       >
-                        {index === 3 ? (
-                          <span>-</span>
-                        ) : (
-                          <span>+ S/. {item.price_delta}.00</span>
-                        )}
-                      </Button>
-                    </div>
-                  );
-                })}
+                        <h3 className="text-base">{mergedItem.commend}</h3>
+                        <p className="text-[11px] text-black">
+                          {mergedItem.description ||
+                            "Sin descripción disponible"}
+                        </p>
+                        <div className="w-full flex flex-col gap-y-3 mt-1 rounded-[1rem] bg-gray-200/60 py-4 px-5">
+                          {mergedItem.includes?.map((include, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center text-left gap-x-1"
+                            >
+                              <div
+                                className={cn(
+                                  "size-4 flex items-center justify-center rounded-full",
+                                  index === 0 && "bg-[#D86C00]",
+                                  index === 1 && "bg-sky-500",
+                                  index === 2 && "bg-yellow-500",
+                                  index === 3 && "bg-neutral-500"
+                                )}
+                              >
+                                <Check
+                                  className="size-2 text-white"
+                                  strokeWidth={5}
+                                />
+                              </div>
+                              <span className="text-xs text-black tracking-tighter">
+                                {include}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          className={cn(
+                            "bg-[#D86C00] text-white text-xs min-w-[75px]",
+                            index === 0 && "bg-[#D86C00]",
+                            index === 1 && "bg-sky-500",
+                            index === 2 && "bg-yellow-500",
+                            index === 3 &&
+                              "pointer-events-none opacity-50 bg-neutral-500"
+                          )}
+                          onClick={() => {
+                            setVariant(item.id, item.price_delta);
+                            // setSelectedVariant(item.id);
+                          }}
+                        >
+                          {selectedVariant === item.id ? (
+                            <Check
+                              className="w-4 h-4 text-white"
+                              strokeWidth={3}
+                            />
+                          ) : index === 3 ? (
+                            <span>-</span>
+                          ) : (
+                            <span>+ S/. {item.price_delta}.00</span>
+                          )}
+                        </Button>
+                      </TabsContent>
+                    );
+                  })}
+                </Tabs>
               </AccordionContent>
             </AccordionItem>
 
