@@ -155,6 +155,7 @@ export default function ProfilePage() {
     };
 
     fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setProfile]);
 
   const [openProfile, setOpenProfile] = useState<boolean>(false);
@@ -254,6 +255,7 @@ export default function ProfilePage() {
       console.error("Error obteniendo las cards:", error);
       toast.error("No se pudieron cargar las tarjetas");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getCards]);
 
   useEffect(() => {
@@ -380,7 +382,6 @@ export default function ProfilePage() {
       <div className="w-full max-w-md rounded-xl flex flex-col mb-2">
         {/* perfil */}
         <div className="flex flex-col items-center gap-y-1">
-
           <span className="text-xl font-bold text-[#D86C00]">
             ¡Hola,{" "}
             {loading ? (
@@ -539,32 +540,19 @@ export default function ProfilePage() {
                 )}
               >
                 <div className="flex items-center gap-x-2">
-                  <Icon /> 
+                  <Icon />
                   <span className="text-base font-normal">{label}</span>
                 </div>
                 <IoIosArrowForward />
-
               </Link>
-
             );
           })}
-
-
-
-
-
-
-
-
-
-
 
           <div className="flex justify-between items-center py-3 cursor-pointer">
             <div className="flex items-center gap-x-2">
               <HiMapPin /> Direcciones
             </div>
             <IoIosArrowForward />
-
           </div>
 
           <div className="flex justify-between items-center py-3 cursor-pointer">
@@ -572,7 +560,6 @@ export default function ProfilePage() {
               <FaCreditCard /> Métodos de pago
             </div>
             <IoIosArrowForward />
-
           </div>
 
           <div className="flex justify-between items-center py-3 cursor-pointer">
@@ -581,7 +568,6 @@ export default function ProfilePage() {
               Libro de reclamaciones
             </div>
             <IoIosArrowForward />
-
           </div>
           <hr className="mt-6 bg-gray-600" />
 
