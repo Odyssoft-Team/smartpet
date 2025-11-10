@@ -1,0 +1,70 @@
+import { Button } from "@/components/ui/button";
+import { IoIosArrowBack } from "react-icons/io";
+//import { Link } from "react-router-dom";
+
+interface PetFormLayoutProps {
+  children: React.ReactNode;
+  onNext?: () => void;
+  onBack?: () => void;
+  showBackButton?: boolean;
+  showNextButton?: boolean;
+  nextDisabled?: boolean;
+  currentStep: number;
+  totalSteps: number;
+}
+
+export default function PetFormLayout({
+  children,
+  onNext,
+  onBack,
+  showBackButton = true,
+  showNextButton = true,
+  nextDisabled = false,
+  currentStep,
+  totalSteps
+}: PetFormLayoutProps) {
+  return (
+    <div className="flex flex-col items-center justify-start pt-4 bg-white h-fit min-h-screen">
+      <div className="w-full flex justify-start mb-4">
+        {showBackButton && (
+          <Button
+            type="button"
+            onClick={onBack}
+            size="back"
+            variant="back"
+            className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
+          >
+            <IoIosArrowBack className="size-8" />
+            <span className="-ml-2">Atrás</span>
+          </Button>
+        )}
+      </div>
+
+      <div className="w-full max-w-md rounded-xl p-4 flex flex-col items-center gap-y-6">
+        {/* Progress indicator */}
+        <div className="w-full flex justify-between px-4 mb-4">
+          {Array.from({ length: totalSteps }, (_, i) => (
+            <div
+              key={i}
+              className={`h-2 flex-1 mx-1 rounded-full ${
+                i + 1 <= currentStep ? 'bg-blue-500' : 'bg-gray-200'
+              }`}
+            />
+          ))}
+        </div>
+
+        {children}
+
+        {showNextButton && (
+          <Button
+            onClick={onNext}
+            disabled={nextDisabled}
+            className="w-full max-w-[200px] bg-black text-white"
+          >
+            Continuar
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}

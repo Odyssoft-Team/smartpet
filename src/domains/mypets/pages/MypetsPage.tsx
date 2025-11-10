@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { TbDog } from "react-icons/tb";
 import { PiPlusBold } from "react-icons/pi";
 import { Cat } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { usePets } from "../services/servicesPet";
 import { useCallback, useEffect } from "react";
 import { usePetStore } from "@/store/pets.store";
@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 import { MdOutlinePets } from "react-icons/md";
 
 export default function MypetsPage() {
+  const navigate = useNavigate();
+
   function getAge(birthDateString: string): number {
     const birthDate = new Date(birthDateString);
     const today = new Date();
@@ -56,6 +58,13 @@ export default function MypetsPage() {
     fetchPets();
   }, [fetchPets]);
 
+  useEffect(() => {
+    if (listPets.length === 1) {
+      setSelectedPet(listPets[0]);
+      navigate("/pet-profile");
+    }
+  }, [listPets]);
+
   return (
     <div className="h-full">
       <Button
@@ -67,7 +76,7 @@ export default function MypetsPage() {
       </Button>
       <div className="mt-6 w-full max-w-md mx-auto">
         {/* Nueva Mascota */}
-        <Link to={"/registermypets"}>
+        <Link to="/register-pet/step1">
           <div className="flex gap-1 items-center py-2 rounded-lg">
             <div className="flex items-center">
               <div className="w-16 h-16 flex items-center justify-center rounded-full object-cover mx-auto bg-gray-200">
@@ -106,11 +115,18 @@ export default function MypetsPage() {
               </span>
             </div>
 
-            <Link to="/editmypets" onClick={() => setSelectedPet(pet)}>
-              <Button size="sm" variant="primary" className="px-6 font-light">
-                Editar
-              </Button>
-            </Link>
+            <div className="flex gap-2">
+              <Link to="/pet-profile" onClick={() => setSelectedPet(pet)}>
+                <Button size="sm" variant="outline" className="px-6 font-light">
+                  Ver perfil
+                </Button>
+              </Link>
+              <Link to="/editmypets" onClick={() => setSelectedPet(pet)}>
+                <Button size="sm" variant="primary" className="px-6 font-light">
+                  Editar
+                </Button>
+              </Link>
+            </div>
           </div>
         ))}
       </div>
