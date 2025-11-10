@@ -123,11 +123,11 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (profile.id && profile.full_name) {
-        console.log("✅ Ya hay datos en el store, omitiendo fetch");
-        setLoading(false);
-        return;
-      }
+      // if (profile.id && profile.full_name) {
+      //   console.log("✅ Ya hay datos en el store, omitiendo fetch");
+      //   setLoading(false);
+      //   return;
+      // }
 
       try {
         setLoading(true);
@@ -240,10 +240,10 @@ export default function ProfilePage() {
   const { getCards, addCard, updateCard, deleteCard } = useCards();
 
   const fetchCards = useCallback(async () => {
-    if (listCards.length > 0) {
-      console.log("✅ Ya hay datos en el store, omitiendo fetch card");
-      return;
-    }
+    // if (listCards.length > 0) {
+    //   console.log("✅ Ya hay datos en el store, omitiendo fetch card");
+    //   return;
+    // }
     try {
       const data = await getCards();
       if (data) {

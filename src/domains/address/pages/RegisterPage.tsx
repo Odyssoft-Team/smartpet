@@ -1,9 +1,11 @@
-import { useState } from "react";
+"use client";
+
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -11,6 +13,11 @@ import {
   SelectItem,
   SelectContent,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import {
+  getPetsByUser,
+  type Pet,
+} from "@/domains/mypets/services/getPetsByUser";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { IoIosArrowBack } from "react-icons/io";
 import { useAddresses } from "../services/addressService";
@@ -42,13 +49,34 @@ export default function RegisterPage() {
 
   const { handleSubmit } = form;
 
+  const [listPets, setListPets] = useState<Pet[]>([]);
+
+  const fetchPets = useCallback(async () => {
+    try {
+      const data = await getPetsByUser();
+      if (data && Array.isArray(data)) {
+        setListPets(data);
+        console.log(listPets);
+      }
+    } catch (error) {
+      console.error("Error obteniendo las mascotas:", error);
+      toast.error("No se pudieron cargar las mascotas");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setListPets]);
+
+  useEffect(() => {
+    fetchPets();
+  }, [fetchPets]);
   const onSubmit = async (data: AddressFormValues) => {
     try {
       setIsLoading(true);
 
       // Verificar que el district_id existe en DISTRICTS
-      const selectedDistrict = DISTRICTS.find(d => d.id.toString() === data.district_id);
-      
+      const selectedDistrict = DISTRICTS.find(
+        (d) => d.id.toString() === data.district_id
+      );
+
       if (!selectedDistrict) {
         toast.error("Distrito no válido");
         return;
@@ -188,7 +216,9 @@ export default function RegisterPage() {
                       onChange={field.onChange}
                       className="w-4 h-4"
                     />
-                    <Label className="mb-0">Establecer como dirección predeterminada</Label>
+                    <Label className="mb-0">
+                      Establecer como dirección predeterminada
+                    </Label>
                   </div>
                 </FormItem>
               )}

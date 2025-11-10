@@ -2,28 +2,30 @@ import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { usePets } from "../services/servicesPet";
 import { toast } from "sonner";
 import { usePetStore } from "@/store/pets.store";
 import { TbDog } from "react-icons/tb";
 import { Cat } from "lucide-react";
 import { MdOutlinePets } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
+import { deletePet } from "../services/deletePet";
 
 export default function PetProfilePage() {
   const { selectedPet, setSelectedPet } = usePetStore();
-  const { deletePet } = usePets();
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    if (!selectedPet || !window.confirm('¿Estás seguro de eliminar esta mascota?')) {
+    if (
+      !selectedPet ||
+      !window.confirm("¿Estás seguro de eliminar esta mascota?")
+    ) {
       return;
     }
 
     const success = await deletePet(selectedPet.id);
     if (success) {
-      toast.success('Mascota eliminada con éxito');
-      navigate('/mypets');
+      toast.success("Mascota eliminada con éxito");
+      navigate("/mypets");
     }
   };
 
@@ -40,7 +42,10 @@ export default function PetProfilePage() {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
       age--;
     }
     return age;
@@ -74,8 +79,8 @@ export default function PetProfilePage() {
               <MdOutlinePets className="size-16 text-gray-600" />
             </div>
           )}
-          <Link 
-            to="/editmypets" 
+          <Link
+            to="/editmypets"
             className="absolute bottom-2 right-2 p-2 rounded-full bg-white shadow-md"
             onClick={() => setSelectedPet(selectedPet)}
           >
@@ -87,24 +92,40 @@ export default function PetProfilePage() {
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center gap-2">
               <h1 className="text-2xl font-bold">{selectedPet.name}</h1>
-              {selectedPet.species === "Perro" ? 
-                <TbDog className="size-6" /> : 
+              {selectedPet.species === "Perro" ? (
+                <TbDog className="size-6" />
+              ) : (
                 <Cat className="size-6" />
-              }
+              )}
             </div>
             <p className="text-gray-500">{selectedPet.breed || "—"}</p>
-            <p className="text-gray-500 text-sm">Especie: {selectedPet.species || "—"}</p>
-            <p className="text-gray-500 text-sm">Fecha de nacimiento: {selectedPet.birth_date ? new Date(selectedPet.birth_date).toLocaleDateString() : "—"}</p>
-            <p className="text-gray-500 text-sm">Alergias: {selectedPet.allergies || "—"}</p>
-            <p className="text-gray-500 text-sm">Condición especial: {selectedPet.special_condition || "—"}</p>
-            <p className="text-gray-500 text-sm">Comportamiento social: {selectedPet.social_behavior || "—"}</p>
+            <p className="text-gray-500 text-sm">
+              Especie: {selectedPet.species || "—"}
+            </p>
+            <p className="text-gray-500 text-sm">
+              Fecha de nacimiento:{" "}
+              {selectedPet.birth_date
+                ? new Date(selectedPet.birth_date).toLocaleDateString()
+                : "—"}
+            </p>
+            <p className="text-gray-500 text-sm">
+              Alergias: {selectedPet.allergies || "—"}
+            </p>
+            <p className="text-gray-500 text-sm">
+              Condición especial: {selectedPet.special_condition || "—"}
+            </p>
+            <p className="text-gray-500 text-sm">
+              Comportamiento social: {selectedPet.social_behavior || "—"}
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-gray-100 rounded-lg text-center">
               <p className="text-sm text-gray-500">Edad</p>
               <p className="text-lg font-semibold">
-                {selectedPet.birth_date ? `${getAge(selectedPet.birth_date)} años` : "—"}
+                {selectedPet.birth_date
+                  ? `${getAge(selectedPet.birth_date)} años`
+                  : "—"}
               </p>
             </div>
             <div className="p-4 bg-gray-100 rounded-lg text-center">
@@ -126,8 +147,8 @@ export default function PetProfilePage() {
                 </Button>
               </Link>
             </div>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               className="w-full"
               onClick={handleDelete}
             >
