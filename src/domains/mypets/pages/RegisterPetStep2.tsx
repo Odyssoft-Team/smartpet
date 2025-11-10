@@ -9,19 +9,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getAllSpecies } from "../services/getAllSpecies";
+import { getAllSpecies, type Species } from "../services/getAllSpecies";
 import { getBreedsBySpecies } from "../services/getBreedsBySpecies";
-
-interface Species {
-  id: number;
-  name: string;
-}
 
 interface Breed {
   id: number;
   name: string;
   species_id: number;
 }
+
+// Especies hardcodeadas
+const SPECIES = [
+  { id: 1, name: "Perro" },
+  { id: 2, name: "Gato" },
+];
+
+// Razas hardcodeadas como fallback
+const DEFAULT_BREEDS = {
+  1: [
+    // Perros
+    { id: 1, name: "Pastor Alemán", species_id: 1 },
+    { id: 2, name: "Bulldog Inglés", species_id: 1 },
+    { id: 3, name: "Beagle", species_id: 1 },
+    { id: 4, name: "Husky Siberiano", species_id: 1 },
+    { id: 5, name: "Shih Tzu", species_id: 1 },
+    { id: 6, name: "Golden Retriever", species_id: 1 },
+    { id: 7, name: "Poodle", species_id: 1 },
+    { id: 8, name: "Labrador Retriever", species_id: 1 },
+    { id: 9, name: "Mestizo", species_id: 1 },
+  ],
+  2: [
+    // Gatos
+    { id: 10, name: "Persa", species_id: 2 },
+    { id: 11, name: "Siamés", species_id: 2 },
+    { id: 12, name: "Maine Coon", species_id: 2 },
+    { id: 13, name: "Bengalí", species_id: 2 },
+    { id: 14, name: "Mestizo", species_id: 2 },
+  ],
+};
 
 export default function RegisterPetStep2() {
   const { species_id, breed_id, setField, nextStep } = useRegisterPetStore();
@@ -36,6 +61,8 @@ export default function RegisterPetStep2() {
       const data = await getAllSpecies();
       if (data) {
         setSpecies(data);
+        console.log(selectedSpecies);
+
         // Si ya hay una especie seleccionada, encontrarla
         if (species_id) {
           const found = data.find((s) => s.id === species_id);
@@ -50,15 +77,23 @@ export default function RegisterPetStep2() {
 
   useEffect(() => {
     const fetchBreeds = async () => {
-      if (selectedSpecies) {
-        const data = await getBreedsBySpecies(selectedSpecies.id);
-        if (data) {
+      if (species_id) {
+        // Mostrar razas hardcodeadas inmediatamente
+        setBreeds(
+          DEFAULT_BREEDS[species_id as keyof typeof DEFAULT_BREEDS] || []
+        );
+
+        // Intentar cargar desde Supabase
+        const data = await getBreedsBySpecies(species_id);
+        if (data && data.length > 0) {
+          // Si carga exitosamente, reemplazar con datos de Supabase
           setBreeds(data);
         }
       }
     };
     fetchBreeds();
-  }, [selectedSpecies]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [species_id, getBreedsBySpecies]);
 
   const handleNext = () => {
     if (!species_id || !breed_id) return;
@@ -78,6 +113,9 @@ export default function RegisterPetStep2() {
       setField("breed_id", undefined);
       setBreeds([]);
     }
+    setField("species_id", speciesId);
+    setField("breed_id", undefined);
+    setBreeds([]);
   };
 
   const handleSelectBreed = (breedId: number) => {
@@ -98,8 +136,9 @@ export default function RegisterPetStep2() {
           <p className="text-gray-500">Selecciona la especie de tu mascota</p>
         </div>
 
+        {/* Especies - Hardcodeadas */}
         <div className="flex justify-center gap-x-8">
-          {species.map((sp) => (
+          {SPECIES.map((sp) => (
             <button
               key={sp.id}
               type="button"
@@ -112,21 +151,30 @@ export default function RegisterPetStep2() {
             >
               <span className="text-3xl">
                 {sp.id === 1 ? "🐕" : sp.id === 2 ? "🐈" : "🐾"}
+                {sp.id === 1 ? "🐕" : "🐈"}
               </span>
               <span className="font-medium">{sp.name}</span>
             </button>
           ))}
         </div>
 
-        {selectedSpecies && breeds.length > 0 && (
+        {/* Razas - Dinámicas desde Supabase */}
+        {species_id && (
           <div className="space-y-2">
             <p className="text-center font-medium">Selecciona la raza</p>
             <Select
               value={breed_id?.toString() || ""}
               onValueChange={(value) => handleSelectBreed(parseInt(value))}
+              disabled={breeds.length === 0}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecciona una raza" />
+                <SelectValue
+                  placeholder={
+                    breeds.length === 0
+                      ? "Cargando razas..."
+                      : "Selecciona una raza"
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 {breeds.map((breed) => (
