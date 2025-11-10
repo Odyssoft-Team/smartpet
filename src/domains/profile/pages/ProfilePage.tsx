@@ -361,6 +361,7 @@ export default function ProfilePage() {
     //{ to: "/", label: "Inicio", icon: HiHome },
     { to: "/mypets", label: "Mis Mascotas", icon: FaPaw },
     { to: "/address", label: "Mis Direcciones", icon: HiMapPin },
+    { to: "/address", label: "Métodos de pago", icon: FaCreditCard },
   ];
 
   return (
@@ -548,19 +549,6 @@ export default function ProfilePage() {
             );
           })}
 
-          <div className="flex justify-between items-center py-3 cursor-pointer">
-            <div className="flex items-center gap-x-2">
-              <HiMapPin /> Direcciones
-            </div>
-            <IoIosArrowForward />
-          </div>
-
-          <div className="flex justify-between items-center py-3 cursor-pointer">
-            <div className="flex items-center gap-x-2">
-              <FaCreditCard /> Métodos de pago
-            </div>
-            <IoIosArrowForward />
-          </div>
 
           <div className="flex justify-between items-center py-3 cursor-pointer">
             <div className="flex items-center gap-x-2">
