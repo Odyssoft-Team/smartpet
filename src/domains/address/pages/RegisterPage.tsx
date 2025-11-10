@@ -46,11 +46,19 @@ export default function RegisterPage() {
     try {
       setIsLoading(true);
 
+      // Verificar que el district_id existe en DISTRICTS
+      const selectedDistrict = DISTRICTS.find(d => d.id.toString() === data.district_id);
+      
+      if (!selectedDistrict) {
+        toast.error("Distrito no válido");
+        return;
+      }
+
       const result = await addAddress({
         alias: data.alias,
         address: data.address,
         reference: data.reference,
-        district_id: parseInt(data.district_id),
+        district_id: selectedDistrict.id,
         is_default: data.is_default,
       });
 

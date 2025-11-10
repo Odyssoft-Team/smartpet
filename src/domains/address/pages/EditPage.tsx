@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/select";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { IoIosArrowBack } from "react-icons/io";
-import { useAddresses } from "../services/addressService";
 import { DISTRICTS } from "../utils/districts";
+import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
 type AddressFormValues = {
@@ -36,9 +36,9 @@ interface Address {
 
 export default function EditPage() {
   const { id } = useParams<{ id: string }>();
-  const { updateAddress, addresses } = useAddresses();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [address, setAddress] = useState<Address | null>(null);
 
   const form = useForm<AddressFormValues>({
@@ -55,40 +55,80 @@ export default function EditPage() {
 
   useEffect(() => {
     if (id) {
-      // Buscar la dirección en el estado de direcciones
-      const found = addresses.find((addr) => addr.id === id);
-      if (found) {
-        setAddress(found as Address);
-        setValue("alias", found.alias);
-        setValue("address", found.address);
-        setValue("reference", found.reference || "");
-        setValue("district_id", found.district_id.toString());
-        setValue("is_default", found.is_default);
-      } else {
-        toast.error("Dirección no encontrada");
-        navigate("/address");
-      }
+      const fetch = async () => {
+        try {
+          setPageLoading(true);
+          const { data, error } = await supabase
+            .from("user_addresses")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+          if (error) {
+            console.error("Error cargando dirección:", error);
+            toast.error("Dirección no encontrada");
+            navigate("/address");
+            return;
+          }
+
+          if (data) {
+            setAddress(data as Address);
+            setValue("alias", data.alias);
+            setValue("address", data.address);
+            setValue("reference", data.reference || "");
+            setValue("district_id", data.district_id.toString());
+            setValue("is_default", data.is_default);
+          }
+        } catch (error) {
+          console.error("Error en fetch:", error);
+          toast.error("Error al cargar la dirección");
+          navigate("/address");
+        } finally {
+          setPageLoading(false);
+        }
+      };
+      fetch();
     }
-  }, [id, addresses, setValue, navigate]);
+  }, [id, navigate, setValue]);
 
   const onSubmit = async (data: AddressFormValues) => {
-    if (!id) return;
+    if (!id) {
+      toast.error("ID de dirección no encontrado");
+      return;
+    }
 
     try {
       setIsLoading(true);
+      console.log("Enviando update con:", { id, data });
 
-      const result = await updateAddress(id, {
-        alias: data.alias,
-        address: data.address,
-        reference: data.reference,
-        district_id: parseInt(data.district_id),
-        is_default: data.is_default,
-      });
+      // Verificar que el district_id existe en DISTRICTS
+      const selectedDistrict = DISTRICTS.find(d => d.id.toString() === data.district_id);
+      console.log("District seleccionado:", selectedDistrict);
 
-      if (result) {
-        toast.success("Dirección actualizada correctamente ✅");
-        navigate("/address");
+      if (!selectedDistrict) {
+        toast.error("Distrito no válido");
+        return;
       }
+
+      const { error } = await supabase
+        .from("user_addresses")
+        .update({
+          alias: data.alias,
+          address: data.address,
+          reference: data.reference || null,
+          district_id: selectedDistrict.id,
+          is_default: data.is_default,
+        })
+        .eq("id", id);
+
+      if (error) {
+        console.error("Error de Supabase:", error);
+        throw error;
+      }
+
+      console.log("Actualización exitosa");
+      toast.success("Dirección actualizada correctamente ✅");
+      navigate("/address");
     } catch (error) {
       console.error("Error actualizando dirección:", error);
       toast.error("No se pudo actualizar la dirección");
@@ -97,7 +137,15 @@ export default function EditPage() {
     }
   };
 
-  if (!address) {
+  if (!address && !pageLoading) {
+    return (
+      <div className="min-h-screen bg-white p-4 flex items-center justify-center">
+        <p className="text-gray-500">Dirección no encontrada</p>
+      </div>
+    );
+  }
+
+  if (pageLoading) {
     return (
       <div className="min-h-screen bg-white p-4 flex items-center justify-center">
         <p className="text-gray-500">Cargando...</p>
