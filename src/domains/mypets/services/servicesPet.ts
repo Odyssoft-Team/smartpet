@@ -3,9 +3,53 @@ import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import type { Pet } from "../utils/Pet";
 
+interface Species {
+  id: number;
+  name: string;
+}
+
+interface Breed {
+  id: number;
+  name: string;
+  species_id: number;
+}
+
 export function usePets() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // 🌿 Obtener especies
+  const getSpecies = async (): Promise<Species[] | null> => {
+    try {
+      const { data, error } = await supabase
+        .from("species_catalog")
+        .select("id, name")
+        .order("name");
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error("Error obteniendo especies:", error);
+      return null;
+    }
+  };
+
+  // 🐕 Obtener razas por especie
+  const getBreedsBySpecies = async (speciesId: number): Promise<Breed[] | null> => {
+    try {
+      const { data, error } = await supabase
+        .from("breed_catalog")
+        .select("id, name, species_id")
+        .eq("species_id", speciesId)
+        .order("name");
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error("Error obteniendo razas:", error);
+      return null;
+    }
+  };
 
   // 🐾 Obtener mascotas
   const getPets = async (): Promise<Pet[] | null> => {
@@ -93,7 +137,7 @@ export function usePets() {
   };
 
   // 🧩 Actualizar mascota
-  const updatePet = async (id: string, updatedData: Partial<Pet>) => {
+  const updatePet = async (id: number, updatedData: Partial<Pet>) => {
     try {
       setLoading(true);
 
@@ -149,7 +193,7 @@ export function usePets() {
   }
 
   // 🗑️ Eliminar mascota
-  const deletePet = async (petId: string): Promise<boolean> => {
+  const deletePet = async (petId: number): Promise<boolean> => {
     try {
       setLoading(true);
       const { error } = await supabase
@@ -176,5 +220,7 @@ export function usePets() {
     updatePet,
     uploadPetPhoto,
     deletePet,
+    getSpecies,
+    getBreedsBySpecies,
   };
 }

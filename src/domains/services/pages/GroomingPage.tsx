@@ -27,7 +27,7 @@ import opcion_1 from "@/assets/home/serv-bano.png";
 export default function GroomingPage() {
   const { listPets, setListPets } = usePetStore();
   const { setPetAndUser } = useDetailStore();
-  const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
+  const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
 
   const { getPets, loading } = usePets();
 
