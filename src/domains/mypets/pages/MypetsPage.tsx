@@ -106,6 +106,12 @@ export default function MypetsPage() {
               <span className="text-xs text-gray-500">
                 Edad: {pet.birth_date ? `${getAge(pet.birth_date)} años` : "—"}
               </span>
+              <span className="text-xs text-gray-500">
+                Especie: {pet.species || "—"}
+              </span>
+              <span className="text-xs text-gray-500">
+                Raza: {pet.breed || "—"}
+              </span>
             </div>
 
             <div className="flex gap-2">

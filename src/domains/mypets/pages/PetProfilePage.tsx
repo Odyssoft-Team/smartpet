@@ -92,7 +92,12 @@ export default function PetProfilePage() {
                 <Cat className="size-6" />
               }
             </div>
-            <p className="text-gray-500">{selectedPet.breed}</p>
+            <p className="text-gray-500">{selectedPet.breed || "—"}</p>
+            <p className="text-gray-500 text-sm">Especie: {selectedPet.species || "—"}</p>
+            <p className="text-gray-500 text-sm">Fecha de nacimiento: {selectedPet.birth_date ? new Date(selectedPet.birth_date).toLocaleDateString() : "—"}</p>
+            <p className="text-gray-500 text-sm">Alergias: {selectedPet.allergies || "—"}</p>
+            <p className="text-gray-500 text-sm">Condición especial: {selectedPet.special_condition || "—"}</p>
+            <p className="text-gray-500 text-sm">Comportamiento social: {selectedPet.social_behavior || "—"}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -128,6 +133,11 @@ export default function PetProfilePage() {
             >
               Eliminar mascota
             </Button>
+            <Link to="/register-pet/step1" className="w-full">
+              <Button size="lg" variant="primary" className="w-full mt-4">
+                Registrar nueva mascota
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
