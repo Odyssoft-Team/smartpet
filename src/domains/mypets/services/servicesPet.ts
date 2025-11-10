@@ -16,7 +16,10 @@ export function usePets() {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!user) throw new Error("No hay usuario autenticado");
+      if (!user) {
+        toast.error("Usuario no autenticado");
+        return null;
+      }
 
       const { data, error } = await supabase
         .from("pets")
@@ -139,5 +142,33 @@ export function usePets() {
     return urlData.publicUrl;
   }
 
-  return { pets, loading, getPets, addPet, updatePet, uploadPetPhoto };
+  // 🗑️ Eliminar mascota
+  const deletePet = async (petId: string): Promise<boolean> => {
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from("pets")
+        .delete()
+        .eq("id", petId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error("Error eliminando mascota:", error);
+      toast.error("No se pudo eliminar la mascota");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    pets,
+    loading,
+    getPets,
+    addPet,
+    updatePet,
+    uploadPetPhoto,
+    deletePet,
+  };
 }

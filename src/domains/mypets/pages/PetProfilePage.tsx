@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { usePets } from "../services/servicesPet";
+import { toast } from "sonner";
 import { usePetStore } from "@/store/pets.store";
 import { TbDog } from "react-icons/tb";
 import { Cat } from "lucide-react";
@@ -9,12 +12,28 @@ import { HiPencil } from "react-icons/hi";
 
 export default function PetProfilePage() {
   const { selectedPet, setSelectedPet } = usePetStore();
+  const { deletePet } = usePets();
   const navigate = useNavigate();
 
-  if (!selectedPet) {
-    navigate("/mypets");
-    return null;
-  }
+  const handleDelete = async () => {
+    if (!selectedPet || !window.confirm('¿Estás seguro de eliminar esta mascota?')) {
+      return;
+    }
+
+    const success = await deletePet(selectedPet.id);
+    if (success) {
+      toast.success('Mascota eliminada con éxito');
+      navigate('/mypets');
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedPet) {
+      navigate("/mypets");
+    }
+  }, [selectedPet, navigate]);
+
+  if (!selectedPet) return null;
 
   function getAge(birthDateString: string): number {
     const birthDate = new Date(birthDateString);
@@ -87,6 +106,28 @@ export default function PetProfilePage() {
               <p className="text-sm text-gray-500">Peso</p>
               <p className="text-lg font-semibold">{selectedPet.weight} kg</p>
             </div>
+          </div>
+
+          <div className="mt-8 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Link to={`/pets/${selectedPet.id}/vaccines`}>
+                <Button variant="outline" className="w-full">
+                  Registrar Vacuna
+                </Button>
+              </Link>
+              <Link to={`/pets/${selectedPet.id}/deworming`}>
+                <Button variant="outline" className="w-full">
+                  Registrar Desparasitación
+                </Button>
+              </Link>
+            </div>
+            <Button 
+              variant="destructive" 
+              className="w-full"
+              onClick={handleDelete}
+            >
+              Eliminar mascota
+            </Button>
           </div>
         </div>
       </div>
