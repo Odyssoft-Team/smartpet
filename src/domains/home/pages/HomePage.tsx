@@ -49,6 +49,11 @@ type Service = {
 import fidel_avatar from "@/assets/pets/fidel-dog.png";
 import olivia_avatar from "@/assets/pets/olivia-dog.png";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  getAddressByUser,
+  type AddressByUser,
+} from "@/domains/address/services/getAddressByUser";
+import { useProfileStore } from "@/store/profile.store";
 
 const TEAMS = [
   {
@@ -69,8 +74,12 @@ export default function HomePage() {
   const [loadingServices, setLoadingServices] = useState(false);
   const [service, setService] = useState<Service[]>([]);
   const [activeTeam, setActiveTeam] = useState(TEAMS[0]);
-  const [address, setAddress] = useState(TEAMS[0].address);
   const { getServices } = useServices(); //tengo un loading aqui, puedes usarlo para mostrar un spinner
+  const { profile } = useProfileStore();
+  const [listAddress, setListAddress] = useState<AddressByUser[]>([]);
+  const [addressSelected, setAddressSelected] = useState<AddressByUser | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -98,6 +107,25 @@ export default function HomePage() {
     fetchServices();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setService]);
+
+  const fetchAddress = async () => {
+    console.log("profile id::", profile);
+
+    const data = await getAddressByUser(profile.id);
+    if (data) {
+      const defaultAddress = data.find((item) => item.is_default === true);
+      setListAddress(data);
+      setAddressSelected(defaultAddress || data[0]);
+    }
+  };
+
+  useEffect(() => {
+    if (profile.id) {
+      fetchAddress();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile.id]);
+
   return (
     <div className="w-full flex flex-col gap-4">
       {/* HEADER */}
@@ -112,7 +140,9 @@ export default function HomePage() {
               className="px-3 max-w-[13rem] bg-transparent hover:bg-transparent !p-0"
             >
               <MapPinCheck />{" "}
-              <span className="truncate font-medium text-sm">{address}</span>
+              <span className="truncate font-medium text-sm">
+                {addressSelected?.address}
+              </span>
               <IoIosArrowDown />
             </Button>
           </DropdownMenuTrigger>
@@ -121,14 +151,16 @@ export default function HomePage() {
             align="start"
             sideOffset={4}
           >
-            {TEAMS.map((team) => (
+            {listAddress.map((team) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setAddress(team.address)}
+                key={team.id}
+                onClick={() => {
+                  setAddressSelected(team);
+                }}
                 className="gap-2 p-2"
               >
                 {team.address}
-                {team.address === address && (
+                {team.address === addressSelected?.address && (
                   <DropdownMenuShortcut>
                     <CheckCheckIcon className="mx-2 h-4 w-4 text-green-500" />
                   </DropdownMenuShortcut>
