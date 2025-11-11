@@ -361,7 +361,9 @@ export default function ProfilePage() {
     //{ to: "/", label: "Inicio", icon: HiHome },
     { to: "/mypets", label: "Mis Mascotas", icon: FaPaw },
     { to: "/address", label: "Mis Direcciones", icon: HiMapPin },
-    { to: "/address", label: "Métodos de pago", icon: FaCreditCard },
+    { to: "/cards", label: "Métodos de pago", icon: FaCreditCard },
+
+    { to: "/address", label: "Libro de Reclamaciones", icon: FaBook },
   ];
 
   return (
@@ -550,13 +552,6 @@ export default function ProfilePage() {
           })}
 
 
-          <div className="flex justify-between items-center py-3 cursor-pointer">
-            <div className="flex items-center gap-x-2">
-              <FaBook />
-              Libro de reclamaciones
-            </div>
-            <IoIosArrowForward />
-          </div>
           <hr className="mt-6 bg-gray-600" />
 
           {/* Medio de pago frecuente */}

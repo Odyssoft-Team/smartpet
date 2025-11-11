@@ -140,7 +140,7 @@ export default function HomePage() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="lg" className="px-3">
+            <Button size="lg" className="px-3 bg-cyan-600">
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeTeam.name}</span>
               </div>

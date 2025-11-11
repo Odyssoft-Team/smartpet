@@ -8,6 +8,8 @@ import MypetsPage from "@/domains/mypets/pages/MypetsPage";
 import AddressPage from "@/domains/address/pages/AddressPage";
 import AddressRegisterPage from "@/domains/address/pages/RegisterPage";
 import AddressEditPage from "@/domains/address/pages/EditPage";
+import CardsPage from "@/domains/cards/pages/CardsPage";
+import CardsRegisterPage from "@/domains/cards/pages/RegisterPage";
 
 const RegisterPetStep1 = lazy(() =>
   import("@/domains/mypets/pages/RegisterPetStep1")
@@ -94,6 +96,8 @@ export const router = createBrowserRouter([
           { path: "/address", element: <AddressPage /> },
           { path: "/address/register", element: <AddressRegisterPage /> },
           { path: "/address/edit/:id", element: <AddressEditPage /> },
+          { path: "/cards", element: <CardsPage /> },
+          { path: "/cards/add", element: <CardsRegisterPage /> },
           { path: "/mypets", element: <MypetsPage /> },
           { path: "/editmypets", element: <EditmypetsPage /> },
           { path: "/pet-profile", element: <PetProfilePage /> },
