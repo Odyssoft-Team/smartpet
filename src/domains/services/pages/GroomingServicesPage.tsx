@@ -70,7 +70,7 @@ export default function GroomingServicesPage() {
       <div className="w-full flex items-center justify-between">
         <h2 className="flex items-center gap-2 font-bold text-lg w-full text-start">
           <FaChevronLeft />
-          Servicios disponibles
+          Servicios adicionales
         </h2>
       </div>
 
@@ -80,21 +80,6 @@ export default function GroomingServicesPage() {
           <h2 className="flex items-center gap-2 font-bold">
             Fidel <PiDogFill className="size-5" />
           </h2>
-          <div className="flex items-center gap-2">
-            {/* {service && (
-              <span className="text-xs text-[#2EA937]">Servicio (1)</span>
-            )}
-            {extras.length > 0 && (
-              <span className="text-xs text-[#2EA937]">
-                {"- "} Adicionales ({extras.length})
-              </span>
-            )}
-            {!service && extras.length === 0 && (
-              <span className="text-xs text-[#D86C00]">
-                Sin opciones seleccionadas
-              </span>
-            )} */}
-          </div>
         </div>
 
         {/* LISTA DE SERVICIOS */}
@@ -103,24 +88,24 @@ export default function GroomingServicesPage() {
             {/* SERVICIOS PRINCIPALES */}
             <AccordionItem value="services" className="group">
               <AccordionTrigger
-                extraContent={
-                  <>
-                    <div
-                      className={cn(
-                        "group-data-[state=open]:hidden group-data-[state=closed]:flex justify-between",
-                        "w-full px-2 py-2 rounded-[0.5rem] border border-gray-500 text-black text-sm",
-                        "flex justify-between items-center"
-                      )}
-                    >
-                      <div className="w-[25%] h-full border-r-2 px-2 font-bold text-gray-500">
-                        Sin servicio
-                      </div>
-                      <div className="w-[75%] h-full text-gray-500">
-                        Presione para realizar cambios
-                      </div>
-                    </div>
-                  </>
-                }
+              // extraContent={
+              //   <>
+              //     <div
+              //       className={cn(
+              //         "group-data-[state=open]:hidden group-data-[state=closed]:flex justify-between",
+              //         "w-full px-2 py-2 rounded-[0.5rem] border border-gray-500 text-black text-sm",
+              //         "flex justify-between items-center"
+              //       )}
+              //     >
+              //       <div className="w-[25%] h-full border-r-2 px-2 font-bold text-gray-500">
+              //         Sin servicio
+              //       </div>
+              //       <div className="w-[75%] h-full text-gray-500">
+              //         Presione para realizar cambios
+              //       </div>
+              //     </div>
+              //   </>
+              // }
               >
                 <div className="flex flex-col gap-y-1">
                   <div className="flex flex-col gap-1">
@@ -128,7 +113,7 @@ export default function GroomingServicesPage() {
                       {selectedService?.service_name}
                       <span className="flex items-center gap-1 text-[10px] text-black/50">
                         <CiClock2 />
-                        {selectedService?.time}
+                        {selectedService?.time} min.
                       </span>
                     </h3>
                     <p className="text-black/50 leading-[1]">

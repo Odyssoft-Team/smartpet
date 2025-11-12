@@ -43,7 +43,7 @@ type Service = {
   name: string;
   description: string;
   price: number;
-  duration: number;
+  duration_minutes: number;
   created_at: string;
   is_active: boolean;
 };
@@ -133,6 +133,7 @@ export default function HomePage() {
 
         if (data) {
           setListServices(data);
+
           console.log("✅ Servicios cargados:", data);
         } else {
           toast.error("No se pudo cargar el perfil del usuario");
@@ -332,7 +333,7 @@ export default function HomePage() {
 
       <Separator />
 
-      {/* Servicios */}
+      {/* Historial de Servicios */}
       <div className="w-full flex flex-col gap-2">
         <h2 className="font-bold flex items-center gap-3 text-base">
           Historial de servicios{" "}
@@ -439,7 +440,7 @@ export default function HomePage() {
 
       <Separator />
 
-      {/* OTRAS OCIONES DE SERVICIOS */}
+      {/* OTROS SERVICIOS */}
 
       <div className="w-full flex flex-col items-center justify-center gap-2 overflow-hidden">
         <h2 className="font-bold flex items-center gap-3 text-lg text-[#D86C00]">
@@ -484,7 +485,7 @@ export default function HomePage() {
                                 id: item.id,
                                 service_name: item.name,
                                 sub: item.description,
-                                time: item.duration,
+                                time: item.duration_minutes,
                               });
                               setServicePrice(item.price);
                             }

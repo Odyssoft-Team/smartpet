@@ -63,7 +63,6 @@ export default function GroomingPage() {
     const selectedPet = listPets.find((pet) => pet.id === selectedPetId);
     if (selectedPet) {
       setPetAndUser(selectedPet.user_id, Number(selectedPet.id));
-      toast.success(`Mascota seleccionada: ${selectedPet.name}`);
       navigate("/services/grooming/2");
     }
   };
@@ -92,9 +91,18 @@ export default function GroomingPage() {
           </div>
 
           <div className="w-full flex flex-col items-center justify-center gap-4 text-center">
-            <h3 className="font-normal text-[#D86C00] text-sm">
-              Seleccione una mascota por favor
-            </h3>
+            {selectedPetId ? (
+              <h3 className="font-normal text-black/50 text-sm">
+                Mascota seleccionada{" "}
+                <span className="font-bold text-black capitalize">
+                  {listPets.find((pet) => pet.id === selectedPetId)?.name}
+                </span>
+              </h3>
+            ) : (
+              <h3 className="font-normal text-[#D86C00] text-sm">
+                Seleccione una mascota por favor
+              </h3>
+            )}
 
             <Carousel
               opts={{

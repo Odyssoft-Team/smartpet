@@ -1,5 +1,7 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
+/* -------------------- Tipos -------------------- */
 interface SelectedService {
   id?: number;
   service_name?: string;
@@ -14,10 +16,18 @@ interface ServiceState {
   clearService: () => void;
 }
 
-export const useServiceStore = create<ServiceState>((set) => ({
-  selectedService: null,
+/* -------------------- Store persistente -------------------- */
+export const useServiceStore = create<ServiceState>()(
+  persist(
+    (set) => ({
+      selectedService: null,
 
-  setSelectedService: (service) => set({ selectedService: service }),
+      setSelectedService: (service) => set({ selectedService: service }),
 
-  clearService: () => set({ selectedService: null }),
-}));
+      clearService: () => set({ selectedService: null }),
+    }),
+    {
+      name: "service-store", // clave en localStorage
+    }
+  )
+);

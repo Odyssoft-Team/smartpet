@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { supabase } from "@/lib/supabaseClient";
 import type { Card } from "../services/cardService";
+import { Trash2 } from "lucide-react";
 
 export default function CardsPage() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -125,6 +126,7 @@ export default function CardsPage() {
                     onClick={() => handleDelete(card.id)}
                     className="flex-1"
                   >
+                    <Trash2 />
                     Eliminar
                   </Button>
                 </div>

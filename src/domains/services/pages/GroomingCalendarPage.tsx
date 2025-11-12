@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FaChevronLeft, FaMapMarkerAlt } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
@@ -18,6 +18,12 @@ import { divIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useProfileStore } from "@/store/profile.store";
 import { Link } from "react-router-dom";
+import { useServiceStore } from "@/store/service.store";
+import {
+  getAvailableDatesByService,
+  type AvailableDates,
+} from "../services/getAvailableDatesByService";
+import { format } from "date-fns";
 
 function MapEvents({
   onMapClick,
@@ -48,6 +54,30 @@ const createCustomIcon = () => {
 };
 
 export default function GroomingCalendarPage() {
+  const { selectedService } = useServiceStore();
+
+  const [availableDates, setAvailableDates] = useState<AvailableDates[]>([]);
+
+  useEffect(() => {
+    const fetchAvailableDates = async () => {
+      try {
+        const data = await getAvailableDatesByService(selectedService?.id ?? 0);
+
+        if (data) {
+          setAvailableDates(data);
+
+          console.log("✅ Fechas:", data);
+        } else {
+          console.log("No se pudo cargar fechas disponibles");
+        }
+      } catch (error) {
+        console.error("Error cargando fechas:", error);
+      }
+    };
+
+    fetchAvailableDates();
+  }, [selectedService]);
+
   const getInitialDate = () => {
     const today = new Date();
     const day = today.getDay();
@@ -59,7 +89,7 @@ export default function GroomingCalendarPage() {
 
   // 🗓️ Estados locales
   const [date, setDate] = useState<Date | undefined>(getInitialDate());
-  const [period, setPeriod] = useState<"AM" | "PM" | null>(null);
+  // const [period, setPeriod] = useState<"AM" | "PM" | null>(null);
   const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
   const [isReserving, setIsReserving] = useState<boolean>(false);
   const [isReserved, setIsReserved] = useState<boolean>(false);
@@ -81,7 +111,7 @@ export default function GroomingCalendarPage() {
 
   // 🎯 Función para manejar la reserva
   const handleReserve = async () => {
-    if (!date || !period || isReserved) {
+    if (!date || isReserved) {
       alert("Por favor, complete todos los campos.");
       return;
     }
@@ -91,7 +121,7 @@ export default function GroomingCalendarPage() {
     // Crear objeto con toda la información
     const reservationData = {
       date: date,
-      period: period,
+      // period: period,
       address: {
         label: profile.label_address,
         fullAddress: profile.address,
@@ -112,7 +142,7 @@ export default function GroomingCalendarPage() {
   const isContinueEnabled = isReserved;
 
   // Deshabilitar botón Reservar si ya está reservado
-  const isReserveDisabled = isReserving || !date || !period || isReserved;
+  const isReserveDisabled = isReserving || !date || isReserved;
 
   return (
     <div className="w-full flex flex-col gap-8 items-center justify-center overflow-hidden">
@@ -208,42 +238,60 @@ export default function GroomingCalendarPage() {
                 Day: ({ children, ...props }) => (
                   <td
                     {...props}
-                    className="w-full flex justify-center items-center gap-[2px] h-8"
+                    className="flex justify-center items-center gap-[2px] h-15 w-full"
                   >
                     {children}
                   </td>
                 ),
+
                 DayButton: (props) => {
                   const { modifiers } = props;
                   const isAvailable = modifiers.available;
                   const isSelected = modifiers.selected;
 
+                  const format_date = format(props.day.date, "yyyy-MM-dd");
+
+                  const temp_date = availableDates.find((item) => {
+                    return item.date === format_date;
+                  });
+
+                  const capacity =
+                    (temp_date?.max_capacity as number) -
+                    (temp_date?.used_capacity as number);
+
                   return (
                     <button
                       {...props}
                       className={cn(
-                        "size-8 rounded-full text-sm transition-all",
+                        "text-sm transition-all flex flex-col w-10 h-15 border rounded-md bg-white justify-center items-center gap-1 text-black",
                         isSelected
-                          ? "bg-[#D86C00] text-white shadow-md scale-105"
+                          ? "bg-[#0085D8] text-white shadow-md scale-105"
                           : isAvailable
-                            ? "text-[#D86C00] hover:bg-[#ffe7cc]"
+                            ? " "
                             : "text-gray-400 opacity-50"
                       )}
-                    />
+                    >
+                      <span className="font-bold text-xs">
+                        {props.children}
+                      </span>
+                      <span className="size-5 rounded-full bg-[#D86c00] text-white text-xs flex items-center justify-center">
+                        {isAvailable ? capacity : "0"}
+                      </span>
+                    </button>
                   );
                 },
               }}
             />
             {/* Botones AM / PM */}
-            <div className="w-full flex items-start justify-between">
+            {/* <div className="w-full flex items-start justify-between">
               <div className="flex items-center gap-2 bg-[#f5f5f5] rounded-2xl">
                 <Button
                   onClick={() => setPeriod("AM")}
                   className={cn(
-                    "h-11 rounded-2xl",
+                    "h-11 rounded-2xl ",
                     period === "AM"
-                      ? "bg-[#2EA937] text-white border-[#2EA937]"
-                      : "bg-transparent text-black"
+                      ? "bg-[#2EA937] text-white border-[#2EA937] hover:bg-[#2EA937]"
+                      : "bg-transparent hover:bg-transparent text-black"
                   )}
                 >
                   AM
@@ -251,17 +299,16 @@ export default function GroomingCalendarPage() {
                 <Button
                   onClick={() => setPeriod("PM")}
                   className={cn(
-                    "h-11 rounded-2xl",
+                    "h-11 rounded-2xl ",
                     period === "PM"
-                      ? "bg-[#2EA937] text-white border-[#2EA937]"
-                      : "bg-transparent text-black"
+                      ? "bg-[#2EA937] text-white border-[#2EA937] hover:bg-[#2EA937]"
+                      : "bg-transparent hover:bg-transparent text-black"
                   )}
                 >
                   PM
                 </Button>
               </div>
 
-              {/* Horarios disponibles */}
               <div className="rounded-md flex items-center justify-center flex-col text-center gap-2 p-4 bg-[#f5f5f5]">
                 <h3 className="text-[#0085D8] text-sm font-semibold">
                   Horarios disponibles
@@ -274,7 +321,7 @@ export default function GroomingCalendarPage() {
                   </p>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 

@@ -161,9 +161,8 @@ export default function RegisterPage() {
                       onChange={(e) => {
                         const value = e.target.value.replace(/\s/g, "");
                         if (/^\d*$/.test(value)) {
-                          const formatted = value
-                            .match(/.{1,4}/g)
-                            ?.join(" ") || value;
+                          const formatted =
+                            value.match(/.{1,4}/g)?.join(" ") || value;
                           field.onChange(formatted);
                         }
                       }}
@@ -182,8 +181,11 @@ export default function RegisterPage() {
                   <FormItem>
                     <Label>Mes *</Label>
                     <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="MM" />
                         </SelectTrigger>
                         <SelectContent>
@@ -206,8 +208,11 @@ export default function RegisterPage() {
                   <FormItem>
                     <Label>Año *</Label>
                     <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="YYYY" />
                         </SelectTrigger>
                         <SelectContent>
@@ -237,7 +242,9 @@ export default function RegisterPage() {
                       onChange={field.onChange}
                       className="w-4 h-4"
                     />
-                    <Label className="mb-0">Establecer como tarjeta predeterminada</Label>
+                    <Label className="mb-0">
+                      Establecer como tarjeta predeterminada
+                    </Label>
                   </div>
                 </FormItem>
               )}
