@@ -11,7 +11,7 @@ import { useAuthStore } from "@/store/auth.store";
 import { useProfiles } from "../services/servicesProfile";
 import { useCards } from "../services/cardService";
 
-import MaskedCard from "../components/MaskedCard";
+// import MaskedCard from "../components/MaskedCard";
 import CardCreateForm from "../components/CardCreateForm";
 import CardEditForm from "../components/CardEditForm";
 import CardDeleteDialog from "../components/CardDeleteDialog";
@@ -26,7 +26,7 @@ import fidel from "@/assets/pets/fidel-dog.png";
 import user_demo from "@/assets/profile/user-profile.jpg";
 
 import {
-  FaRegTrashAlt,
+  // FaRegTrashAlt,
   FaPlayCircle,
   FaRegHeart,
   FaRegClock,
@@ -38,8 +38,8 @@ import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 //import { FiArrowRightCircle } from "react-icons/fi";
 //import { IoIosArrowForward } from "react-icons/io";
 import { BiSolidEnvelope } from "react-icons/bi";
-import { MdPhoneEnabled, MdAddCard } from "react-icons/md";
-import { HiPencil } from "react-icons/hi";
+import { MdPhoneEnabled } from "react-icons/md";
+// import { HiPencil } from "react-icons/hi";
 import { TbDog } from "react-icons/tb";
 import { useProfileStore } from "@/store/profile.store";
 import { useCardsStore } from "@/store/card.store";
@@ -137,7 +137,7 @@ export default function ProfilePage() {
 
   // estados GLOBALES y GET de CARDS
   const {
-    listCards,
+    // listCards,
     setCards,
     addCard: addCardToStore,
     updateCard: updateCardInStore,
@@ -196,10 +196,10 @@ export default function ProfilePage() {
   const [openEditCard, setOpenEditCard] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<Cards | null>(null);
 
-  const handleOpenEditCard = (card: Cards) => {
-    setSelectedCard(card);
-    setOpenEditCard(true);
-  };
+  // const handleOpenEditCard = (card: Cards) => {
+  //   setSelectedCard(card);
+  //   setOpenEditCard(true);
+  // };
 
   const handleCloseEditCard = () => {
     setSelectedCard(null);
@@ -231,10 +231,10 @@ export default function ProfilePage() {
   // estados y const de DELETE Card
   const [openDeleteCard, setOpenDeleteCard] = useState(false);
 
-  const handleOpenDeleteCard = (card: Cards) => {
-    setSelectedCard(card);
-    setOpenDeleteCard(true);
-  };
+  // const handleOpenDeleteCard = (card: Cards) => {
+  //   setSelectedCard(card);
+  //   setOpenDeleteCard(true);
+  // };
 
   const handleCloseDeleteCard = () => {
     setOpenEditCard(false);
@@ -350,10 +350,10 @@ export default function ProfilePage() {
             );
           })}
 
-          <hr className="mt-6 bg-gray-600" />
+          <hr className="mt-6 bg-gray-600 hidden" />
 
           {/* Medio de pago frecuente */}
-          <div className="flex flex-col gap-y-2">
+          {/* <div className="flex flex-col gap-y-2">
             <div className="ml-4 mt-4 text-base font-bold flex justify-between">
               Medios de pago
               <button
@@ -417,7 +417,7 @@ export default function ProfilePage() {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
           <hr className="mt-6 bg-gray-600" />
 
