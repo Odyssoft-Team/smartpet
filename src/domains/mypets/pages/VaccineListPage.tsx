@@ -3,33 +3,38 @@ import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { usePetStore } from "@/store/pets.store";
-import { useVaccines, type Vaccine } from "../services/vaccineService";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { FaPlus } from "react-icons/fa";
+import {
+  getVaccinesByPet,
+  type VaccineByPet,
+} from "../services/getVaccinesByPet";
 
 export default function VaccineListPage() {
   const { petId } = useParams();
   const navigate = useNavigate();
   const { selectedPet } = usePetStore();
-  const { getVaccines, loading } = useVaccines();
-  const [vaccines, setVaccines] = useState<Vaccine[]>([]);
+  const [vaccines, setVaccines] = useState<VaccineByPet[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!selectedPet || !petId) {
       navigate("/mypets");
       return;
     }
-
-    const fetchVaccines = async () => {
-      const data = await getVaccines(petId);
+    const fetchVaccinesByPet = async () => {
+      setLoading(true);
+      const data = await getVaccinesByPet(petId);
       if (data) {
         setVaccines(data);
       }
+      setLoading(false);
     };
 
-    fetchVaccines();
-  }, [petId, selectedPet, getVaccines, navigate]);
+    fetchVaccinesByPet();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [petId]);
 
   if (!selectedPet) return null;
 
@@ -61,15 +66,23 @@ export default function VaccineListPage() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="font-medium">
-                      Aplicada: {format(new Date(vaccine.applied_at), "PPP", { locale: es })}
+                      Aplicada:{" "}
+                      {format(new Date(vaccine.applied_at), "PPP", {
+                        locale: es,
+                      })}
                     </p>
                     {vaccine.next_dose_at && (
                       <p className="text-sm text-gray-500">
-                        Próxima dosis: {format(new Date(vaccine.next_dose_at), "PPP", { locale: es })}
+                        Próxima dosis:{" "}
+                        {format(new Date(vaccine.next_dose_at), "PPP", {
+                          locale: es,
+                        })}
                       </p>
                     )}
                     {vaccine.notes && (
-                      <p className="text-sm text-gray-600 mt-2">{vaccine.notes}</p>
+                      <p className="text-sm text-gray-600 mt-2">
+                        {vaccine.notes}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -84,7 +97,7 @@ export default function VaccineListPage() {
 
         <Link
           to={`/pets/${petId}/vaccines/new`}
-          className="fixed bottom-6 right-6"
+          className="fixed bottom-20 right-6"
         >
           <Button size="icon" className="rounded-full h-14 w-14">
             <FaPlus className="h-6 w-6" />

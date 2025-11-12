@@ -2,18 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-// 🗺️ React Leaflet
-import { MapContainer } from "react-leaflet/MapContainer";
-import { useMapEvents } from "react-leaflet";
-import { TileLayer } from "react-leaflet/TileLayer";
-import { Marker } from "react-leaflet/Marker";
-import { Popup } from "react-leaflet";
-import { divIcon } from "leaflet";
-import "leaflet/dist/leaflet.css";
-
-import { renderToStaticMarkup } from "react-dom/server";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -27,7 +16,6 @@ import CardCreateForm from "../components/CardCreateForm";
 import CardEditForm from "../components/CardEditForm";
 import CardDeleteDialog from "../components/CardDeleteDialog";
 import ProfileEditForm from "../components/ProfileEditForm";
-import AddressEditForm from "../components/AddressEditForm";
 import Modal from "../components/Modal";
 import { AvatarUploader } from "../components/AvatarUploader";
 
@@ -40,7 +28,6 @@ import user_demo from "@/assets/profile/user-profile.jpg";
 import {
   FaRegTrashAlt,
   FaPlayCircle,
-  FaMapMarkerAlt,
   FaRegHeart,
   FaRegClock,
   FaPaw,
@@ -57,61 +44,22 @@ import { TbDog } from "react-icons/tb";
 import { useProfileStore } from "@/store/profile.store";
 import { useCardsStore } from "@/store/card.store";
 import { HiMapPin } from "react-icons/hi2";
-
-// Componente para manejar los eventos del mapa
-const createCustomIcon = () => {
-  const iconMarkup = renderToStaticMarkup(
-    <FaMapMarkerAlt className="text-[#D86C00] text-2xl" />
-  );
-
-  return divIcon({
-    html: iconMarkup,
-    iconSize: [32, 32],
-    iconAnchor: [14, 28],
-    popupAnchor: [0, -28],
-    className: "custom-marker-icon",
-  });
-};
-
-function MapEvents({
-  onMapClick,
-}: {
-  onMapClick: (lat: number, lng: number) => void;
-}) {
-  useMapEvents({
-    click: (e) => {
-      const { lat, lng } = e.latlng;
-      onMapClick(lat, lng);
-    },
-  });
-  return null;
-}
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProfilePage() {
-  const customIcon = createCustomIcon();
   const { clearAuth, logout } = useAuthStore();
   const navigate = useNavigate();
-  const [coordinates, setCoordinates] = useState({
-    lat: -12.0464, // valor por defecto (Lima, Perú por ejemplo)
-    lng: -77.0428,
-  });
 
   const { getCurrentUserProfile, updateProfile } = useProfiles();
   // const { loadUserCards, updateCard } = useCards();
 
   const [openVideos, setOpenVideos] = useState<{ [key: string]: boolean }>({});
-  const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
 
   const toggleVideo = (itemId: string) => {
     setOpenVideos((prev) => ({
       ...prev,
       [itemId]: !prev[itemId],
     }));
-  };
-
-  const handleMapClick = (lat: number, lng: number) => {
-    setCoordinates({ lat, lng });
-    console.log("Coordenadas guardadas:", { lat, lng });
   };
 
   // estados y const de PROFILE
@@ -186,47 +134,6 @@ export default function ProfilePage() {
   };
 
   // manejadores para editar DIRECCION
-  const [openAddress, setOpenAddress] = useState<boolean>(false);
-
-  const handleCloseAddress = () => {
-    setOpenAddress(false);
-  };
-
-  const handleSaveAddress = async (updatedAddress: {
-    label_address: string;
-    address: string;
-  }) => {
-    try {
-      if (
-        updatedAddress.label_address === profile.label_address &&
-        updatedAddress.address === profile.address
-      ) {
-        toast.info("No hay cambios en la dirección");
-        return;
-      }
-
-      const result = await updateProfile({
-        label_address: updatedAddress.label_address,
-        address: updatedAddress.address,
-      });
-
-      if (!result) {
-        throw new Error("No se recibió respuesta del servidor");
-      }
-
-      // ✅ Actualizar directamente el store global del perfil
-      setProfile({
-        label_address: result.label_address || "",
-        address: result.address || "",
-      });
-
-      toast.success("Dirección actualizada correctamente");
-      handleCloseAddress();
-    } catch (error) {
-      console.error("Error al actualizar la dirección:", error);
-      toast.error("No se pudo actualizar la dirección");
-    }
-  };
 
   // estados GLOBALES y GET de CARDS
   const {
@@ -368,27 +275,14 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white h-fit min-h-screen">
-      {/* <div className="w-full flex justify-start max-w-md">
-        <Link to="/" className="!text-black">
-          <Button
-            size="back"
-            variant={"back"}
-            className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
-          >
-            <IoIosArrowBack className="size-8" strokeWidth={12} />
-            <span className="-ml-2 font-bold">Tú Perfil</span>
-          </Button>
-        </Link>
-      </div> */}
-
       {/* Body */}
       <div className="w-full max-w-md rounded-xl flex flex-col mb-2">
         {/* perfil */}
-        <div className="flex flex-col items-center gap-y-1">
+        <div className="flex flex-col items-center gap-y-4">
           <span className="text-xl font-bold text-[#D86C00]">
             ¡Hola,{" "}
             {loading ? (
-              <Loader2 className="animate-spin" />
+              <Skeleton className="inline-block h-6 w-32 align-middle rounded" />
             ) : (
               profile.full_name || ""
             )}
@@ -404,13 +298,13 @@ export default function ProfilePage() {
         {/* datos */}
         <div className="flex flex-col">
           {/* Información */}
-          <h2 className="ml-4 mt-4 text-xl font-semibold">Información</h2>
+          <h2 className="mt-4 text-lg font-semibold">Información</h2>
           <div className="w-full flex rounded-xl bg-gray-200 py-4">
             <div className="w-[65%] space-y-2 pl-4">
               <div className="text-xs flex items-center gap-x-2">
                 <BiSolidEnvelope className="size-6" />
                 {loading ? (
-                  <Loader2 className="animate-spin" />
+                  <Skeleton className="inline-block h-6 w-32 align-middle rounded" />
                 ) : (
                   <span className="truncate w-[22ch]">
                     {profile.email || ""}
@@ -420,114 +314,19 @@ export default function ProfilePage() {
               <div className="text-xs flex items-center gap-x-2 ml-1">
                 <MdPhoneEnabled className="size-[17px] rotate-225" />
                 {loading ? (
-                  <Loader2 className="animate-spin" />
+                  <Skeleton className="inline-block h-6 w-32 align-middle rounded" />
                 ) : (
-                  profile.phone || "sin número"
+                  profile.phone || "Sin número"
                 )}
               </div>
             </div>
-            <div className="w-[35%] flex justify-center items-center border-l-[2px] border-gray-500 ">
+            <div className="w-[35%] flex justify-center items-center">
               <Button
                 onClick={() => setOpenProfile(true)}
                 className="bg-black text-white rounded-lg font-light px-6"
               >
                 Editar
               </Button>
-            </div>
-          </div>
-
-          {/* Dirección */}
-          <div className="w-full space-y-2 mt-3">
-            <div className="flex items-center gap-x-3 ml-5">
-              <FaMapMarkerAlt className="size-5 text-[#D86C00]" />
-              <div>
-                <div className="flex items-center gap-x-2 text-base font-bold">
-                  {loading ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <span>{profile.label_address || "label"}</span>
-                  )}
-                  <button
-                    onClick={() => setOpenAddress(true)}
-                    className="size-5 flex items-center justify-center rounded-full bg-gray-200"
-                  >
-                    <HiPencil className="size-3" />
-                  </button>
-                </div>
-                <div className="flex items-center gap-x-2 text-xs text-gray-500">
-                  {loading ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <span>{profile.address || "sin dirección"}</span>
-                  )}
-                  <button
-                    onClick={() => setIsMapOpen(!isMapOpen)}
-                    className="size-5 flex items-center justify-center rounded-full bg-gray-200"
-                  >
-                    <IoIosArrowDown
-                      className={cn(
-                        "size-4 text-black",
-                        isMapOpen ? "rotate-180" : "rotate-0"
-                      )}
-                      strokeWidth={12}
-                    />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Contenedor del mapa */}
-            <div
-              className={cn(
-                "w-full overflow-hidden rounded-xl mt-3 relative z-0 transition-all duration-300 ease-in-out",
-                isMapOpen ? "h-[200px]" : "h-0"
-              )}
-            >
-              <MapContainer
-                className="w-full h-full relative z-0"
-                center={[coordinates.lat, coordinates.lng]}
-                zoom={18}
-                scrollWheelZoom={true}
-                style={{ position: "relative", zIndex: 0 }}
-              >
-                <TileLayer
-                  url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-
-                {/* Componente para manejar eventos de clic */}
-                <MapEvents onMapClick={handleMapClick} />
-
-                {/* Marcador en la ubicación seleccionada */}
-                <Marker
-                  position={[coordinates.lat, coordinates.lng]}
-                  icon={customIcon}
-                >
-                  <Popup>
-                    <div className="text-center">
-                      <strong>Tu ubicación seleccionada</strong>
-                      <br />
-                      Lat: {coordinates.lat.toFixed(6)}
-                      <br />
-                      Lng: {coordinates.lng.toFixed(6)}
-                    </div>
-                  </Popup>
-                </Marker>
-              </MapContainer>
-
-              {/* Información de coordenadas */}
-              <div className="absolute bottom-2 left-2 right-2 z-[1000] bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg text-xs">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Coordenadas guardadas:</span>
-                  <span className="text-gray-600">
-                    {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-medium text-sky-500">
-              👆 Toca en el mapa para seleccionar tu ubicación
             </div>
           </div>
 
@@ -550,7 +349,6 @@ export default function ProfilePage() {
               </Link>
             );
           })}
-
 
           <hr className="mt-6 bg-gray-600" />
 
@@ -803,17 +601,6 @@ export default function ProfilePage() {
           profileData={profile}
           onEdit={handleEditProfile}
           onClose={handleCloseProfile}
-        />
-      </Modal>
-
-      <Modal isOpen={openAddress} onClose={handleCloseAddress}>
-        <AddressEditForm
-          addressData={{
-            label_address: profile.label_address,
-            address: profile.address,
-          }}
-          onSave={handleSaveAddress}
-          onClose={handleCloseAddress}
         />
       </Modal>
 

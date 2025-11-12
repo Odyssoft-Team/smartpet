@@ -69,12 +69,12 @@ export default function GroomingPage() {
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <h2 className="flex items-center gap-2 font-bold text-lg w-full text-start">
         <FaChevronLeft />
         Mis Mascotas
       </h2>
-      <div className="z-10 h-44 flex items-center justify-center overflow-hidden object-center  rounded-2xl">
+      <div className="z-10 h-44 flex items-center justify-center overflow-hidden object-center  rounded-2xl shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
         <img
           src={opcion_1}
           alt="Mascota 1"
@@ -91,11 +91,9 @@ export default function GroomingPage() {
             <h3 className="text-lg">¿Para cuál mascota deseas el servicio?</h3>
           </div>
 
-          <Separator />
-
           <div className="w-full flex flex-col items-center justify-center gap-4 text-center">
-            <h3 className="font-medium text-[#D86C00] text-sm">
-              seleccione una mascota porfavor
+            <h3 className="font-normal text-[#D86C00] text-sm">
+              Seleccione una mascota por favor
             </h3>
 
             <Carousel
@@ -128,10 +126,7 @@ export default function GroomingPage() {
                 {loading && (
                   <div className="flex gap-4 basis-[30%] ml-5">
                     {[1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="flex flex-col items-center gap-2"
-                      >
+                      <div key={i} className="flex flex-col items-center gap-2">
                         <Skeleton className="size-22 rounded-full" />
                         <Skeleton className="h-4 w-16" />
                       </div>
@@ -200,6 +195,6 @@ export default function GroomingPage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

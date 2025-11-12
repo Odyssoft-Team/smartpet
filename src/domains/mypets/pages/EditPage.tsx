@@ -17,6 +17,7 @@ import { usePetStore } from "@/store/pets.store";
 import { toast } from "sonner";
 import type { Pet } from "../services/getPetsByUser";
 import { updatePet } from "../services/updatePet";
+import { getAllBreeds, type Breed } from "../services/getAllBreeds";
 
 type EditPetFormValues = {
   name: string;
@@ -32,6 +33,7 @@ export default function EditPage() {
   const { selectedPet } = usePetStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [listBreeds, setListBreeds] = useState<Breed[]>([]);
 
   const form = useForm<EditPetFormValues>({
     defaultValues: {
@@ -48,10 +50,23 @@ export default function EditPage() {
   const { handleSubmit, setValue } = form;
 
   useEffect(() => {
+    const fetchBreeds = async () => {
+      const data = await getAllBreeds();
+      if (data) {
+        setListBreeds(data);
+      }
+    };
+
+    fetchBreeds();
+  }, []);
+
+  const breed = listBreeds.find((b) => b.id === selectedPet?.breed_id);
+
+  useEffect(() => {
     if (selectedPet) {
       setValue("name", selectedPet.name);
       setValue("weight", selectedPet.weight?.toString() || "");
-      setValue("breed", selectedPet.breed || "");
+      setValue("breed", breed?.name || "");
       setValue("birth_date", selectedPet.birth_date || "");
       setValue("allergies", selectedPet.allergies || "");
       setValue("special_condition", selectedPet.special_condition || "");
@@ -59,7 +74,7 @@ export default function EditPage() {
     } else {
       navigate("/mypets");
     }
-  }, [selectedPet, setValue, navigate]);
+  }, [selectedPet, setValue, navigate, breed?.name]);
 
   const onSubmit = async (data: EditPetFormValues) => {
     if (!selectedPet) {

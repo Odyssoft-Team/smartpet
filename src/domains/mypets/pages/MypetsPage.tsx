@@ -1,10 +1,6 @@
 import { Button } from "@/components/ui/button";
-// import fidel_pet from "@/assets/pets/fidel-dog.png";
-// import trufa_cat from "@/assets/pets/trufa-cat.png";
-// import olivia_dog from "@/assets/pets/olivia-dog.png";
-import { TbDog } from "react-icons/tb";
 import { PiPlusBold } from "react-icons/pi";
-import { Cat, Eye, Pencil } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { usePetStore } from "@/store/pets.store";
@@ -14,6 +10,7 @@ import { MdOutlinePets } from "react-icons/md";
 import { getPetsByUser, type Pet } from "../services/getPetsByUser";
 import { getAllSpecies, type Species } from "../services/getAllSpecies";
 import { getAllBreeds, type Breed } from "../services/getAllBreeds";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MypetsPage() {
   const navigate = useNavigate();
@@ -21,6 +18,7 @@ export default function MypetsPage() {
   const [listPets, setListPets] = useState<Pet[]>([]);
   const [listSpecies, setListSpecies] = useState<Species[]>([]);
   const [listBreeds, setListBreeds] = useState<Breed[]>([]);
+  const [loadingPets, setLoadingPets] = useState(false);
 
   useEffect(() => {
     const fetchSpecies = async () => {
@@ -63,9 +61,9 @@ export default function MypetsPage() {
   const { setSelectedPet } = usePetStore();
 
   const fetchPets = useCallback(async () => {
+    setLoadingPets(true);
     try {
       const data = await getPetsByUser();
-      console.log("lista de mascotas::", data);
 
       if (data && Array.isArray(data)) {
         setListPets(data);
@@ -74,6 +72,7 @@ export default function MypetsPage() {
       console.error("Error obteniendo las mascotas:", error);
       toast.error("No se pudieron cargar las mascotas");
     }
+    setLoadingPets(false);
   }, [setListPets]);
 
   useEffect(() => {
@@ -111,83 +110,104 @@ export default function MypetsPage() {
         </Link>
       </div>
       <div className="mt-6 w-full max-w-md mx-auto">
-        {/* Nueva Mascota */}
-        {/* <Link to="/register-pet/step1">
-          <div className="flex gap-1 items-center py-2 rounded-lg">
-            <div className="flex items-center">
-              <div className="w-16 h-16 flex items-center justify-center rounded-full object-cover mx-auto bg-gray-200">
-                <PiPlusBold className="size-7 text-gray-400" strokeWidth={10} />
-              </div>
-              <div className="p-4 text-gray-500">Nueva Mascota</div>
-            </div>
-          </div>
-        </Link> */}
         <div className="w-full flex flex-col gap-3">
-          {listPets.map((pet, index) => {
-            const specie = listSpecies.find((s) => s.id === pet.species_id);
-            const breed = listBreeds.find((b) => b.id === pet.breed_id);
-            return (
-              <div
-                key={index}
-                className={cn(
-                  "flex gap-4 items-center py-2 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] px-4"
-                )}
-              >
-                {pet.photo_url ? (
-                  <img
-                    src={pet.photo_url}
-                    alt="Mascota 1"
-                    className="w-16 h-16 rounded-full object-cover mx-auto"
-                  />
-                ) : (
-                  <div className="min-w-16 min-h-16 flex items-center justify-center rounded-full object-cover mx-auto bg-gray-200">
-                    <MdOutlinePets className="size-8 text-gray-600" />
+          {loadingPets
+            ? Array.from({ length: 2 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="flex gap-4 items-center py-2 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] px-4"
+                >
+                  <Skeleton className="w-16 h-16 rounded-full" />
+                  <div className="flex flex-col items-start w-full gap-1">
+                    <Skeleton className="w-24 h-4" />
+                    <Skeleton className="w-16 h-3" />
+                    <Skeleton className="w-20 h-3" />
+                    <Skeleton className="w-20 h-3" />
                   </div>
-                )}
-                <div className="flex flex-col items-start w-full">
-                  <div className="flex gap-x-1 items-center">
-                    <span className="text-base text-black">{pet.name}</span>
-                    {pet.species === "Perro" ? <TbDog /> : <Cat />}
+                  <div className="flex flex-col gap-2 w-32">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
                   </div>
-                  <span className="text-xs text-gray-500">
-                    Edad:{" "}
-                    <span className="font-medium">
-                      {pet.birth_date ? `${getAge(pet.birth_date)} años` : "—"}
-                    </span>
-                  </span>
-                  <span className="text-xs text-gray-500 capitalize">
-                    Especie:
-                    <span className="font-medium">{specie?.name || "—"}</span>
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    Raza:{" "}
-                    <span className="font-medium">{breed?.name || "—"}</span>
-                  </span>
                 </div>
+              ))
+            : listPets.map((pet, index) => {
+                const specie = listSpecies.find((s) => s.id === pet.species_id);
+                const breed = listBreeds.find((b) => b.id === pet.breed_id);
+                return (
+                  <div
+                    key={index}
+                    className={cn(
+                      "flex gap-4 items-center py-2 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] px-4"
+                    )}
+                  >
+                    {pet.photo_url ? (
+                      <img
+                        src={pet.photo_url}
+                        alt="Mascota 1"
+                        className="w-16 h-16 rounded-full object-cover mx-auto"
+                      />
+                    ) : (
+                      <div className="min-w-16 min-h-16 flex items-center justify-center rounded-full object-cover mx-auto bg-gray-200">
+                        <MdOutlinePets className="size-8 text-gray-600" />
+                      </div>
+                    )}
+                    <div className="flex flex-col items-start w-full">
+                      <div className="flex gap-x-1 items-center">
+                        <span className="text-base text-black capitalize">
+                          {pet.name}
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        Edad:{" "}
+                        <span className="font-medium">
+                          {pet.birth_date
+                            ? `${getAge(pet.birth_date)} años`
+                            : "—"}
+                        </span>
+                      </span>
+                      <span className="text-xs text-gray-500 capitalize">
+                        Especie:
+                        <span className="font-medium">
+                          {specie?.name || "—"}
+                        </span>
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        Raza:{" "}
+                        <span className="font-medium">
+                          {breed?.name || "—"}
+                        </span>
+                      </span>
+                    </div>
 
-                <div className="flex flex-col gap-2">
-                  <Link to="/pet-profile" onClick={() => setSelectedPet(pet)}>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="px-6 font-light text-xs bg-[#0085D8] hover:bg-[#0085D8] hover:text-white text-white w-full"
-                    >
-                      <Eye /> Ver perfil
-                    </Button>
-                  </Link>
-                  <Link to="/editmypets" onClick={() => setSelectedPet(pet)}>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="px-6 font-light text-xs w-full"
-                    >
-                      <Pencil /> Editar
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
+                    <div className="flex flex-col gap-2">
+                      <Link
+                        to="/pet-profile"
+                        onClick={() => setSelectedPet(pet)}
+                      >
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="px-6 font-light text-xs bg-[#0085D8] hover:bg-[#0085D8] hover:text-white text-white w-full"
+                        >
+                          <Eye /> Ver perfil
+                        </Button>
+                      </Link>
+                      <Link
+                        to="/editmypets"
+                        onClick={() => setSelectedPet(pet)}
+                      >
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="px-6 font-light text-xs w-full"
+                        >
+                          <Pencil /> Editar
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
         </div>
       </div>
     </div>

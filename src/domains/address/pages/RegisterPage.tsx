@@ -1,5 +1,8 @@
 "use client";
 
+// 🗺️ React Leaflet
+import "leaflet/dist/leaflet.css";
+
 import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
@@ -23,6 +26,21 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useAddresses } from "../services/addressService";
 import { DISTRICTS } from "../utils/districts";
 import { toast } from "sonner";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { cn } from "@/lib/utils";
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMapEvents,
+} from "react-leaflet";
+import { renderToStaticMarkup } from "react-dom/server";
+import { divIcon } from "leaflet";
+import { useProfileStore } from "@/store/profile.store";
+import Modal from "@/domains/profile/components/Modal";
+import AddressEditForm from "@/domains/profile/components/AddressEditForm";
+import { useProfiles } from "@/domains/profile/services/servicesProfile";
 
 type AddressFormValues = {
   alias: string;
@@ -32,10 +50,55 @@ type AddressFormValues = {
   is_default: boolean;
 };
 
+function MapEvents({
+  onMapClick,
+}: {
+  onMapClick: (lat: number, lng: number) => void;
+}) {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
+      onMapClick(lat, lng);
+    },
+  });
+  return null;
+}
+
+const createCustomIcon = () => {
+  const iconMarkup = renderToStaticMarkup(
+    <FaMapMarkerAlt className="text-[#D86C00] text-2xl" />
+  );
+
+  return divIcon({
+    html: iconMarkup,
+    iconSize: [32, 32],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -28],
+    className: "custom-marker-icon",
+  });
+};
+
 export default function RegisterPage() {
   const { addAddress } = useAddresses();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const customIcon = createCustomIcon();
+
+  const { updateProfile } = useProfiles();
+
+  const { profile, setProfile } = useProfileStore();
+
+  const [coordinates, setCoordinates] = useState({
+    lat: -12.0464, // valor por defecto (Lima, Perú por ejemplo)
+    lng: -77.0428,
+  });
+
+  const [openAddress, setOpenAddress] = useState<boolean>(false);
+
+  const handleMapClick = (lat: number, lng: number) => {
+    setCoordinates({ lat, lng });
+    console.log("Coordenadas guardadas:", { lat, lng });
+  };
 
   const form = useForm<AddressFormValues>({
     defaultValues: {
@@ -102,6 +165,45 @@ export default function RegisterPage() {
     }
   };
 
+  const handleSaveAddress = async (updatedAddress: {
+    label_address: string;
+    address: string;
+  }) => {
+    try {
+      if (
+        updatedAddress.label_address === profile.label_address &&
+        updatedAddress.address === profile.address
+      ) {
+        toast.info("No hay cambios en la dirección");
+        return;
+      }
+
+      const result = await updateProfile({
+        label_address: updatedAddress.label_address,
+        address: updatedAddress.address,
+      });
+
+      if (!result) {
+        throw new Error("No se recibió respuesta del servidor");
+      }
+
+      // ✅ Actualizar directamente el store global del perfil
+      setProfile({
+        label_address: result.label_address || "",
+        address: result.address || "",
+      });
+
+      toast.success("Dirección actualizada correctamente");
+      handleCloseAddress();
+    } catch (error) {
+      console.error("Error al actualizar la dirección:", error);
+      toast.error("No se pudo actualizar la dirección");
+    }
+  };
+
+  const handleCloseAddress = () => {
+    setOpenAddress(false);
+  };
   return (
     <div className="min-h-screen bg-white p-4">
       <div className="w-full max-w-md mx-auto">
@@ -184,7 +286,7 @@ export default function RegisterPage() {
                   <Label>Distrito *</Label>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona un distrito" />
                       </SelectTrigger>
                       <SelectContent>
@@ -202,6 +304,58 @@ export default function RegisterPage() {
                 </FormItem>
               )}
             />
+
+            {/* Dirección */}
+            <div className="w-full space-y-2 mt-3">
+              {/* Contenedor del mapa */}
+              <div
+                className={cn(
+                  "w-full overflow-hidden rounded-xl mt-3 relative z-0 transition-all duration-300 ease-in-out h-[200px]"
+                )}
+              >
+                <MapContainer
+                  className="w-full h-full relative z-0"
+                  center={[coordinates.lat, coordinates.lng]}
+                  zoom={18}
+                  scrollWheelZoom={true}
+                  style={{ position: "relative", zIndex: 0 }}
+                >
+                  <TileLayer
+                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  />
+
+                  {/* Componente para manejar eventos de clic */}
+                  <MapEvents onMapClick={handleMapClick} />
+
+                  {/* Marcador en la ubicación seleccionada */}
+                  <Marker
+                    position={[coordinates.lat, coordinates.lng]}
+                    icon={customIcon}
+                  >
+                    <Popup>
+                      <div className="text-center">
+                        <strong>Tu ubicación seleccionada</strong>
+                        <br />
+                        Lat: {coordinates.lat.toFixed(6)}
+                        <br />
+                        Lng: {coordinates.lng.toFixed(6)}
+                      </div>
+                    </Popup>
+                  </Marker>
+                </MapContainer>
+
+                {/* Información de coordenadas */}
+                <div className="absolute bottom-2 left-2 right-2 z-[1000] bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg text-xs">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Coordenadas guardadas:</span>
+                    <span className="text-gray-600">
+                      {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Es predeterminada */}
             <FormField
@@ -238,6 +392,17 @@ export default function RegisterPage() {
           </form>
         </Form>
       </div>
+
+      <Modal isOpen={openAddress} onClose={handleCloseAddress}>
+        <AddressEditForm
+          addressData={{
+            label_address: profile.label_address,
+            address: profile.address,
+          }}
+          onSave={handleSaveAddress}
+          onClose={handleCloseAddress}
+        />
+      </Modal>
     </div>
   );
 }

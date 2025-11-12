@@ -1,18 +1,48 @@
 import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { usePetStore } from "@/store/pets.store";
-import { TbDog } from "react-icons/tb";
-import { Cat } from "lucide-react";
 import { MdOutlinePets } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { deletePet } from "../services/deletePet";
+import { getAllSpecies, type Species } from "../services/getAllSpecies";
+import { getAllBreeds, type Breed } from "../services/getAllBreeds";
+import { Plus, Trash2 } from "lucide-react";
 
 export default function PetProfilePage() {
   const { selectedPet, setSelectedPet } = usePetStore();
+
   const navigate = useNavigate();
+
+  const [listSpecies, setListSpecies] = useState<Species[]>([]);
+  const [listBreeds, setListBreeds] = useState<Breed[]>([]);
+
+  useEffect(() => {
+    const fetchSpecies = async () => {
+      const data = await getAllSpecies();
+      if (data) {
+        setListSpecies(data);
+      }
+    };
+
+    fetchSpecies();
+  }, []);
+
+  useEffect(() => {
+    const fetchBreeds = async () => {
+      const data = await getAllBreeds();
+      if (data) {
+        setListBreeds(data);
+      }
+    };
+
+    fetchBreeds();
+  }, []);
+
+  const specie = listSpecies.find((s) => s.id === selectedPet?.species_id);
+  const breed = listBreeds.find((b) => b.id === selectedPet?.breed_id);
 
   const handleDelete = async () => {
     if (
@@ -92,15 +122,10 @@ export default function PetProfilePage() {
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center gap-2">
               <h1 className="text-2xl font-bold">{selectedPet.name}</h1>
-              {selectedPet.species === "Perro" ? (
-                <TbDog className="size-6" />
-              ) : (
-                <Cat className="size-6" />
-              )}
             </div>
-            <p className="text-gray-500">{selectedPet.breed || "—"}</p>
-            <p className="text-gray-500 text-sm">
-              Especie: {selectedPet.species || "—"}
+            <p className="text-gray-500">{breed?.name || "—"}</p>
+            <p className="text-gray-500 text-sm capitalize">
+              Especie: {specie?.name || "—"}
             </p>
             <p className="text-gray-500 text-sm">
               Fecha de nacimiento:{" "}
@@ -134,31 +159,37 @@ export default function PetProfilePage() {
             </div>
           </div>
 
-          <div className="mt-8 space-y-4">
+          <div className="flex flex-col gap-2">
             <div className="grid grid-cols-2 gap-4">
               <Link to={`/pets/${selectedPet.id}/vaccines`}>
                 <Button variant="outline" className="w-full">
-                  Registrar Vacuna
+                  Vacunas
                 </Button>
               </Link>
               <Link to={`/pets/${selectedPet.id}/deworming`}>
                 <Button variant="outline" className="w-full">
-                  Registrar Desparasitación
+                  Desparasitación
                 </Button>
               </Link>
             </div>
+            <Link to="/register-pet/step1" className="w-full">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full bg-transparent hover:bg-transparent border-green-600 text-green-600 hover:text-green-600"
+              >
+                <Plus />
+                Registrar nueva mascota
+              </Button>
+            </Link>
             <Button
               variant="destructive"
               className="w-full"
               onClick={handleDelete}
             >
+              <Trash2 />
               Eliminar mascota
             </Button>
-            <Link to="/register-pet/step1" className="w-full">
-              <Button size="lg" variant="primary" className="w-full mt-4">
-                Registrar nueva mascota
-              </Button>
-            </Link>
           </div>
         </div>
       </div>

@@ -53,6 +53,7 @@ export default function GroomingServicesPage() {
     };
 
     fetchVariants();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setVariants]);
 
   const total = useDetailStore((state) => state.selectedService?.total ?? 0);
