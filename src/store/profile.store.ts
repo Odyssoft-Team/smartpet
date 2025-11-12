@@ -29,15 +29,15 @@ export const useProfileStore = create<ProfileState>()(
         address: "",
       },
       setProfile: (data) => {
-        console.log("🎯 setProfile llamado con:", data);
+        // console.log("🎯 setProfile llamado con:", data);
         set((state) => {
           const newProfile = { ...state.profile, ...data };
-          console.log("📝 Nuevo estado del profile:", newProfile);
+          // console.log("📝 Nuevo estado del profile:", newProfile);
           return { profile: newProfile };
         });
       },
       clearProfile: () => {
-        console.log("🧹 clearProfile llamado");
+        // console.log("🧹 clearProfile llamado");
         set({
           profile: {
             id: "",
@@ -54,7 +54,7 @@ export const useProfileStore = create<ProfileState>()(
     {
       name: "profile-storage",
       onRehydrateStorage: () => {
-        console.log("🔄 Intentando rehidratar profile-storage...");
+        // console.log("🔄 Intentando rehidratar profile-storage...");
         return (state, error) => {
           if (error) {
             console.log("❌ Error rehidratando profile-storage:", error);

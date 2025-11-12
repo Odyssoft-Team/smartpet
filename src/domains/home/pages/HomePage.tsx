@@ -8,19 +8,19 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import { FaCircle } from "react-icons/fa";
 import { IoChevronForward } from "react-icons/io5";
 import { LuDog } from "react-icons/lu";
 
-import fidel from "@/assets/home/fidel.png";
 import fidel_circle from "@/assets/home/fidel-circle.png";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { SERVICES } from "../utils/Services";
 import { cn } from "@/lib/utils";
 import { useServiceStore } from "@/store/service.store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useServices } from "../services/useServices";
 import { toast } from "sonner";
 import { useDetailStore } from "@/store/detail";
@@ -36,6 +36,8 @@ import {
 import { IoIosArrowDown } from "react-icons/io";
 import { CheckCheckIcon, MapPinCheck, Plus, Repeat } from "lucide-react";
 
+import fondo from "@/assets/home/fondo_pet.png";
+
 type Service = {
   id: number;
   name: string;
@@ -47,52 +49,90 @@ type Service = {
 };
 
 import fidel_avatar from "@/assets/pets/fidel-dog.png";
-import olivia_avatar from "@/assets/pets/olivia-dog.png";
+// import olivia_avatar from "@/assets/pets/olivia-dog.png";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   getAddressByUser,
   type AddressByUser,
 } from "@/domains/address/services/getAddressByUser";
 import { useProfileStore } from "@/store/profile.store";
-
-const TEAMS = [
-  {
-    name: "Fidel",
-    logo: fidel_avatar,
-    plan: "Chihuahua",
-    address: "Av. Paseo de la Republica 2179 - San Isidro",
-  },
-  {
-    name: "Olivia",
-    logo: olivia_avatar,
-    plan: "Pastor Alemán",
-    address: "Jr. Felipe Gil B7 - Santiago de Surco",
-  },
-];
+import {
+  getPetsByUser,
+  type Pet,
+} from "@/domains/mypets/services/getPetsByUser";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function HomePage() {
   const [loadingServices, setLoadingServices] = useState(false);
-  const [service, setService] = useState<Service[]>([]);
-  const [activeTeam, setActiveTeam] = useState(TEAMS[0]);
+  const [listServices, setListServices] = useState<Service[]>([]);
+
   const { getServices } = useServices(); //tengo un loading aqui, puedes usarlo para mostrar un spinner
   const { profile } = useProfileStore();
   const [listAddress, setListAddress] = useState<AddressByUser[]>([]);
   const [addressSelected, setAddressSelected] = useState<AddressByUser | null>(
     null
   );
+  const [listPets, setListPets] = useState<Pet[]>([]);
+
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+
+  const [api, setApi] = useState<CarouselApi | null>(null);
+  const [idxCarousel, setIdxCarousel] = useState<number>(0);
+
+  // ✅ Escuchar los cambios del carousel (cuando el usuario desliza)
+  useEffect(() => {
+    if (!api) return;
+
+    const onSelect = () => {
+      const idx = api.selectedScrollSnap();
+      setIdxCarousel(idx);
+      setSelectedPet(listPets[idx]);
+    };
+
+    api.on("select", onSelect);
+
+    // ✅ cleanup correcto para TypeScript
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api, listPets]);
+
+  // ✅ Mover el carousel cuando cambia el índice externamente (por ej. desde el combobox)
+  useEffect(() => {
+    if (api && typeof idxCarousel === "number") {
+      api.scrollTo(idxCarousel);
+    }
+  }, [idxCarousel, api]);
+
+  const { setSelectedService } = useServiceStore();
+  const { setServicePrice } = useDetailStore();
+
+  const fetchPets = useCallback(async () => {
+    try {
+      const data = await getPetsByUser();
+
+      if (data && Array.isArray(data)) {
+        setListPets(data);
+        setSelectedPet(data[0]);
+      }
+    } catch (error) {
+      console.error("Error obteniendo las mascotas:", error);
+      toast.error("No se pudieron cargar las mascotas");
+    }
+  }, [setListPets]);
+
+  useEffect(() => {
+    fetchPets();
+  }, [fetchPets]);
 
   useEffect(() => {
     const fetchServices = async () => {
       setLoadingServices(true);
-      if (service.length > 0) {
-        console.log("✅ Ya hay datos, omitiendo fetch");
-        return;
-      }
       try {
         const data = await getServices();
 
         if (data) {
-          setService(data);
+          setListServices(data);
           console.log("✅ Servicios cargados:", data);
         } else {
           toast.error("No se pudo cargar el perfil del usuario");
@@ -106,11 +146,9 @@ export default function HomePage() {
 
     fetchServices();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setService]);
+  }, []);
 
   const fetchAddress = async () => {
-    console.log("profile id::", profile);
-
     const data = await getAddressByUser(profile.id);
     if (data) {
       const defaultAddress = data.find((item) => item.is_default === true);
@@ -174,11 +212,20 @@ export default function HomePage() {
           <DropdownMenuTrigger asChild>
             <Button size="lg" className="px-3 bg-cyan-600">
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name}</span>
+                <span className="truncate font-medium">
+                  {selectedPet?.name}
+                </span>
               </div>
-              <div className="bg-transparent text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <img src={activeTeam.logo} alt={activeTeam.name} />
-              </div>
+
+              <Avatar className="size-7">
+                <AvatarImage
+                  src={selectedPet?.photo_url as string}
+                  alt={selectedPet?.name}
+                />
+                <AvatarFallback className="font-bold text-black">
+                  {selectedPet?.name?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -189,17 +236,23 @@ export default function HomePage() {
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Mascotas
             </DropdownMenuLabel>
-            {TEAMS.map((team) => (
+            {listPets.map((team) => (
               <DropdownMenuItem
                 key={team.name}
-                onClick={() => setActiveTeam(team)}
+                onClick={() => {
+                  setSelectedPet(team);
+                  setIdxCarousel(listPets.indexOf(team));
+                }}
                 className="gap-2 p-2"
               >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <img src={team.logo} alt={team.name} className="shrink-0" />
-                </div>
+                <Avatar className="size-6">
+                  <AvatarImage src={team.photo_url as string} alt={team.name} />
+                  <AvatarFallback>
+                    {team.name?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 {team.name}
-                {team.name === activeTeam.name && (
+                {team.name === selectedPet?.name && (
                   <DropdownMenuShortcut>
                     <CheckCheckIcon className="mr-2 h-4 w-4 text-green-500" />
                   </DropdownMenuShortcut>
@@ -235,31 +288,42 @@ export default function HomePage() {
           opts={{
             align: "start",
           }}
+          setApi={setApi}
           className="w-full"
         >
           <CarouselContent>
-            <CarouselItem className="">
-              <Card className="p-0 rounded-md overflow-hidden">
-                <CardContent className="flex items-center justify-center p-0 w-full h-[7rem]">
-                  <img
-                    className="w-full h-full object-cover"
-                    src={fidel}
-                    alt="asds"
-                  />
-                </CardContent>
-              </Card>
-            </CarouselItem>
-            <CarouselItem className="">
-              <Card className="p-0 rounded-md overflow-hidden">
-                <CardContent className="flex items-center justify-center p-0 w-full h-[7rem]">
-                  <img
-                    className="w-full h-full object-cover"
-                    src={fidel}
-                    alt="asds"
-                  />
-                </CardContent>
-              </Card>
-            </CarouselItem>
+            {listPets.map((pet) => (
+              <CarouselItem key={pet.id}>
+                <Card className="p-0 rounded-md overflow-hidden">
+                  <CardContent className="flex items-center justify-center p-0 w-full h-[7rem] relative">
+                    <div className="w-full absolute flex items-center justify-center gap-4">
+                      {/* <img
+                        className="size-20 object-cover"
+                        src={pet.photo_url as string}
+                        alt={pet?.name}
+                      /> */}
+                      <Avatar className="size-20">
+                        <AvatarImage
+                          src={pet.photo_url as string}
+                          alt={pet?.name}
+                        />
+                        <AvatarFallback className="font-bold text-xl">
+                          {pet?.name?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <h2 className="font-bold text-white capitalize">
+                        {pet.name}
+                      </h2>
+                    </div>
+                    <img
+                      className="w-full h-full object-cover"
+                      src={fondo}
+                      alt="asds"
+                    />
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
           </CarouselContent>
           <CarouselPrevious />
           <CarouselNext />
@@ -406,13 +470,8 @@ export default function HomePage() {
                     </Card>
                   </CarouselItem>
                 ))
-              : service.map((item, index) => {
+              : listServices.map((item, index) => {
                   const typeService = SERVICES.find((s) => s.id === item.id);
-
-                  const mergedItem = {
-                    ...item,
-                    ...typeService,
-                  };
 
                   return (
                     <CarouselItem key={item.id} className="basis-[80%]">
@@ -421,18 +480,13 @@ export default function HomePage() {
                           to="/services/grooming"
                           onClick={() => {
                             if (index === 0) {
-                              useServiceStore.getState().setSelectedService({
+                              setSelectedService({
                                 id: item.id,
                                 service_name: item.name,
                                 sub: item.description,
                                 time: item.duration,
                               });
-                            }
-
-                            if (index === 0) {
-                              useDetailStore
-                                .getState()
-                                .setServicePrice(item.price);
+                              setServicePrice(item.price);
                             }
                           }}
                           className={cn(
@@ -445,7 +499,7 @@ export default function HomePage() {
                             <div className="w-full h-fit relative">
                               <img
                                 className="w-full h-auto object-cover rounded-2xl"
-                                src={mergedItem.img}
+                                src={typeService?.img}
                                 alt="asds"
                               />
                               <div

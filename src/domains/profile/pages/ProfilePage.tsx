@@ -30,9 +30,9 @@ import {
   FaPlayCircle,
   FaRegHeart,
   FaRegClock,
-  FaPaw,
+  // FaPaw,
   FaCreditCard,
-  FaBook,
+  // FaBook,
 } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 //import { FiArrowRightCircle } from "react-icons/fi";
@@ -104,7 +104,7 @@ export default function ProfilePage() {
 
     fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setProfile]);
+  }, []);
 
   const [openProfile, setOpenProfile] = useState<boolean>(false);
 
@@ -266,11 +266,11 @@ export default function ProfilePage() {
 
   const linkItems = [
     //{ to: "/", label: "Inicio", icon: HiHome },
-    { to: "/mypets", label: "Mis Mascotas", icon: FaPaw },
+    // { to: "/mypets", label: "Mis Mascotas", icon: FaPaw },
     { to: "/address", label: "Mis Direcciones", icon: HiMapPin },
     { to: "/cards", label: "Métodos de pago", icon: FaCreditCard },
 
-    { to: "/address", label: "Libro de Reclamaciones", icon: FaBook },
+    // { to: "/libro", label: "Libro de Reclamaciones", icon: FaBook },
   ];
 
   return (
@@ -284,7 +284,7 @@ export default function ProfilePage() {
             {loading ? (
               <Skeleton className="inline-block h-6 w-32 align-middle rounded" />
             ) : (
-              profile.full_name || ""
+              `${profile.full_name.split(" ")[0]} ${profile.full_name.split(" ")[1]}`
             )}
             !
           </span>

@@ -10,7 +10,7 @@ export default function CardsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchCards = async () => {
       setLoading(true);
 
       const {
@@ -36,16 +36,13 @@ export default function CardsPage() {
       setLoading(false);
     };
 
-    fetch();
+    fetchCards();
   }, []);
 
   const handleDelete = async (id: string) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta tarjeta?")) {
       try {
-        const { error } = await supabase
-          .from("cards")
-          .delete()
-          .eq("id", id);
+        const { error } = await supabase.from("cards").delete().eq("id", id);
 
         if (error) {
           console.error("Error eliminando tarjeta:", error);
@@ -81,7 +78,9 @@ export default function CardsPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-8 text-gray-500">Cargando tarjetas...</div>
+          <div className="text-center py-8 text-gray-500">
+            Cargando tarjetas...
+          </div>
         ) : cards.length === 0 ? (
           <div className="text-center py-8 space-y-4">
             <p className="text-gray-500">No tienes tarjetas registradas</p>
@@ -113,7 +112,8 @@ export default function CardsPage() {
                       {maskCardNumber(card.card_number)}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Vence: {String(card.expiry_month).padStart(2, "0")}/{card.expiry_year}
+                      Vence: {String(card.expiry_month).padStart(2, "0")}/
+                      {card.expiry_year}
                     </p>
                   </div>
                 </div>
