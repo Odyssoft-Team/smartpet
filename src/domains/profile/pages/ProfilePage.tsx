@@ -350,10 +350,10 @@ export default function ProfilePage() {
             );
           })}
 
-          <hr className="mt-6 bg-gray-600" />
+          <hr className="mt-6 bg-gray-600 hidden" />
 
           {/* Medio de pago frecuente */}
-          <div className="flex flex-col gap-y-2">
+          {/* <div className="flex flex-col gap-y-2">
             <div className="ml-4 mt-4 text-base font-bold flex justify-between">
               Medios de pago
               <button
@@ -417,7 +417,7 @@ export default function ProfilePage() {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
           <hr className="mt-6 bg-gray-600" />
 
