@@ -354,7 +354,7 @@ export default function HomePage() {
                 </figure>
                 <div className="flex flex-col gap-1">
                   <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    {listPets[0].name} <LuDog className="size-6" />
+                    {listPets[0]?.name} <LuDog className="size-6" />
                   </h3>
                   <p className="font-medium text-sm leading-[1]">
                     Ducha y corte de pelo
@@ -391,7 +391,7 @@ export default function HomePage() {
                 </figure>
                 <div className="flex flex-col gap-1">
                   <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    {listPets[0].name} <LuDog className="size-6" />
+                    {listPets[0]?.name} <LuDog className="size-6" />
                   </h3>
                   <p className="font-medium text-sm leading-[1]">
                     Ducha y corte de pelo
@@ -420,7 +420,7 @@ export default function HomePage() {
                 </figure>
                 <div className="flex flex-col gap-1">
                   <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    {listPets[0].name} <LuDog className="size-6" />
+                    {listPets[0]?.name} <LuDog className="size-6" />
                   </h3>
                   <p className="font-medium text-sm leading-[1]">
                     Ducha y corte de pelo
