@@ -55,6 +55,7 @@ type Service = {
 import fidel_avatar from "@/assets/pets/fidel-dog.png";
 // import olivia_avatar from "@/assets/pets/olivia-dog.png";
 import { Skeleton } from "@/components/ui/skeleton";
+import beneficios from "@/assets/home/beneficios.png";
 import {
   getAddressByUser,
   type AddressByUser,
@@ -567,8 +568,19 @@ export default function HomePage() {
           <CarouselNext />
         </Carousel>
 
-        <div className="bg-yellow-500 w-full mt-4 rounded-2xl p-4">
-          Conoce los beneficios
+        <div className="bg-yellow-500 w-full mt-4 rounded-2xl pl-6 flex items-center justify-between overflow-hidden">
+          <div className="flex-1">
+            <h3 className="text-base font-bold text-black">
+              Conoce los beneficios
+            </h3>
+          </div>
+          <div className="w-1/2 flex-shrink-0">
+            <img
+              src={beneficios}
+              alt="Beneficios"
+              className="w-full h-full object-cover rounded-lg"
+            />
+          </div>
         </div>
       </div>
     </div>

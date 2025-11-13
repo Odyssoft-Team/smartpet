@@ -25,7 +25,7 @@ export default function RegisterPetStep1() {
   return (
     <PetFormLayout
       currentStep={1}
-      totalSteps={5}
+      totalSteps={7}
       onNext={handleNext}
       showBackButton={false}
       nextDisabled={!name.trim()}
@@ -33,7 +33,9 @@ export default function RegisterPetStep1() {
       <div className="w-full space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold">¿Cómo se llama tu mascota?</h1>
-          <p className="text-gray-500">Este será el nombre que usaremos para referirnos a tu mascota</p>
+          <p className="text-gray-500">
+            Este será el nombre que usaremos para referirnos a tu mascota
+          </p>
         </div>
 
         <div className="space-y-2">

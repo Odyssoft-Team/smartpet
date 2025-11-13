@@ -38,7 +38,7 @@ export default function RegisterPetStep3() {
   return (
     <PetFormLayout
       currentStep={3}
-      totalSteps={5}
+      totalSteps={7}
       onNext={handleNext}
       onBack={handleBack}
       nextDisabled={!weight}
@@ -64,9 +64,7 @@ export default function RegisterPetStep3() {
           </div>
         </div>
 
-        {error && (
-          <p className="text-red-500 text-sm text-center">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
       </div>
     </PetFormLayout>
   );

@@ -125,7 +125,7 @@ export default function RegisterPetStep2() {
   return (
     <PetFormLayout
       currentStep={2}
-      totalSteps={5}
+      totalSteps={7}
       onNext={handleNext}
       onBack={handleBack}
       nextDisabled={!species_id || !breed_id}

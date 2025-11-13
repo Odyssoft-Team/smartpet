@@ -1,16 +1,19 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface RegisterPetStore {
   name: string;
-  species: 'Perro' | 'Gato' | undefined;
+  species: "Perro" | "Gato" | undefined;
   species_id?: number;
   breed: string;
   breed_id?: number;
   weight: string;
+  allergies: string;
+  special_condition: string;
   birthDate?: Date;
   ageInYears?: number;
   photoUrl: string;
   currentStep: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setField: (field: string, value: any) => void;
   nextStep: () => void;
   previousStep: () => void;
@@ -18,29 +21,34 @@ interface RegisterPetStore {
 }
 
 export const useRegisterPetStore = create<RegisterPetStore>((set) => ({
-  name: '',
+  name: "",
   species: undefined,
   species_id: undefined,
-  breed: '',
+  breed: "",
   breed_id: undefined,
-  weight: '',
+  weight: "",
+  allergies: "",
+  special_condition: "",
   birthDate: undefined,
   ageInYears: undefined,
-  photoUrl: '',
+  photoUrl: "",
   currentStep: 1,
   setField: (field, value) => set({ [field]: value }),
   nextStep: () => set((state) => ({ currentStep: state.currentStep + 1 })),
   previousStep: () => set((state) => ({ currentStep: state.currentStep - 1 })),
-  reset: () => set({
-    name: '',
-    species: undefined,
-    species_id: undefined,
-    breed: '',
-    breed_id: undefined,
-    weight: '',
-    birthDate: undefined,
-    ageInYears: undefined,
-    photoUrl: '',
-    currentStep: 1
-  })
+  reset: () =>
+    set({
+      name: "",
+      species: undefined,
+      species_id: undefined,
+      breed: "",
+      breed_id: undefined,
+      weight: "",
+      allergies: "",
+      special_condition: "",
+      birthDate: undefined,
+      ageInYears: undefined,
+      photoUrl: "",
+      currentStep: 1,
+    }),
 }));
