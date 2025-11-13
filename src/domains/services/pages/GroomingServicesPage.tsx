@@ -123,7 +123,7 @@ export default function GroomingServicesPage() {
                 </div>
               </AccordionTrigger>
 
-              <AccordionContent className="w-full h-fit flex flex-col text-balance mt-2">
+              <AccordionContent className="w-full h-fit flex flex-col mt-2">
                 <Tabs defaultValue="item-0" className="w-full gap-0 !bg-none">
                   <TabsList className="w-full flex h-fit !bg-transparent p-0">
                     {variants.slice(3, 7).map((item, index) => {
@@ -137,7 +137,7 @@ export default function GroomingServicesPage() {
                             "relative rounded-t-[1rem] rounded-b-none !shadow-none border-x-2 border-t-2 border-b-0 border-gray-300 transition-colors duration-200 flex flex-col items-center justify-center",
                             "py-2 h-16 text-xs font-bold",
                             // Efecto "carpeta": cuando está activo, sin borde inferior visible
-                            "data-[state=active]:-mb-[2px] data-[state=active]:bg-white z-20",
+                            "data-[state=active]:mb-[0px] data-[state=active]:bg-white z-20",
                             index === 0 &&
                               "data-[state=active]:font-bold data-[state=active]:text-[#D86C00] data-[state=active]:border-t-[#D86C00] data-[state=active]:border-x-[#D86C00]",
                             index === 1 &&
@@ -180,10 +180,13 @@ export default function GroomingServicesPage() {
                         )}
                       >
                         <h3 className="text-base">{mergedItem.commend}</h3>
-                        <p className="text-[11px] text-black text-left pl-4">
+                        <div className="w-full px-4">
+                          <p className="text-[12px] text-black text-left">
                           {mergedItem.description ||
                             "Sin descripción disponible"}
-                        </p>
+                          </p>
+                        </div>
+                        
                         <div className="w-full flex flex-col gap-y-3 mt-1 bg-gray-200/60 py-4 px-5">
                           {mergedItem.includes?.map((include, i) => (
                             <div
