@@ -73,7 +73,8 @@ import { es } from "date-fns/locale";
 
 export default function HomePage() {
   const { setSelectedService } = useServiceStore();
-  const { setServicePrice, selectedPet, setSelectedPet } = useDetailStore();
+  const { setServicePrice, selectedPet, setSelectedPet, setPetAndUser } =
+    useDetailStore();
 
   const [loadingServices, setLoadingServices] = useState(false);
   const [listServices, setListServices] = useState<Service[]>([]);
@@ -121,12 +122,13 @@ export default function HomePage() {
       if (data && Array.isArray(data)) {
         setListPets(data);
         setSelectedPet(data[0]);
+        setPetAndUser(data[0].user_id, Number(data[0].id), data[0].name);
       }
     } catch (error) {
       console.error("Error obteniendo las mascotas:", error);
       toast.error("No se pudieron cargar las mascotas");
     }
-  }, [setListPets, setSelectedPet]);
+  }, [setListPets, setSelectedPet, setPetAndUser]);
 
   useEffect(() => {
     fetchPets();
@@ -402,7 +404,8 @@ export default function HomePage() {
                       </figure>
                       <div className="flex flex-col gap-1">
                         <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                          {listPets[0]?.name} <LuDog className="size-6" />
+                          {listPets.find((pet) => pet.id === item.pet_id)?.name}{" "}
+                          <LuDog className="size-6" />
                         </h3>
                         <p className="font-medium text-sm leading-[1]">
                           Ducha y corte de pelo
