@@ -98,6 +98,11 @@ export default function HomePage() {
       const idx = api.selectedScrollSnap();
       setIdxCarousel(idx);
       setSelectedPet(listPets[idx]);
+      setPetAndUser(
+        listPets[idx].user_id,
+        Number(listPets[idx].id),
+        listPets[idx].name
+      );
     };
 
     api.on("select", onSelect);
@@ -106,7 +111,7 @@ export default function HomePage() {
     return () => {
       api.off("select", onSelect);
     };
-  }, [api, listPets, setSelectedPet]);
+  }, [api, listPets, setSelectedPet, setPetAndUser]);
 
   // ✅ Mover el carousel cuando cambia el índice externamente (por ej. desde el combobox)
   useEffect(() => {
