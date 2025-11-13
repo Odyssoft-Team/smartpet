@@ -13,30 +13,32 @@ import { HiPencil } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
 import { PaymentSuccess } from "../components/DialogSucessPay";
 import { useDetailStore } from "@/store/detail";
+import { Separator } from "@/components/ui/separator";
+import {
+  addServiceOrder,
+  type ServiceOrder,
+} from "../services/addServiceOrder";
+import { format } from "date-fns";
+import { toast } from "sonner";
 
 export default function ShoppingPage() {
   // const { selectedService, setSelectedService } = useServiceStore();
-  const { selectedService } = useServiceStore();
-  const { selectedService: selectedServiceBeta, listAdditionalServices } =
-    useDetailStore();
+  const { selectedService, clearService } = useServiceStore();
+  const {
+    selectedService: selectedServiceBeta,
+    listAdditionalServices,
+    totalAdditionalServices,
+    selectedDateService,
+    selectedVariant,
+    reset: resetDetailStore,
+  } = useDetailStore();
   const navigate = useNavigate();
 
   const hasService = selectedService && Object.keys(selectedService).length > 0;
 
-  // const service = selectedService?.type_service;
-  // const extras = selectedService?.additional_services ?? [];
-
-  // 🧮 Calcular total
-  // const basePrice = parseFloat(selectedService?.price ?? "0");
-  // const extrasTotal = extras.reduce(
-  //   (acc, add) => acc + parseFloat(add.price ?? "0"),
-  //   0
-  // );
-  // const total = (basePrice + extrasTotal).toFixed(2);
-
   const { listCards } = useCardsStore();
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [openCard, setOpenCard] = useState<boolean>(false);
+  const [openCard, setOpenCard] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState<boolean>(false);
 
@@ -55,18 +57,41 @@ export default function ShoppingPage() {
 
     setLoading(true);
 
-    // Simular proceso de pago de 3 segundos
-    setTimeout(() => {
-      setLoading(false);
-      setShowSuccessDialog(true);
+    const data: ServiceOrder = {
+      user_id: selectedServiceBeta?.user_id as string,
+      card_id: selectedCardId,
+      pet_id: selectedServiceBeta?.pet_id as number,
+      variant_id: selectedVariant?.id as number,
+      scheduled_date: format(selectedDateService as Date, "yyyy-MM-dd"),
+      notes: "",
+      total:
+        totalAdditionalServices + (selectedServiceBeta?.price_service ?? 0),
+      payment_status: "true",
+      scheduled_time: "10:00 am",
+      status: "pending",
+    };
 
-      // Limpiar el estado global después de mostrar el diálogo
-      setTimeout(() => {
-        // setSelectedService(null);
-        setShowSuccessDialog(false);
-        navigate("/");
-      }, 5500);
-    }, 3000);
+    try {
+      const response = await addServiceOrder(data);
+
+      console.log("response", response);
+
+      if (response) {
+        setTimeout(() => {
+          resetDetailStore();
+          clearService();
+          setShowSuccessDialog(false);
+          navigate("/");
+        }, 2000);
+      } else {
+        toast.error("Error al registrar la orden de servicio");
+      }
+    } catch (error) {
+      console.log("Error al registrar la orden de servicio", error);
+    }
+
+    setLoading(false);
+    setShowSuccessDialog(true);
   };
 
   const handleCloseSuccessDialog = () => {
@@ -91,18 +116,20 @@ export default function ShoppingPage() {
           <div className="w-full flex flex-col gap-3">
             <div className="w-full flex items-center justify-between">
               <h2 className="flex items-center gap-2 font-bold">
-                Fidel <PiDogFill className="size-5" />
+                {selectedServiceBeta?.pet_name} <PiDogFill className="size-5" />
               </h2>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2"></div>
                 <Link
                   to={"/services/grooming/2"}
-                  className="size-5 flex items-center justify-center rounded-full bg-gray-200"
+                  className="flex items-center justify-center rounded-md py-1 px-2 gap-2 border size-8"
                 >
-                  <HiPencil className="size-3 text-sky-600" />
+                  <HiPencil className="text-sky-600" />
                 </Link>
               </div>
             </div>
+
+            <Separator />
 
             <div className="w-full flex justify-between items-center">
               <div className="w-fit">
@@ -122,52 +149,41 @@ export default function ShoppingPage() {
               </h3>
             </div>
 
-            <div className="w-full flex justify-between items-center">
+            <div className="w-full flex flex-col">
+              <div className="w-full flex items-center justify-between">
+                <h3 className="font-bold text-[#0085D8]">Adicionales+</h3>
+                <span className="w-fit font-bold text-sm text-[#D86C00]">
+                  S/. {totalAdditionalServices}
+                </span>
+              </div>
               {listAdditionalServices.map((item) => {
                 return (
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-fit">
-                      <h3 className="flex items-center gap-x-2 font-medium -mb-2">
-                        {item.name}
+                  <div
+                    className="w-full flex justify-between items-center"
+                    key={item.id}
+                  >
+                    <div className="w-fit flex flex-col leading-[1.2]">
+                      <h3 className="flex items-center gap-x-2 font-medium text-sm">
+                        {item?.name}
                       </h3>
-                      <span className="text-sm text-gray-400">
-                        {item.description}
+                      <span className="text-xs text-gray-400">
+                        {item?.description}
+                      </span>
+                      <span className="text-xs font-bold">
+                        S/. {item?.price}
                       </span>
                     </div>
-                    <h3 className="w-fit font-bold text-sm text-[#D86C00]">
-                      S/.{item?.price}
-                    </h3>
                   </div>
                 );
               })}
             </div>
 
-            {/* <div>
-              <h3 className="text-sky-500">Adicionales+</h3>
-              {extras.length > 0 ? (
-                <ul className="list-disc list-inside ml-4">
-                  {extras.map((add, i) => (
-                    <li key={i} className="w-full flex justify-between">
-                      <p className="text-sm flex gap-x-2 text-gray-400">
-                        ● <span>{add.name}</span>
-                      </p>
-                      <span className="text-sm font-bold text-sky-500">
-                        S/.{add.price}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-gray-400 italic">Sin adicionales</p>
-              )}
-            </div> */}
+            <Separator />
 
-            <div className="w-full h-[1px] bg-gray-300 mt-2" />
-
-            <div className="w-full flex justify-end">
-              {/* <h3 className="w-fit font-bold text-green-500 tracking-wider">
-                Total: S/.{total}
-              </h3> */}
+            <div className="w-full flex items-center justify-end font-bold text-[#2EA937]">
+              Total: S/.{" "}
+              {totalAdditionalServices +
+                (selectedServiceBeta?.price_service ?? 0)}
             </div>
           </div>
         ) : (
@@ -186,7 +202,7 @@ export default function ShoppingPage() {
           </span>
         </h2>
 
-        <div className="flex items-center gap-x-2 text-sm">
+        <div className="flex items-center justify-between gap-x-2 text-sm">
           Tarjeta de crédito/débito
           <button
             onClick={() => setOpenCard(!openCard)}
@@ -240,20 +256,22 @@ export default function ShoppingPage() {
                       : "bg-transparent border-2 border-black"
                   )}
                 >
-                  <Check
-                    className={cn(
-                      "size-3 transition-all duration-200",
-                      selectedCardId === card.id ? "text-white" : "text-black"
-                    )}
-                    strokeWidth={3}
-                  />
+                  {selectedCardId && (
+                    <Check
+                      className={cn(
+                        "size-3 transition-all duration-200",
+                        selectedCardId === card.id ? "text-white" : "text-black"
+                      )}
+                      strokeWidth={3}
+                    />
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex items-center gap-x-2 text-sm opacity-45">
+        {/* <div className="flex items-center gap-x-2 text-sm opacity-45">
           Billetera digital (Apple Pay/Google Pay)
           <button className="size-5 flex items-center justify-center rounded-full bg-gray-200">
             <IoIosArrowDown className="size-4 text-black" strokeWidth={12} />
@@ -265,7 +283,7 @@ export default function ShoppingPage() {
           <button className="size-5 flex items-center justify-center rounded-full bg-gray-200">
             <IoIosArrowDown className="size-4 text-black" strokeWidth={12} />
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="w-full flex justify-center">

@@ -545,6 +545,8 @@ export default function HomePage() {
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
+
+        <div className="bg-yellow-500 w-full mt-4 rounded-2xl p-4">Conoce los beneficios</div>
       </div>
     </div>
   );

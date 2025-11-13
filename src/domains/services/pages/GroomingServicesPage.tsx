@@ -1,4 +1,3 @@
-import { FaChevronLeft } from "react-icons/fa";
 import {
   Accordion,
   AccordionContent,
@@ -6,25 +5,45 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CiClock2 } from "react-icons/ci";
-import { PiDogFill } from "react-icons/pi";
+/* import { PiDogFill } from "react-icons/pi"; */
 import { Button } from "@/components/ui/button";
 // import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useServiceStore } from "@/store/service.store";
 import { TYPE_SERVICE_GROMMING } from "@/domains/home/utils/Services";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useServices } from "@/domains/home/services/useServices";
 import { toast } from "sonner";
 import { useDetailStore, type ServiceVariant } from "@/store/detail";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check } from "lucide-react";
+import { Check, CheckCheckIcon, MapPinCheck, Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import {
+  getPetsByUser,
+  type Pet,
+} from "@/domains/mypets/services/getPetsByUser";
+import {
+  getAddressByUser,
+  type AddressByUser,
+} from "@/domains/address/services/getAddressByUser";
 import {
   getAdditionalServices,
   type AdditionalServices,
 } from "../services/getAdditionalServices";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { IoIosArrowDown } from "react-icons/io";
+import { useProfileStore } from "@/store/profile.store";
 
 export default function GroomingServicesPage() {
   const navigate = useNavigate();
@@ -68,6 +87,15 @@ export default function GroomingServicesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setVariants]);
 
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+    const { profile } = useProfileStore();
+  const [listAddress, setListAddress] = useState<AddressByUser[]>([]);
+  const [addressSelected, setAddressSelected] = useState<AddressByUser | null>(
+    null
+  );
+
+  const [listPets, setListPets] = useState<Pet[]>([]);
+
   const [listAdditionalServices, setListAdditionalServices] = useState<
     AdditionalServices[]
   >([]);
@@ -99,23 +127,153 @@ export default function GroomingServicesPage() {
 
   const isContinueEnabled = true;
 
+  const fetchPets = useCallback(async () => {
+      try {
+        const data = await getPetsByUser();
+  
+        if (data && Array.isArray(data)) {
+          setListPets(data);
+          setSelectedPet(data[0]);
+        }
+      } catch (error) {
+        console.error("Error obteniendo las mascotas:", error);
+        toast.error("No se pudieron cargar las mascotas");
+      }
+    }, [setListPets]);
+  
+    useEffect(() => {
+      fetchPets();
+    }, [fetchPets]);
+  const fetchAddress = async () => {
+    const data = await getAddressByUser(profile.id);
+    if (data) {
+      const defaultAddress = data.find((item) => item.is_default === true);
+      setListAddress(data);
+      setAddressSelected(defaultAddress || data[0]);
+    }
+  };
+
+  useEffect(() => {
+    if (profile.id) {
+      fetchAddress();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile.id]);
   return (
     <div className="w-full h-full flex flex-col gap-8 items-center justify-center">
       {/* HEADER */}
-      <div className="w-full flex items-center justify-between">
-        <h2 className="flex items-center gap-2 font-bold text-lg w-full text-start">
-          <FaChevronLeft />
-          Servicios adicionales
-        </h2>
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className="text-white flex items-center gap-2"
+            asChild
+          >
+            <Button
+              size="lg"
+              className="px-3 max-w-[13rem] bg-transparent hover:bg-transparent !p-0"
+            >
+              <MapPinCheck />{" "}
+              <span className="truncate font-medium text-sm">
+                {addressSelected?.address}
+              </span>
+              <IoIosArrowDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-full rounded-lg"
+            align="start"
+            sideOffset={4}
+          >
+            {listAddress.map((team) => (
+              <DropdownMenuItem
+                key={team.id}
+                onClick={() => {
+                  setAddressSelected(team);
+                }}
+                className="gap-2 p-2"
+              >
+                {team.address}
+                {team.address === addressSelected?.address && (
+                  <DropdownMenuShortcut>
+                    <CheckCheckIcon className="mx-2 h-4 w-4 text-green-500" />
+                  </DropdownMenuShortcut>
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="lg" className="px-3 bg-cyan-600">
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">
+                  {selectedPet?.name}
+                </span>
+              </div>
+
+              <Avatar className="size-7">
+                <AvatarImage
+                  src={selectedPet?.photo_url as string}
+                  alt={selectedPet?.name}
+                />
+                <AvatarFallback className="font-bold text-black">
+                  {selectedPet?.name?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-[12rem] rounded-lg"
+            align="end"
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="text-muted-foreground text-xs">
+              Mascotas
+            </DropdownMenuLabel>
+            {listPets.map((team) => (
+              <DropdownMenuItem
+                key={team.name}
+                onClick={() => {
+                  setSelectedPet(team);
+                  //setIdxCarousel(listPets.indexOf(team));
+                }}
+                className="gap-2 p-2"
+              >
+                <Avatar className="size-6">
+                  <AvatarImage src={team.photo_url as string} alt={team.name} />
+                  <AvatarFallback>
+                    {team.name?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                {team.name}
+                {team.name === selectedPet?.name && (
+                  <DropdownMenuShortcut>
+                    <CheckCheckIcon className="mr-2 h-4 w-4 text-green-500" />
+                  </DropdownMenuShortcut>
+                )}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-2 p-2">
+              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                <Plus className="size-4" />
+              </div>
+              <div className="text-muted-foreground font-medium">
+                Agregar mascota
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* INFO GENERAL */}
-      <div className="w-full h-full flex flex-col justify-between pb-[6rem]">
-        <div className="w-full flex items-center justify-between">
+      <div className="w-full h-full flex flex-col justify-between pb-[6rem] mt-20">
+        {/* <div className="w-full flex items-center justify-between">
           <h2 className="flex items-center gap-2 font-bold">
             Fidel <PiDogFill className="size-5" />
           </h2>
-        </div>
+        </div> */}
 
         {/* LISTA DE SERVICIOS */}
         <div className="w-full h-full flex flex-col gap-4">

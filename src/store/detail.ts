@@ -7,6 +7,7 @@ type Service = {
   id: number;
   user_id: string;
   pet_id: number;
+  pet_name?: string;
   variant_id: number;
   scheduled_date: string;
   scheduled_time: string;
@@ -47,7 +48,7 @@ type detailStore = {
   selectedDateService: Date | undefined;
   setSelectedDateService: (date: Date | undefined) => void;
 
-  setPetAndUser: (user_id: string, pet_id: number) => void;
+  setPetAndUser: (user_id: string, pet_id: number, pet_name?: string) => void;
   setService: (service: Service) => void;
   setVariant: (variant_id: number, price_delta: number, name: string) => void;
   setOptions: (options: ServiceOption[]) => void;
@@ -107,12 +108,13 @@ export const useDetailStore = create<detailStore>()(
       selectedDateService: undefined,
       setSelectedDateService: (date) => set({ selectedDateService: date }),
 
-      setPetAndUser: (user_id: string, pet_id: number) =>
+      setPetAndUser: (user_id: string, pet_id: number, pet_name?: string) =>
         set((state) => ({
           selectedService: {
             ...state.selectedService,
             user_id,
             pet_id,
+            pet_name,
           } as Service,
         })),
 
@@ -159,12 +161,24 @@ export const useDetailStore = create<detailStore>()(
         }),
 
       reset: () =>
+        // set({
+        //   selectedService: null,
+        //   selectedVariant: null,
+        //   selectedOptions: [],
+        //   scheduledDate: null,
+        //   scheduledTime: null,
+        // }),
         set({
           selectedService: null,
           selectedVariant: null,
           selectedOptions: [],
           scheduledDate: null,
           scheduledTime: null,
+
+          // 🔥 LO QUE FALTABA
+          listAdditionalServices: [],
+          totalAdditionalServices: 0,
+          selectedDateService: undefined,
         }),
     }),
     {
