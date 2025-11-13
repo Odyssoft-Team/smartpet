@@ -72,12 +72,18 @@ export default function AgeSelector({
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full max-w-[280px]">
                 <TbCalendarEvent className="mr-2" />
-                {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Seleccionar fecha"}
+                {selectedDate
+                  ? format(selectedDate, "dd/MM/yyyy")
+                  : "Seleccionar fecha"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="center">
               <Calendar
                 mode="single"
+                captionLayout="dropdown"
+                classNames={{
+                  dropdown_root: "relative max-h-36 overflow-y-auto", // 👈 aquí limitas el alto
+                }}
                 selected={selectedDate}
                 onSelect={(date) => {
                   onSelectDate(date);

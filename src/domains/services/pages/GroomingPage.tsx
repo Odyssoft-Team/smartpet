@@ -76,7 +76,11 @@ export default function GroomingPage() {
 
     const selectedPet = listPets.find((pet) => pet.id === selectedPetId);
     if (selectedPet) {
-      setPetAndUser(selectedPet.user_id, Number(selectedPet.id));
+      setPetAndUser(
+        selectedPet.user_id,
+        Number(selectedPet.id),
+        selectedPet.name
+      );
       navigate("/services/grooming/2");
     }
   };

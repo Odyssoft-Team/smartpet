@@ -34,7 +34,7 @@ export default function RegisterPetStep4() {
   return (
     <PetFormLayout
       currentStep={4}
-      totalSteps={5}
+      totalSteps={7}
       onNext={handleNext}
       onBack={handleBack}
       nextDisabled={false}

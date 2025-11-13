@@ -25,7 +25,7 @@ export function PaymentSuccess({ isOpen, onClose }: PaymentSuccessDialogProps) {
             <DialogTitle className="text-xl font-bold text-gray-900">
               ¡Pago Realizado con Éxito!
             </DialogTitle>
-            <DialogDescription className="text-base mt-2">
+            <DialogDescription className="text-sm mt-2">
               Tu pedido ha sido procesado correctamente.
             </DialogDescription>
           </div>

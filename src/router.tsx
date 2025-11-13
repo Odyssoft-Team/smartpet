@@ -3,8 +3,8 @@ import { Layout } from "./components/Layout";
 import RegisterPetStep1 from "./domains/mypets/pages/RegisterPetStep1";
 import RegisterPetStep2 from "./domains/mypets/pages/RegisterPetStep2";
 import RegisterPetStep3 from "./domains/mypets/pages/RegisterPetStep3";
-import RegisterPetStep4 from "./domains/mypets/pages/RegisterPetStep4";
-import RegisterPetStep5 from "./domains/mypets/pages/RegisterPetStep5";
+import RegisterPetStep4 from "./domains/mypets/pages/RegisterPetStep7";
+import RegisterPetStep5 from "./domains/mypets/pages/RegisterPetStep7";
 
 // ...existing routes...
 
