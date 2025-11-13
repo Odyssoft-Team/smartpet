@@ -1,5 +1,5 @@
-import { Separator } from "@/components/ui/separator";
-import { FaChevronLeft } from "react-icons/fa";
+/* import { Separator } from "@/components/ui/separator";
+import { FaChevronLeft } from "react-icons/fa"; */
 
 import { Card, CardContent } from "@/components/ui/card";
 import {

@@ -11,7 +11,7 @@ export default function MenuBottom() {
     { to: "/", label: "Inicio", icon: HiHome },
     { to: "/mypets", label: "Servicios", icon: FaPaw },
     /* { to: "/shopping", label: "Compras", icon: FaShoppingCart }, */
-    { to: "/notifications", label: "Ficha Médica", icon: FaStethoscope },
+    { to: "/mypets-medical", label: "Ficha Médica", icon: FaStethoscope },
     { to: "/profile", label: "Perfil", icon: FaUser },
   ];
   return (

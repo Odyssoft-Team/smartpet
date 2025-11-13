@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CiClock2 } from "react-icons/ci";
-import { PiDogFill } from "react-icons/pi";
+/* import { PiDogFill } from "react-icons/pi"; */
 import { Button } from "@/components/ui/button";
 // import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
