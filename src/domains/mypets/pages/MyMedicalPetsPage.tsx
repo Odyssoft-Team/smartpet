@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { PiPlusBold } from "react-icons/pi";
-import { Eye, Pencil } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { usePetStore } from "@/store/pets.store";
@@ -12,7 +12,7 @@ import { getAllSpecies, type Species } from "../services/getAllSpecies";
 import { getAllBreeds, type Breed } from "../services/getAllBreeds";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function MypetsPage() {
+export default function MyMedicalPetsPage() {
   const navigate = useNavigate();
 
   const [listPets, setListPets] = useState<Pet[]>([]);
@@ -50,7 +50,6 @@ export default function MypetsPage() {
     const monthDiff = today.getMonth() - birthDate.getMonth();
     const dayDiff = today.getDate() - birthDate.getDate();
 
-    // Si aún no cumplió años este año, restamos 1
     if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
       age--;
     }
@@ -82,7 +81,7 @@ export default function MypetsPage() {
   useEffect(() => {
     if (listPets.length === 1) {
       setSelectedPet(listPets[0]);
-      navigate("/pet-profile");
+      navigate("/pet-medical-profile");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listPets]);
@@ -95,7 +94,7 @@ export default function MypetsPage() {
           variant={"back"}
           className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
         >
-          Mis mascotas
+          Historial Médico
         </Button>
       </div>
       <div className="mt-6 w-full max-w-md mx-auto">
@@ -115,7 +114,6 @@ export default function MypetsPage() {
                   </div>
                   <div className="flex flex-col gap-2 w-32">
                     <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
                   </div>
                 </div>
               ))
@@ -132,7 +130,7 @@ export default function MypetsPage() {
                     {pet.photo_url ? (
                       <img
                         src={pet.photo_url}
-                        alt="Mascota 1"
+                        alt="Mascota"
                         className="w-16 h-16 rounded-full object-cover mx-auto"
                       />
                     ) : (
@@ -147,7 +145,6 @@ export default function MypetsPage() {
                         </span>
                       </div>
                       <span className="text-xs text-gray-700">
-                        {/* Raza:{" "} */}
                         <span className="font-medium">
                           {breed?.name || "—"}
                         </span>
@@ -170,27 +167,15 @@ export default function MypetsPage() {
 
                     <div className="flex flex-col gap-2">
                       <Link
-                        to="/pet-profile"
+                        to="/pet-medical-profile"
                         onClick={() => setSelectedPet(pet)}
                       >
                         <Button
                           size="sm"
                           variant="outline"
-                          className="px-6 font-light text-xs bg-[#0085D8] hover:bg-[#0085D8] hover:text-white text-white w-full"
+                          className="px-6 font-light text-xs bg-cyan-600 hover:bg-cyan-700 hover:text-white text-white w-full"
                         >
-                          <Eye /> Ver perfil
-                        </Button>
-                      </Link>
-                      <Link
-                        to="/editmypets"
-                        onClick={() => setSelectedPet(pet)}
-                      >
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="px-6 font-light text-xs w-full"
-                        >
-                          <Pencil /> Editar
+                          <Heart /> Ficha Médica
                         </Button>
                       </Link>
                     </div>

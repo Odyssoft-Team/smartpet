@@ -64,6 +64,8 @@ const RegisterEmailVerificationPage = lazy(
 
 const EditmypetsPage = lazy(() => import("../domains/mypets/pages/EditPage"));
 const PetProfilePage = lazy(() => import("../domains/mypets/pages/PetProfilePage"));
+const PetMedicalProfilePage = lazy(() => import("../domains/mypets/pages/PetMedicalProfilePage"));
+const MyMedicalPetsPage = lazy(() => import("../domains/mypets/pages/MyMedicalPetsPage"));
 const VaccineListPage = lazy(() => import("../domains/mypets/pages/VaccineListPage"));
 const VaccineFormPage = lazy(() => import("../domains/mypets/pages/VaccineFormPage"));
 
@@ -99,8 +101,10 @@ export const router = createBrowserRouter([
           { path: "/cards", element: <CardsPage /> },
           { path: "/cards/add", element: <CardsRegisterPage /> },
           { path: "/mypets", element: <MypetsPage /> },
+          { path: "/mypets-medical", element: <MyMedicalPetsPage /> },
           { path: "/editmypets", element: <EditmypetsPage /> },
           { path: "/pet-profile", element: <PetProfilePage /> },
+          { path: "/pet-medical-profile", element: <PetMedicalProfilePage /> },
           { path: "/pets/:petId/vaccines", element: <VaccineListPage /> },
           { path: "/pets/:petId/vaccines/new", element: <VaccineFormPage /> },
           { path: "/register-pet/step1", element: <RegisterPetStep1 /> },

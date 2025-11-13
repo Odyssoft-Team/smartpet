@@ -12,7 +12,7 @@ import { getAllBreeds, type Breed } from "../services/getAllBreeds";
 import { Plus, Trash2 } from "lucide-react";
 import { FaSyringe } from "react-icons/fa";
 import { FaWorm } from "react-icons/fa6";
-export default function PetProfilePage() {
+export default function PetMedicalProfilePage() {
   const { selectedPet, setSelectedPet } = usePetStore();
 
   const navigate = useNavigate();
