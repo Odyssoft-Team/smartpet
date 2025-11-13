@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
 export interface ServiceOrder {
+  id?: string;
   user_id: string;
   pet_id: number;
   variant_id: number;

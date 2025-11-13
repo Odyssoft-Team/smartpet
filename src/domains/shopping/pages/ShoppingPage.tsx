@@ -30,6 +30,7 @@ export default function ShoppingPage() {
     totalAdditionalServices,
     selectedDateService,
     selectedVariant,
+    selectedPet,
     reset: resetDetailStore,
   } = useDetailStore();
   const navigate = useNavigate();
@@ -60,13 +61,13 @@ export default function ShoppingPage() {
     const data: ServiceOrder = {
       user_id: selectedServiceBeta?.user_id as string,
       card_id: selectedCardId,
-      pet_id: selectedServiceBeta?.pet_id as number,
+      pet_id: selectedPet?.id as number,
       variant_id: selectedVariant?.id as number,
       scheduled_date: format(selectedDateService as Date, "yyyy-MM-dd"),
       notes: "",
       total:
         totalAdditionalServices + (selectedServiceBeta?.price_service ?? 0),
-      payment_status: "true",
+      payment_status: "paid",
       scheduled_time: "10:00 am",
       status: "pending",
     };
@@ -74,9 +75,10 @@ export default function ShoppingPage() {
     try {
       const response = await addServiceOrder(data);
 
-      console.log("response", response);
+      console.log("dataaaa", data);
 
       if (response) {
+        setShowSuccessDialog(true);
         setTimeout(() => {
           resetDetailStore();
           clearService();
@@ -91,7 +93,6 @@ export default function ShoppingPage() {
     }
 
     setLoading(false);
-    setShowSuccessDialog(true);
   };
 
   const handleCloseSuccessDialog = () => {

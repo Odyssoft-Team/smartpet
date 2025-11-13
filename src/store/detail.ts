@@ -1,3 +1,4 @@
+import type { Pet } from "@/domains/mypets/services/getPetsByUser";
 import type { AdditionalServices } from "@/domains/services/services/getAdditionalServices";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -48,6 +49,9 @@ type detailStore = {
   selectedDateService: Date | undefined;
   setSelectedDateService: (date: Date | undefined) => void;
 
+  selectedPet: Pet | null;
+  setSelectedPet: (pet: Pet | null) => void;
+
   setPetAndUser: (user_id: string, pet_id: number, pet_name?: string) => void;
   setService: (service: Service) => void;
   setVariant: (variant_id: number, price_delta: number, name: string) => void;
@@ -78,6 +82,9 @@ export const useDetailStore = create<detailStore>()(
       selectedOptions: [],
       scheduledDate: null,
       scheduledTime: null,
+
+      selectedPet: null,
+      setSelectedPet: (pet) => set({ selectedPet: pet }),
 
       listAdditionalServices: [],
       totalAdditionalServices: 0,

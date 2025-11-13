@@ -10,7 +10,6 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { FaCircle } from "react-icons/fa";
 import { IoChevronForward } from "react-icons/io5";
 import { LuDog } from "react-icons/lu";
 
@@ -33,7 +32,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IoIosArrowDown } from "react-icons/io";
-import { CheckCheckIcon, MapPinCheck, Plus, Repeat } from "lucide-react";
+import {
+  Calendar,
+  CheckCheckIcon,
+  MapPinCheck,
+  Plus,
+  Repeat,
+} from "lucide-react";
 
 import fondo from "@/assets/home/fondo_pet.png";
 
@@ -60,8 +65,15 @@ import {
   type Pet,
 } from "@/domains/mypets/services/getPetsByUser";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getOrderServices } from "../services/getOrderServices";
+import type { ServiceOrder } from "@/domains/shopping/services/addServiceOrder";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export default function HomePage() {
+  const { setSelectedService } = useServiceStore();
+  const { setServicePrice, selectedPet, setSelectedPet } = useDetailStore();
+
   const [loadingServices, setLoadingServices] = useState(false);
   const [listServices, setListServices] = useState<Service[]>([]);
 
@@ -72,8 +84,6 @@ export default function HomePage() {
     null
   );
   const [listPets, setListPets] = useState<Pet[]>([]);
-
-  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
 
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [idxCarousel, setIdxCarousel] = useState<number>(0);
@@ -94,7 +104,7 @@ export default function HomePage() {
     return () => {
       api.off("select", onSelect);
     };
-  }, [api, listPets]);
+  }, [api, listPets, setSelectedPet]);
 
   // ✅ Mover el carousel cuando cambia el índice externamente (por ej. desde el combobox)
   useEffect(() => {
@@ -102,9 +112,6 @@ export default function HomePage() {
       api.scrollTo(idxCarousel);
     }
   }, [idxCarousel, api]);
-
-  const { setSelectedService } = useServiceStore();
-  const { setServicePrice } = useDetailStore();
 
   const fetchPets = useCallback(async () => {
     try {
@@ -118,7 +125,7 @@ export default function HomePage() {
       console.error("Error obteniendo las mascotas:", error);
       toast.error("No se pudieron cargar las mascotas");
     }
-  }, [setListPets]);
+  }, [setListPets, setSelectedPet]);
 
   useEffect(() => {
     fetchPets();
@@ -163,6 +170,32 @@ export default function HomePage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.id]);
+
+  const [listOrderServices, setListOrderServices] = useState<ServiceOrder[]>(
+    []
+  );
+
+  useEffect(() => {
+    const fetchOrderServices = async () => {
+      setLoadingServices(true);
+      try {
+        const data = await getOrderServices();
+
+        if (data) {
+          setListOrderServices(data);
+
+          console.log("✅ Order de Servicios cargados:", data);
+        } else {
+          console.log("");
+        }
+      } catch (error) {
+        console.error("Error cargando perfil:", error);
+      }
+      setLoadingServices(false);
+    };
+
+    fetchOrderServices();
+  }, []);
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -348,98 +381,86 @@ export default function HomePage() {
         </h2>
 
         <div className="flex flex-col gap-3">
-          <Card className="p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]">
-            <CardContent className="flex items-center justify-between pl-2 pr-4 w-full py-3">
-              <div className="flex items-center gap-3">
-                <figure className="relative flex">
-                  <img
-                    className="size-15 rounded-full overflow-hidden object-cover"
-                    src={(listPets[0]?.photo_url as string) || fidel_avatar}
-                    alt="asds"
-                  />
-                </figure>
-                <div className="flex flex-col gap-1">
-                  <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    {listPets[0]?.name} <LuDog className="size-6" />
-                  </h3>
-                  <p className="font-medium text-sm leading-[1]">
-                    Ducha y corte de pelo
-                  </p>
-                  <h2 className="flex items-center gap-3">
-                    <span className="flex items-center gap-1 text-xs font-medium">
-                      <FaCircle className="text-green-500 size-3" />
-                      En curso{" "}
+          {listOrderServices.length > 0 &&
+            listOrderServices.map((item) => {
+              return (
+                <Card
+                  className="p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]"
+                  key={item.id}
+                >
+                  <CardContent className="flex items-center justify-between pl-2 pr-4 w-full py-3">
+                    <div className="flex items-center gap-3">
+                      <figure className="relative flex">
+                        <img
+                          className="size-15 rounded-full overflow-hidden object-cover"
+                          src={
+                            (listPets[0]?.photo_url as string) || fidel_avatar
+                          }
+                          alt="asds"
+                        />
+                      </figure>
+                      <div className="flex flex-col gap-1">
+                        <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
+                          {listPets[0]?.name} <LuDog className="size-6" />
+                        </h3>
+                        <p className="font-medium text-sm leading-[1]">
+                          Ducha y corte de pelo
+                        </p>
+                        <h2 className="flex items-center gap-3">
+                          <span className="flex items-center gap-1 text-xs font-medium">
+                            <Calendar className="text-gray-500 size-3" />
+                            {format(new Date(item.scheduled_date), "PP", {
+                              locale: es,
+                            })}
+                            {" - "}
+                            {item.scheduled_time}
+                          </span>
+                        </h2>
+                      </div>
+                    </div>
+
+                    <Link
+                      to={"/activities"}
+                      className="bg-primary text-white px-3 rounded-md py-1"
+                    >
+                      Ver
+                    </Link>
+                  </CardContent>
+                </Card>
+              );
+            })}
+
+          {listOrderServices.length === 0 && (
+            <Card className="p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]">
+              <CardContent className="flex items-center justify-between pl-2 pr-4 w-full py-3">
+                <div className="flex items-center gap-3">
+                  <figure className="relative flex">
+                    <img
+                      className="size-15 rounded-full overflow-hidden object-cover"
+                      src={(listPets[0]?.photo_url as string) || fidel_avatar}
+                      alt="asds"
+                    />
+                    <span className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
+                      <Repeat className="size-7" />
                     </span>
-                  </h2>
+                  </figure>
+                  <div className="flex flex-col gap-1">
+                    <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
+                      {listPets[0]?.name} <LuDog className="size-6" />
+                    </h3>
+                    <p className="font-medium text-sm leading-[1]">
+                      Ducha y corte de pelo
+                    </p>
+                    <span className="text-muted-foreground text-xs">
+                      17 de julio - 3:00 pm
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <Link
-                to={"/activities"}
-                className="bg-primary text-white px-3 rounded-md py-1"
-              >
-                Ver
-              </Link>
-            </CardContent>
-          </Card>
-          <Card className="p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]">
-            <CardContent className="flex items-center justify-between pl-2 pr-4 w-full py-3">
-              <div className="flex items-center gap-3">
-                <figure className="relative flex">
-                  <img
-                    className="size-15 rounded-full overflow-hidden object-cover"
-                    src={(listPets[0]?.photo_url as string) || fidel_avatar}
-                    alt="asds"
-                  />
-                  <span className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
-                    <Repeat className="size-7" />
-                  </span>
-                </figure>
-                <div className="flex flex-col gap-1">
-                  <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    {listPets[0]?.name} <LuDog className="size-6" />
-                  </h3>
-                  <p className="font-medium text-sm leading-[1]">
-                    Ducha y corte de pelo
-                  </p>
-                  <span className="text-muted-foreground text-xs">
-                    17 de julio - 3:00 pm
-                  </span>
-                </div>
-              </div>
-
-              <Button>Repetir</Button>
-            </CardContent>
-          </Card>
-          <Card className="p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]">
-            <CardContent className="flex items-center justify-between pl-2 pr-4 w-full py-3">
-              <div className="flex items-center gap-3">
-                <figure className="relative flex">
-                  <img
-                    className="size-15 rounded-full overflow-hidden object-cover"
-                    src={(listPets[0]?.photo_url as string) || fidel_avatar}
-                    alt="asds"
-                  />
-                  <span className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
-                    <Repeat className="size-7" />
-                  </span>
-                </figure>
-                <div className="flex flex-col gap-1">
-                  <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    {listPets[0]?.name} <LuDog className="size-6" />
-                  </h3>
-                  <p className="font-medium text-sm leading-[1]">
-                    Ducha y corte de pelo
-                  </p>
-                  <span className="text-muted-foreground text-xs">
-                    04 de julio - 10:00 am
-                  </span>
-                </div>
-              </div>
-
-              <Button>Repetir</Button>
-            </CardContent>
-          </Card>
+                <Button>Repetir</Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
@@ -483,7 +504,7 @@ export default function HomePage() {
                     <CarouselItem key={item.id} className="basis-[80%]">
                       <Card className="p-0 border-none shadow-none rounded-none">
                         <Link
-                          to="/services/grooming"
+                          to="/services/grooming/2"
                           onClick={() => {
                             if (index === 0) {
                               setSelectedService({
@@ -546,7 +567,9 @@ export default function HomePage() {
           <CarouselNext />
         </Carousel>
 
-        <div className="bg-yellow-500 w-full mt-4 rounded-2xl p-4">Conoce los beneficios</div>
+        <div className="bg-yellow-500 w-full mt-4 rounded-2xl p-4">
+          Conoce los beneficios
+        </div>
       </div>
     </div>
   );
