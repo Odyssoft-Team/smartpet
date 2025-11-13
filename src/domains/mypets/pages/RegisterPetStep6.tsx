@@ -6,70 +6,79 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-export default function RegisterPetStep5() {
-  const { allergies, setField, nextStep } = useRegisterPetStore();
+export default function RegisterPetStep6() {
+  const { special_condition, setField, nextStep } = useRegisterPetStore();
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleNext = () => {
-    if (!allergies.trim()) {
+    if (!special_condition.trim()) {
       setError(
-        "Por favor ingresa las alergias o marca la opción 'No especifico por ahora'"
+        "Por favor ingresa una condición especial o marca la opción 'No presenta una condición'."
       );
+
       return;
     }
-    if (allergies.length > 50) {
+    if (special_condition.length > 50) {
       setError("El texto no puede tener más de 50 caracteres");
       return;
     }
+
     nextStep();
-    navigate("/register-pet/step6");
+    navigate("/register-pet/step7");
   };
 
   const handleBack = () => {
-    navigate("/register-pet/step4");
+    navigate("/register-pet/step5");
   };
 
   return (
     <PetFormLayout
-      currentStep={5}
+      currentStep={6}
       totalSteps={7}
       onNext={handleNext}
       onBack={handleBack}
-      nextDisabled={!allergies}
+      nextDisabled={!special_condition}
     >
       <div className="w-full space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">¿Tú mascota posee alergías?</h1>
+          <h1 className="text-2xl font-bold">
+            ¿Tú mascota posee alguna condición especial?
+          </h1>
           <p className="text-gray-500">
             Es importante tener esta información en consideración
           </p>
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
-          <div className="relative w-48">
+          <div className="relative w-60">
             <Input
               type="text"
-              value={allergies}
+              value={special_condition}
               onChange={(e) => {
                 setError("");
-                setField("allergies", e.target.value);
+                setField("special_condition", e.target.value);
               }}
               className=""
-              placeholder="pulgas, pollo, etc."
+              placeholder="displacia en cadera, etc.."
             />
           </div>
 
           <div className="flex items-center gap-3">
             <Checkbox
-              id="noAllergies"
-              checked={allergies === "Sin alergías"}
+              id="Nospecial_condition"
+              checked={special_condition === "No presenta una condición"}
               onCheckedChange={(checked) => {
                 setError("");
-                setField("allergies", checked ? "No especifico" : "");
+                setField(
+                  "special_condition",
+                  checked ? "No presenta una condición" : ""
+                );
               }}
             />
-            <Label htmlFor="noAllergies">No especifico por ahora.</Label>
+            <Label htmlFor="Nospecial_condition">
+              No presenta ninguna condición especial.
+            </Label>
           </div>
         </div>
 

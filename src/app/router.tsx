@@ -11,20 +11,26 @@ import AddressEditPage from "@/domains/address/pages/EditPage";
 import CardsPage from "@/domains/cards/pages/CardsPage";
 import CardsRegisterPage from "@/domains/cards/pages/RegisterPage";
 
-const RegisterPetStep1 = lazy(() =>
-  import("@/domains/mypets/pages/RegisterPetStep1")
+const RegisterPetStep1 = lazy(
+  () => import("@/domains/mypets/pages/RegisterPetStep1")
 );
-const RegisterPetStep2 = lazy(() =>
-  import("@/domains/mypets/pages/RegisterPetStep2")
+const RegisterPetStep2 = lazy(
+  () => import("@/domains/mypets/pages/RegisterPetStep2")
 );
-const RegisterPetStep3 = lazy(() =>
-  import("@/domains/mypets/pages/RegisterPetStep3")
+const RegisterPetStep3 = lazy(
+  () => import("@/domains/mypets/pages/RegisterPetStep3")
 );
-const RegisterPetStep4 = lazy(() =>
-  import("@/domains/mypets/pages/RegisterPetStep4")
+const RegisterPetStep4 = lazy(
+  () => import("@/domains/mypets/pages/RegisterPetStep4")
 );
-const RegisterPetStep5 = lazy(() =>
-  import("@/domains/mypets/pages/RegisterPetStep5")
+const RegisterPetStep5 = lazy(
+  () => import("@/domains/mypets/pages/RegisterPetStep5")
+);
+const RegisterPetStep6 = lazy(
+  () => import("@/domains/mypets/pages/RegisterPetStep6")
+);
+const RegisterPetStep7 = lazy(
+  () => import("@/domains/mypets/pages/RegisterPetStep7")
 );
 
 const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
@@ -63,9 +69,15 @@ const RegisterEmailVerificationPage = lazy(
 );
 
 const EditmypetsPage = lazy(() => import("../domains/mypets/pages/EditPage"));
-const PetProfilePage = lazy(() => import("../domains/mypets/pages/PetProfilePage"));
-const VaccineListPage = lazy(() => import("../domains/mypets/pages/VaccineListPage"));
-const VaccineFormPage = lazy(() => import("../domains/mypets/pages/VaccineFormPage"));
+const PetProfilePage = lazy(
+  () => import("../domains/mypets/pages/PetProfilePage")
+);
+const VaccineListPage = lazy(
+  () => import("../domains/mypets/pages/VaccineListPage")
+);
+const VaccineFormPage = lazy(
+  () => import("../domains/mypets/pages/VaccineFormPage")
+);
 
 const CallbackPage = lazy(() => import("@/domains/auth/pages/CallbackPage"));
 
@@ -108,6 +120,8 @@ export const router = createBrowserRouter([
           { path: "/register-pet/step3", element: <RegisterPetStep3 /> },
           { path: "/register-pet/step4", element: <RegisterPetStep4 /> },
           { path: "/register-pet/step5", element: <RegisterPetStep5 /> },
+          { path: "/register-pet/step6", element: <RegisterPetStep6 /> },
+          { path: "/register-pet/step7", element: <RegisterPetStep7 /> },
           // {
           //   path: "/live",
           //   element: <LiveHomePage />,
