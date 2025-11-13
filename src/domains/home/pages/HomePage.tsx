@@ -236,38 +236,44 @@ export default function HomePage() {
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Mascotas
             </DropdownMenuLabel>
-            {listPets.map((team) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => {
-                  setSelectedPet(team);
-                  setIdxCarousel(listPets.indexOf(team));
-                }}
-                className="gap-2 p-2"
-              >
-                <Avatar className="size-6">
-                  <AvatarImage src={team.photo_url as string} alt={team.name} />
-                  <AvatarFallback>
-                    {team.name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                {team.name}
-                {team.name === selectedPet?.name && (
-                  <DropdownMenuShortcut>
-                    <CheckCheckIcon className="mr-2 h-4 w-4 text-green-500" />
-                  </DropdownMenuShortcut>
-                )}
-              </DropdownMenuItem>
-            ))}
+            {listPets.length > 0 &&
+              listPets.map((team) => (
+                <DropdownMenuItem
+                  key={team.name}
+                  onClick={() => {
+                    setSelectedPet(team);
+                    setIdxCarousel(listPets.indexOf(team));
+                  }}
+                  className="gap-2 p-2"
+                >
+                  <Avatar className="size-6">
+                    <AvatarImage
+                      src={team.photo_url as string}
+                      alt={team.name}
+                    />
+                    <AvatarFallback>
+                      {team.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  {team.name}
+                  {team.name === selectedPet?.name && (
+                    <DropdownMenuShortcut>
+                      <CheckCheckIcon className="mr-2 h-4 w-4 text-green-500" />
+                    </DropdownMenuShortcut>
+                  )}
+                </DropdownMenuItem>
+              ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <Plus className="size-4" />
-              </div>
-              <div className="text-muted-foreground font-medium">
-                Agregar mascota
-              </div>
-            </DropdownMenuItem>
+            <Link to={"/register-pet/step1"}>
+              <DropdownMenuItem className="gap-2 p-2">
+                <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                  <Plus className="size-4" />
+                </div>
+                <div className="text-muted-foreground font-medium">
+                  Agregar mascota
+                </div>
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
