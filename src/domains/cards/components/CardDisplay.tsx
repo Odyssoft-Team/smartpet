@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface CardDisplayProps {
   card: Card;
@@ -35,9 +34,9 @@ export default function CardDisplay({
           <div className="flex justify-between items-center">
             <span className="text-sm">{card.label}</span>
             {card.is_default && (
-                <span className="text-xs bg-black bg-opacity-20 px-2 py-1 rounded ml-3">
-                  Predeterminada
-                </span>
+              <span className="text-xs bg-black bg-opacity-20 px-2 py-1 rounded ml-3">
+                Predeterminada
+              </span>
             )}
           </div>
         )}
@@ -86,7 +85,7 @@ export default function CardDisplay({
       {/* Header con logo y marca */}
       <div className="flex justify-between items-start mt-2">
         {/* <div className="text-3xl opacity-0">{cardInfo.logo}</div> */}
-        <div className="text-3xl opacity-0">{" "}</div>
+        <div className="text-3xl opacity-0"> </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold bg-black bg-opacity-30 px-3 py-1 rounded">
             {cardInfo.displayName}
