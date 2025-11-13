@@ -14,7 +14,6 @@ import { FaCircle } from "react-icons/fa";
 import { IoChevronForward } from "react-icons/io5";
 import { LuDog } from "react-icons/lu";
 
-import fidel_circle from "@/assets/home/fidel-circle.png";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { SERVICES } from "../utils/Services";
@@ -349,13 +348,13 @@ export default function HomePage() {
                 <figure className="relative flex">
                   <img
                     className="size-15 rounded-full overflow-hidden object-cover"
-                    src={fidel_avatar}
+                    src={(listPets[0]?.photo_url as string) || fidel_avatar}
                     alt="asds"
                   />
                 </figure>
                 <div className="flex flex-col gap-1">
                   <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    Fidel <LuDog className="size-6" />
+                    {listPets[0].name} <LuDog className="size-6" />
                   </h3>
                   <p className="font-medium text-sm leading-[1]">
                     Ducha y corte de pelo
@@ -383,7 +382,7 @@ export default function HomePage() {
                 <figure className="relative flex">
                   <img
                     className="size-15 rounded-full overflow-hidden object-cover"
-                    src={fidel_circle}
+                    src={(listPets[0]?.photo_url as string) || fidel_avatar}
                     alt="asds"
                   />
                   <span className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
@@ -392,7 +391,7 @@ export default function HomePage() {
                 </figure>
                 <div className="flex flex-col gap-1">
                   <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    Fidel <LuDog className="size-6" />
+                    {listPets[0].name} <LuDog className="size-6" />
                   </h3>
                   <p className="font-medium text-sm leading-[1]">
                     Ducha y corte de pelo
@@ -412,7 +411,7 @@ export default function HomePage() {
                 <figure className="relative flex">
                   <img
                     className="size-15 rounded-full overflow-hidden object-cover"
-                    src={fidel_circle}
+                    src={(listPets[0]?.photo_url as string) || fidel_avatar}
                     alt="asds"
                   />
                   <span className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
@@ -421,7 +420,7 @@ export default function HomePage() {
                 </figure>
                 <div className="flex flex-col gap-1">
                   <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                    Fidel <LuDog className="size-6" />
+                    {listPets[0].name} <LuDog className="size-6" />
                   </h3>
                   <p className="font-medium text-sm leading-[1]">
                     Ducha y corte de pelo
@@ -514,7 +513,10 @@ export default function HomePage() {
                               <div className="w-15">
                                 <img
                                   className="size-12 rounded-full overflow-hidden object-cover"
-                                  src={fidel_circle}
+                                  src={
+                                    (listPets[0]?.photo_url as string) ||
+                                    fidel_avatar
+                                  }
                                   alt="asds"
                                 />
                               </div>
