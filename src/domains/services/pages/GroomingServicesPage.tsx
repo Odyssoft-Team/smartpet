@@ -232,7 +232,7 @@ export default function GroomingServicesPage() {
                           ) : index === 3 ? (
                             <span>-</span>
                           ) : (
-                            <span>+ S/. {item.price_delta}.00</span>
+                            <span>S/. {item.price_delta}.00</span>
                           )}
                         </Button>
                       </TabsContent>

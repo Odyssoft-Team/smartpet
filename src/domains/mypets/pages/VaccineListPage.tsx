@@ -65,6 +65,15 @@ export default function VaccineListPage() {
               >
                 <div className="flex justify-between items-start">
                   <div>
+                    {/* Calcular nombre compatible con diferentes shapes de datos */}
+                    {(() => {
+                      const v: any = vaccine as any;
+                      const vaccineName =
+                        v.vaccine_name || v.name || v.vaccine?.name || "Vacuna";
+                      return (
+                        <p className="font-semibold text-base">{vaccineName}</p>
+                      );
+                    })()}
                     <p className="font-medium">
                       Aplicada:{" "}
                       {format(new Date(vaccine.applied_at), "PPP", {

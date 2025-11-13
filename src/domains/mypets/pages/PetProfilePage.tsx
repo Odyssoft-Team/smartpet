@@ -10,7 +10,8 @@ import { deletePet } from "../services/deletePet";
 import { getAllSpecies, type Species } from "../services/getAllSpecies";
 import { getAllBreeds, type Breed } from "../services/getAllBreeds";
 import { Plus, Trash2 } from "lucide-react";
-
+import { FaSyringe } from "react-icons/fa";
+import { FaWorm } from "react-icons/fa6";
 export default function PetProfilePage() {
   const { selectedPet, setSelectedPet } = usePetStore();
 
@@ -96,82 +97,84 @@ export default function PetProfilePage() {
         </Link>
       </div>
 
-      <div className="w-full max-w-md rounded-xl p-4 flex flex-col items-center">
-        <div className="relative w-40 h-40 mb-4">
-          {selectedPet.photo_url ? (
-            <img
-              src={selectedPet.photo_url}
-              alt={selectedPet.name}
-              className="w-full h-full rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center rounded-full bg-gray-200">
-              <MdOutlinePets className="size-16 text-gray-600" />
-            </div>
-          )}
-          <Link
-            to="/editmypets"
-            className="absolute bottom-2 right-2 p-2 rounded-full bg-white shadow-md"
-            onClick={() => setSelectedPet(selectedPet)}
-          >
-            <HiPencil className="size-5" />
-          </Link>
-        </div>
-
-        <div className="w-full space-y-6">
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center gap-2">
+      <div className="w-full max-w-md rounded-xl p-4 items-center">
+        <div className="items-center mb-6 flex gap-4">
+          <div className="relative h-40 mb-4 w-2/5">
+            {selectedPet.photo_url ? (
+              <img
+                src={selectedPet.photo_url}
+                alt={selectedPet.name}
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center rounded-full bg-gray-200">
+                <MdOutlinePets className="size-16 text-gray-600" />
+              </div>
+            )}
+            <Link
+              to="/editmypets"
+              className="absolute bottom-2 right-2 p-2 rounded-full bg-white shadow-md"
+              onClick={() => setSelectedPet(selectedPet)}
+            >
+              <HiPencil className="size-5" />
+            </Link>
+          </div>
+          <div className="text-left space-y-0 w-3/5">
+            <div className="flex items-center  gap-2">
               <h1 className="text-2xl font-bold">{selectedPet.name}</h1>
             </div>
             <p className="text-gray-500">{breed?.name || "—"}</p>
-            <p className="text-gray-500 text-sm capitalize">
+            {/* <p className="text-gray-500 text-sm capitalize">
               Especie: {specie?.name || "—"}
-            </p>
-            <p className="text-gray-500 text-sm">
+            </p> */}
+            {/* <p className="text-gray-500 text-sm">
               Fecha de nacimiento:{" "}
               {selectedPet.birth_date
                 ? new Date(selectedPet.birth_date).toLocaleDateString()
                 : "—"}
-            </p>
+            </p> */}
+            <div className="border-t border-gray-200 my-4" />
+            <h3 className="mt-4">Alergias</h3>
             <p className="text-gray-500 text-sm">
-              Alergias: {selectedPet.allergies || "—"}
+              Alergias: {selectedPet.allergies || "Sin alergias"}
             </p>
             <p className="text-gray-500 text-sm">
               Condición especial: {selectedPet.special_condition || "—"}
             </p>
-            <p className="text-gray-500 text-sm">
+            {/* <p className="text-gray-500 text-sm">
               Comportamiento social: {selectedPet.social_behavior || "—"}
-            </p>
+            </p> */}
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-gray-100 rounded-lg text-center">
-              <p className="text-sm text-gray-500">Edad</p>
-              <p className="text-lg font-semibold">
-                {selectedPet.birth_date
-                  ? `${getAge(selectedPet.birth_date)} años`
-                  : "—"}
-              </p>
-            </div>
-            <div className="p-4 bg-gray-100 rounded-lg text-center">
-              <p className="text-sm text-gray-500">Peso</p>
-              <p className="text-lg font-semibold">{selectedPet.weight} kg</p>
-            </div>
-          </div>
+
+        <div className="w-full space-y-6">
+
 
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-2 gap-4">
-              <Link to={`/pets/${selectedPet.id}/vaccines`}>
-                <Button variant="outline" className="w-full">
-                  Vacunas
+            <div className="grid grid-cols-3 gap-3">
+              <Link to={`/pets/${selectedPet.id}/vaccines`} className="">
+                <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
+                  <FaSyringe style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
+                  <span className="mt-2">Vacunas</span>
                 </Button>
               </Link>
               <Link to={`/pets/${selectedPet.id}/deworming`}>
-                <Button variant="outline" className="w-full">
-                  Desparasitación
+                <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
+                  <FaWorm style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
+                  <span className="mt-2">Revisiones</span>
+                </Button>
+              </Link>
+              <Link to={`/pets/${selectedPet.id}/deworming`}>
+                <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
+                  <FaWorm style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
+                  <span className="mt-2">Desparasitación</span>
                 </Button>
               </Link>
             </div>
+
+            <p>Información Médica</p>
+
             <Link to="/register-pet/step1" className="w-full">
               <Button
                 size="lg"

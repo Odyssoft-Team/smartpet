@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -36,6 +36,9 @@ export default function VaccineFormPage() {
   const [loading, setLoading] = useState(false);
   const [listVaccines, setListVaccines] = useState<Vaccine[]>([]);
   const [selectedVaccine, setSelectedVaccine] = useState<Vaccine | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [attachedFiles, setAttachedFiles] = useState<FileList | null>(null);
 
   const [open, setOpen] = useState(false);
   const [openAppliedAt, setOpenAppliedAt] = useState(false);
@@ -229,6 +232,31 @@ export default function VaccineFormPage() {
             }
             placeholder="Observaciones o detalles adicionales"
           />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Adjuntar archivos</label>
+          <input
+            ref={fileInputRef}
+            id="vaccine-files"
+            type="file"
+            multiple
+            className="hidden"
+            onChange={(e) => setAttachedFiles(e.target.files)}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full text-white bg-sky-700 justify-center"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Adjuntar archivos
+          </Button>
+          {attachedFiles && attachedFiles.length > 0 && (
+            <p className="text-sm text-gray-500">
+              {attachedFiles.length} archivo(s) seleccionado(s)
+            </p>
+          )}
         </div>
 
         <Button
