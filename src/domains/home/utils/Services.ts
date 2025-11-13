@@ -36,7 +36,7 @@ export const TYPE_SERVICE_GROMMING: TypeService[] = [
     icon: groming_1,
     commend: "Ideal para perros activos",
     description:
-      " Ofrece una limpieza completa y cuidadosa para tu mascota, utilizando productos suaves que eliminan la suciedad y mantienen su pelaje brillante y saludable.",
+      "Limpieza completa y cuidadosa para tu mascota, utilizando productos suaves que eliminan la suciedad y mantienen su pelaje brillante y saludable.",
     includes: [
       "Shampoo y acondicionador hipoalergénicos.",
       "Recorte de uñas.",
@@ -50,7 +50,7 @@ export const TYPE_SERVICE_GROMMING: TypeService[] = [
     icon: groming_2,
     commend: "Cuidado especial",
     description:
-      " Diseñado para mascotas con piel sensible, alergias o irritaciones. Utiliza productos dermatológicos especiales que favorecen la recuperación de la piel.",
+      "Diseñado para mascotas con piel sensible, alergias o irritaciones. Usamos productos dermatológicos especiales que favorecen la recuperación de la piel.",
     includes: [
       "Shampoo y acondicionador hipoclorosos.",
       "Recorte de uñas.",
@@ -64,7 +64,7 @@ export const TYPE_SERVICE_GROMMING: TypeService[] = [
     commend: "Experiencia premium",
     icon: groming_3,
     description:
-      "Brinda una experiencia de spa para tu mascota, con productos de alta calidad, mascarillas y cuidados que dejan su piel revitalizada.",
+      "Una experiencia de spa para tu mascota, con productos de alta calidad, mascarillas y cuidados que dejan su piel revitalizada.",
     includes: [
       "Shampoo intensivo.",
       "Recorte de uñas.",

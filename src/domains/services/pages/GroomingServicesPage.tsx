@@ -168,7 +168,7 @@ export default function GroomingServicesPage() {
                         key={item.id}
                         value={`item-${index}`}
                         className={cn(
-                          "py-4 px-4 border-2 flex flex-col gap-y-2 items-center text-center rounded-b-[1rem] transition-colors duration-200 border-gray-300",
+                          "py-4 px-0 border-2 flex flex-col gap-y-2 items-center text-center rounded-b-[1rem] transition-colors duration-200 border-gray-300",
                           // Hace que el borde superior “se una” con el tab activo
                           "-mt-[2px]",
                           index === 0 && "data-[state=active]:border-[#D86C00]",
@@ -180,11 +180,11 @@ export default function GroomingServicesPage() {
                         )}
                       >
                         <h3 className="text-base">{mergedItem.commend}</h3>
-                        <p className="text-[11px] text-black">
+                        <p className="text-[11px] text-black text-left pl-4">
                           {mergedItem.description ||
                             "Sin descripción disponible"}
                         </p>
-                        <div className="w-full flex flex-col gap-y-3 mt-1 rounded-[1rem] bg-gray-200/60 py-4 px-5">
+                        <div className="w-full flex flex-col gap-y-3 mt-1 bg-gray-200/60 py-4 px-5">
                           {mergedItem.includes?.map((include, i) => (
                             <div
                               key={i}
