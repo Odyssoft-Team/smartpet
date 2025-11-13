@@ -19,15 +19,27 @@ import { toast } from "sonner";
 import { useDetailStore, type ServiceVariant } from "@/store/detail";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import {
+  getAdditionalServices,
+  type AdditionalServices,
+} from "../services/getAdditionalServices";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function GroomingServicesPage() {
   const navigate = useNavigate();
   // const [selectedVariant, setSelectedVariant] = useState(null);
-  const [selectedVariant] = useState(null);
+  // const [selectedVariant] = useState(null);
 
   const { selectedService } = useServiceStore();
   const { getServiceVariants } = useServices();
-  const { setVariant } = useDetailStore();
+  const {
+    setVariant,
+    selectedVariant,
+    listAdditionalServices: selected,
+    totalAdditionalServices,
+    toggleAdditionalService,
+  } = useDetailStore();
 
   const [variants, setVariants] = useState<ServiceVariant[]>([]);
 
@@ -56,6 +68,29 @@ export default function GroomingServicesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setVariants]);
 
+  const [listAdditionalServices, setListAdditionalServices] = useState<
+    AdditionalServices[]
+  >([]);
+
+  useEffect(() => {
+    const fetchAdditionalServices = async () => {
+      try {
+        const data = await getAdditionalServices(selectedService?.id ?? 0);
+
+        if (data) {
+          console.log("✅ Servicios adicionales cargados:", data);
+          setListAdditionalServices(data);
+        } else {
+          toast.error("No se pudieron cargar los servicios adicionales");
+        }
+      } catch (error) {
+        console.error("Error cargando servicios adicionales:", error);
+      }
+    };
+
+    fetchAdditionalServices();
+  }, [selectedService?.id]);
+
   const total = useDetailStore((state) => state.selectedService?.total ?? 0);
 
   const handleContinue = () => {
@@ -75,7 +110,7 @@ export default function GroomingServicesPage() {
       </div>
 
       {/* INFO GENERAL */}
-      <div className="w-full h-full flex flex-col justify-between">
+      <div className="w-full h-full flex flex-col justify-between pb-[6rem]">
         <div className="w-full flex items-center justify-between">
           <h2 className="flex items-center gap-2 font-bold">
             Fidel <PiDogFill className="size-5" />
@@ -83,29 +118,47 @@ export default function GroomingServicesPage() {
         </div>
 
         {/* LISTA DE SERVICIOS */}
-        <div className="w-full h-full">
-          <Accordion type="single" collapsible className="w-full">
+        <div className="w-full h-full flex flex-col gap-4">
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            defaultValue="services"
+          >
             {/* SERVICIOS PRINCIPALES */}
             <AccordionItem value="services" className="group">
               <AccordionTrigger
-              // extraContent={
-              //   <>
-              //     <div
-              //       className={cn(
-              //         "group-data-[state=open]:hidden group-data-[state=closed]:flex justify-between",
-              //         "w-full px-2 py-2 rounded-[0.5rem] border border-gray-500 text-black text-sm",
-              //         "flex justify-between items-center"
-              //       )}
-              //     >
-              //       <div className="w-[25%] h-full border-r-2 px-2 font-bold text-gray-500">
-              //         Sin servicio
-              //       </div>
-              //       <div className="w-[75%] h-full text-gray-500">
-              //         Presione para realizar cambios
-              //       </div>
-              //     </div>
-              //   </>
-              // }
+                extraContent={
+                  <>
+                    <div
+                      className={cn(
+                        "group-data-[state=open]:hidden group-data-[state=closed]:flex justify-between",
+                        "w-full px-2 py-4 rounded-[0.5rem] border border-gray-500 text-black text-sm",
+                        "flex justify-between items-center mt-2"
+                      )}
+                    >
+                      <div className="w-[25%] h-full border-r-2 px-2 font-bold">
+                        {selectedVariant ? (
+                          <span className="font-bold text-[#2EA937]">
+                            {selectedVariant?.name}
+                          </span>
+                        ) : (
+                          <span className="text-gray-500">Sin servicio</span>
+                        )}
+                      </div>
+                      <div className="w-[75%] flex items-center justify-between px-2 h-full text-gray-500">
+                        <span className="text-xs">
+                          Presione para realizar cambios
+                        </span>
+                        {selectedVariant && (
+                          <span className="font-bold text-[#2EA937]">
+                            S/. {selectedVariant?.price_delta}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                }
               >
                 <div className="flex flex-col gap-y-1">
                   <div className="flex flex-col gap-1">
@@ -123,7 +176,7 @@ export default function GroomingServicesPage() {
                 </div>
               </AccordionTrigger>
 
-              <AccordionContent className="w-full h-fit flex flex-col mt-2">
+              <AccordionContent className="w-full h-fit flex flex-col mt-4">
                 <Tabs defaultValue="item-0" className="w-full gap-0 !bg-none">
                   <TabsList className="w-full flex h-fit !bg-transparent p-0">
                     {variants.slice(3, 7).map((item, index) => {
@@ -179,14 +232,16 @@ export default function GroomingServicesPage() {
                             "data-[state=active]:border-neutral-500"
                         )}
                       >
-                        <h3 className="text-base font-semibold">{mergedItem.commend}</h3>
+                        <h3 className="text-base font-semibold">
+                          {mergedItem.commend}
+                        </h3>
                         <div className="w-full px-4">
                           <p className="text-[12px] text-black text-left">
-                          {mergedItem.description ||
-                            "Sin descripción disponible"}
+                            {mergedItem.description ||
+                              "Sin descripción disponible"}
                           </p>
                         </div>
-                        
+
                         <div className="w-full flex flex-col gap-y-3 mt-1 bg-gray-200/60 py-4 px-5">
                           {mergedItem.includes?.map((include, i) => (
                             <div
@@ -223,11 +278,11 @@ export default function GroomingServicesPage() {
                               "pointer-events-none opacity-50 bg-neutral-500"
                           )}
                           onClick={() => {
-                            setVariant(item.id, item.price_delta);
+                            setVariant(item.id, item.price_delta, item.name);
                             // setSelectedVariant(item.id);
                           }}
                         >
-                          {selectedVariant === item.id ? (
+                          {selectedVariant?.id === item.id ? (
                             <Check
                               className="w-4 h-4 text-white"
                               strokeWidth={3}
@@ -247,10 +302,219 @@ export default function GroomingServicesPage() {
 
             {/* SERVICIOS ADICIONALES */}
           </Accordion>
+
+          <Separator />
+
+          <div className="w-full flex flex-col gap-2">
+            <h3 className="font-bold text-[#0085D8]">Adicionales+</h3>
+
+            {/* <Accordion
+              type="single"
+              collapsible
+              className="w-full space-y-2"
+              defaultValue="item-1"
+            >
+              <AccordionItem value="item-1" className="border-none">
+                <AccordionTrigger className="border h-auto py-2 px-2">
+                  Pelaje y estilo
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4 text-balance px-2 py-2">
+                  {listAdditionalServices
+                    .filter((item) => item.category === "pelaje")
+                    .map((item) => {
+                      return (
+                        <div
+                          className={cn(
+                            "flex items-center gap-3 w-full justify-between",
+                            item.price <= 0 && "pointer-events-none opacity-50"
+                          )}
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-sm text-[#0085D8]">
+                              {item.name}
+                            </span>
+                            <p className="text-xs text-black">
+                              {item.description}
+                            </p>
+                            {item.price <= 0 && (
+                              <span className="text-xs text-[#D86C00] font-bold">
+                                No aplicable
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {item.price > 0 && (
+                              <span className="font-bold text-[#0085D8] text-xs">
+                                S/. {item.price}
+                              </span>
+                            )}
+                            <Checkbox id="terms" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-2" className="border-none">
+                <AccordionTrigger className="border h-auto py-2 px-2">
+                  AllquSpa Plus+
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4 text-balance px-2 py-2">
+                  {listAdditionalServices
+                    .filter((item) => item.category === "spa")
+                    .map((item) => {
+                      return (
+                        <div
+                          className={cn(
+                            "flex items-center gap-3 w-full justify-between",
+                            item.price <= 0 && "pointer-events-none opacity-50"
+                          )}
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-sm text-[#0085D8]">
+                              {item.name}
+                            </span>
+                            <p className="text-xs text-black">
+                              {item.description}
+                            </p>
+                            {item.price <= 0 && (
+                              <span className="text-xs text-[#D86C00] font-bold">
+                                No aplicable
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {item.price > 0 && (
+                              <span className="font-bold text-[#0085D8] text-xs">
+                                S/. {item.price}
+                              </span>
+                            )}
+                            <Checkbox id="terms" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-3" className="border-none">
+                <AccordionTrigger className="border h-auto py-2 px-2">
+                  Cuidado y salud
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4 text-balance px-2 py-2">
+                  {listAdditionalServices
+                    .filter((item) => item.category === "cuidado")
+                    .map((item) => {
+                      return (
+                        <div
+                          className={cn(
+                            "flex items-center gap-3 w-full justify-between",
+                            item.price <= 0 && "pointer-events-none opacity-50"
+                          )}
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-sm text-[#0085D8]">
+                              {item.name}
+                            </span>
+                            <p className="text-xs text-black">
+                              {item.description}
+                            </p>
+                            {item.price <= 0 && (
+                              <span className="text-xs text-[#D86C00] font-bold">
+                                No aplicable
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {item.price > 0 && (
+                              <span className="font-bold text-[#0085D8] text-xs">
+                                S/. {item.price}
+                              </span>
+                            )}
+                            <Checkbox id="terms" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion> */}
+
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full space-y-2"
+              defaultValue="item-1"
+            >
+              {["pelaje", "spa", "cuidado"].map((category, index) => (
+                <AccordionItem
+                  key={category}
+                  value={`item-${index + 1}`}
+                  className="border-none"
+                >
+                  <AccordionTrigger className="border h-auto py-2 px-2 capitalize">
+                    {category === "spa"
+                      ? "AllquSpa Plus+"
+                      : category === "pelaje"
+                        ? "Pelaje y estilo"
+                        : "Cuidado y salud"}
+                  </AccordionTrigger>
+
+                  <AccordionContent className="flex flex-col gap-4 text-balance px-2 py-2">
+                    {listAdditionalServices
+                      .filter((item) => item.category === category)
+                      .map((item) => {
+                        const isChecked = selected.some(
+                          (s) => s.id === item.id
+                        );
+
+                        return (
+                          <div
+                            key={item.id}
+                            className={cn(
+                              "flex items-center gap-3 w-full justify-between",
+                              item.price <= 0 &&
+                                "pointer-events-none opacity-50"
+                            )}
+                          >
+                            <div className="flex flex-col">
+                              <span className="text-sm text-[#0085D8]">
+                                {item.name}
+                              </span>
+                              <p className="text-xs text-black">
+                                {item.description}
+                              </p>
+                              {item.price <= 0 && (
+                                <span className="text-xs text-[#D86C00] font-bold">
+                                  No aplicable
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {item.price > 0 && (
+                                <span className="font-bold text-[#0085D8] text-xs">
+                                  S/. {item.price}
+                                </span>
+                              )}
+                              <Checkbox
+                                checked={isChecked}
+                                onCheckedChange={() =>
+                                  toggleAdditionalService(item)
+                                }
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         </div>
 
         {/* Botón: Comprar */}
-        <div className="w-full h-fit flex justify-between items-center">
+        <div className="w-full h-auto flex justify-between items-center fixed left-0 right-0 px-4 bottom-16 bg-white border-t py-3">
           <Button
             className="flex w-fit items-center bg-green-600 rounded-full px-5"
             disabled={!isContinueEnabled}
@@ -259,10 +523,10 @@ export default function GroomingServicesPage() {
             Continuar
           </Button>
 
-          <div className="flex flex-col">
-            <h3 className="font-bold text-lg">Total a pagar:</h3>
+          <div className="flex flex-col justify-end items-end">
+            <h3 className="font-bold text-lg">Total a pagar</h3>
             <h3 className="text-[#D86C00] font-bold text-lg -mt-1">
-              S/. {total}
+              S/. {total + totalAdditionalServices}
             </h3>
           </div>
         </div>

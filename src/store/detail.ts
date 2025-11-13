@@ -1,3 +1,4 @@
+import type { AdditionalServices } from "@/domains/services/services/getAdditionalServices";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -39,9 +40,16 @@ type detailStore = {
   scheduledDate: string | null;
   scheduledTime: string | null;
 
+  listAdditionalServices: AdditionalServices[];
+  totalAdditionalServices: number;
+  toggleAdditionalService: (service: AdditionalServices) => void;
+
+  selectedDateService: Date | undefined;
+  setSelectedDateService: (date: Date | undefined) => void;
+
   setPetAndUser: (user_id: string, pet_id: number) => void;
   setService: (service: Service) => void;
-  setVariant: (variant_id: number, price_delta: number) => void;
+  setVariant: (variant_id: number, price_delta: number, name: string) => void;
   setOptions: (options: ServiceOption[]) => void;
   setDate: (date: string) => void;
   setTime: (time: string) => void;
@@ -53,21 +61,51 @@ type detailStore = {
 /* -------------------- Función auxiliar -------------------- */
 const calculateTotal = (service?: Service) => {
   if (!service) return 0;
-  const servicePrice = service.price_service ?? 0;
+  // const servicePrice = service.price_service ?? 0;
   const variantPrice = service.price_delta ?? 0;
   const optionsPrice = service.price_add ?? 0;
-  return servicePrice + variantPrice + optionsPrice;
+  // return servicePrice + variantPrice + optionsPrice;
+  return variantPrice + optionsPrice;
 };
 
 /* -------------------- Store persistente -------------------- */
 export const useDetailStore = create<detailStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       selectedService: null,
       selectedVariant: null,
       selectedOptions: [],
       scheduledDate: null,
       scheduledTime: null,
+
+      listAdditionalServices: [],
+      totalAdditionalServices: 0,
+      toggleAdditionalService: (service) => {
+        const { listAdditionalServices } = get();
+        const exists = listAdditionalServices.some((s) => s.id === service.id);
+
+        let newSelected;
+        if (exists) {
+          // 🔹 Si ya está seleccionado → quitarlo
+          newSelected = listAdditionalServices.filter(
+            (s) => s.id !== service.id
+          );
+        } else {
+          // 🔹 Si no está → agregarlo
+          newSelected = [...listAdditionalServices, service];
+        }
+
+        // 🔹 Calcular nuevo total
+        const newTotal = newSelected.reduce((sum, s) => sum + s.price, 0);
+
+        set({
+          listAdditionalServices: newSelected,
+          totalAdditionalServices: newTotal,
+        });
+      },
+
+      selectedDateService: undefined,
+      setSelectedDateService: (date) => set({ selectedDateService: date }),
 
       setPetAndUser: (user_id: string, pet_id: number) =>
         set((state) => ({
@@ -80,7 +118,7 @@ export const useDetailStore = create<detailStore>()(
 
       setService: (service) => set({ selectedService: service }),
 
-      setVariant: (id: number, price_delta: number) =>
+      setVariant: (id: number, price_delta: number, name: string) =>
         set((state) => {
           const updated = {
             ...state.selectedService,
@@ -90,7 +128,7 @@ export const useDetailStore = create<detailStore>()(
 
           return {
             selectedService: updated,
-            selectedVariant: { id, price_delta } as ServiceVariant,
+            selectedVariant: { id, price_delta, name } as ServiceVariant,
           };
         }),
 

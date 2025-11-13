@@ -1,60 +1,66 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FaChevronLeft, FaMapMarkerAlt } from "react-icons/fa";
-import { IoIosArrowDown } from "react-icons/io";
+import { FaChevronLeft } from "react-icons/fa";
+// import { IoIosArrowDown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { es } from "react-day-picker/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { renderToStaticMarkup } from "react-dom/server";
+// import { renderToStaticMarkup } from "react-dom/server";
 
-import { MapContainer } from "react-leaflet/MapContainer";
-import { useMapEvents } from "react-leaflet";
-import { TileLayer } from "react-leaflet/TileLayer";
-import { Marker } from "react-leaflet/Marker";
-import { Popup } from "react-leaflet";
-import { divIcon } from "leaflet";
-import "leaflet/dist/leaflet.css";
+// import { MapContainer } from "react-leaflet/MapContainer";
+// import { useMapEvents } from "react-leaflet";
+// import { TileLayer } from "react-leaflet/TileLayer";
+// import { Marker } from "react-leaflet/Marker";
+// import { Popup } from "react-leaflet";
+// import { divIcon } from "leaflet";
+// import "leaflet/dist/leaflet.css";
 import { useProfileStore } from "@/store/profile.store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useServiceStore } from "@/store/service.store";
 import {
   getAvailableDatesByService,
   type AvailableDates,
 } from "../services/getAvailableDatesByService";
 import { format } from "date-fns";
+import { useDetailStore } from "@/store/detail";
+import type { Address } from "@/domains/address/pages/AddressPage";
+import { supabase } from "@/lib/supabaseClient";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
-function MapEvents({
-  onMapClick,
-}: {
-  onMapClick: (lat: number, lng: number) => void;
-}) {
-  useMapEvents({
-    click: (e) => {
-      const { lat, lng } = e.latlng;
-      onMapClick(lat, lng);
-    },
-  });
-  return null;
-}
+// function MapEvents({
+//   onMapClick,
+// }: {
+//   onMapClick: (lat: number, lng: number) => void;
+// }) {
+//   useMapEvents({
+//     click: (e) => {
+//       const { lat, lng } = e.latlng;
+//       onMapClick(lat, lng);
+//     },
+//   });
+//   return null;
+// }
 
-const createCustomIcon = () => {
-  const iconMarkup = renderToStaticMarkup(
-    <FaMapMarkerAlt className="text-[#D86C00] text-2xl" />
-  );
+// const createCustomIcon = () => {
+//   const iconMarkup = renderToStaticMarkup(
+//     <FaMapMarkerAlt className="text-[#D86C00] text-2xl" />
+//   );
 
-  return divIcon({
-    html: iconMarkup,
-    iconSize: [32, 32],
-    iconAnchor: [14, 28],
-    popupAnchor: [0, -28],
-    className: "custom-marker-icon",
-  });
-};
+//   return divIcon({
+//     html: iconMarkup,
+//     iconSize: [32, 32],
+//     iconAnchor: [14, 28],
+//     popupAnchor: [0, -28],
+//     className: "custom-marker-icon",
+//   });
+// };
 
 export default function GroomingCalendarPage() {
   const { selectedService } = useServiceStore();
+  const navigate = useNavigate();
 
   const [availableDates, setAvailableDates] = useState<AvailableDates[]>([]);
 
@@ -87,32 +93,39 @@ export default function GroomingCalendarPage() {
     return today;
   };
 
+  const { selectedDateService, setSelectedDateService } = useDetailStore();
+
+  useEffect(() => {
+    setSelectedDateService(getInitialDate());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // 🗓️ Estados locales
-  const [date, setDate] = useState<Date | undefined>(getInitialDate());
+  // const [date, setDate] = useState<Date | undefined>(getInitialDate());
   // const [period, setPeriod] = useState<"AM" | "PM" | null>(null);
-  const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
+  // const [isMapOpen, setIsMapOpen] = useState<boolean>(true);
   const [isReserving, setIsReserving] = useState<boolean>(false);
   const [isReserved, setIsReserved] = useState<boolean>(false);
 
   // 📍 Información de dirección y coordenadas
   const { profile } = useProfileStore();
 
-  const [coordinates, setCoordinates] = useState({
+  const coordinates = {
     lat: -12.046374,
     lng: -77.042793,
-  });
+  };
 
-  const customIcon = createCustomIcon();
+  // const customIcon = createCustomIcon();
 
   // 📍 Manejador del clic en el mapa
-  const handleMapClick = (lat: number, lng: number) => {
-    setCoordinates({ lat, lng });
-  };
+  // const handleMapClick = (lat: number, lng: number) => {
+  //   setCoordinates({ lat, lng });
+  // };
 
   // 🎯 Función para manejar la reserva
   const handleReserve = async () => {
-    if (!date || isReserved) {
-      alert("Por favor, complete todos los campos.");
+    if (!selectedDateService || isReserved) {
+      toast.warning("Por favor, complete todos los campos.");
       return;
     }
 
@@ -120,7 +133,7 @@ export default function GroomingCalendarPage() {
 
     // Crear objeto con toda la información
     const reservationData = {
-      date: date,
+      date: selectedDateService,
       // period: period,
       address: {
         label: profile.label_address,
@@ -135,14 +148,65 @@ export default function GroomingCalendarPage() {
 
       setIsReserving(false);
       setIsReserved(true); // ✅ Esta línea se mantiene permanentemente
+      navigate("/shopping");
     }, 2000);
   };
 
   // Habilitar botón Continuar solo si hay reserva exitosa
-  const isContinueEnabled = isReserved;
+  // const isContinueEnabled = isReserved;
 
   // Deshabilitar botón Reservar si ya está reservado
-  const isReserveDisabled = isReserving || !date || isReserved;
+  const isReserveDisabled = isReserving || !selectedDateService || isReserved;
+
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedId, setSelectedId] = useState<string | null>(
+    addresses.find((a) => a.is_default)?.id ?? null
+  );
+
+  useEffect(() => {
+    setSelectedId(addresses.find((a) => a.is_default)?.id ?? null);
+  }, [addresses]);
+
+  const handleSelect = (id: string) => {
+    setSelectedId(id);
+  };
+
+  const fetchAddresses = async () => {
+    try {
+      setLoading(true);
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("user_addresses")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("is_default", { ascending: false });
+
+      if (error) {
+        console.error("Error obteniendo direcciones:", error);
+      } else {
+        setAddresses(data || []);
+      }
+    } catch (error) {
+      console.error("Error en fetchAddresses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
 
   return (
     <div className="w-full flex flex-col gap-8 items-center justify-center overflow-hidden">
@@ -153,11 +217,11 @@ export default function GroomingCalendarPage() {
           Horarios disponibles
         </h2>
 
-        <Link to={"/shopping"}>
+        {/* <Link to={"/shopping"}>
           <Button className="flex w-fit" disabled={!isContinueEnabled}>
             Continuar
           </Button>
-        </Link>
+        </Link> */}
       </div>
 
       {/* Contenido principal */}
@@ -168,9 +232,9 @@ export default function GroomingCalendarPage() {
           <div className="w-full flex flex-col gap-4 mt-3">
             <Calendar
               mode="single"
-              selected={date}
-              onSelect={setDate}
-              defaultMonth={date}
+              selected={selectedDateService}
+              onSelect={setSelectedDateService}
+              defaultMonth={selectedDateService}
               numberOfMonths={1}
               locale={es}
               className="w-full p-2 rounded-2xl !bg-[#f5f5f5]"
@@ -282,46 +346,6 @@ export default function GroomingCalendarPage() {
                 },
               }}
             />
-            {/* Botones AM / PM */}
-            {/* <div className="w-full flex items-start justify-between">
-              <div className="flex items-center gap-2 bg-[#f5f5f5] rounded-2xl">
-                <Button
-                  onClick={() => setPeriod("AM")}
-                  className={cn(
-                    "h-11 rounded-2xl ",
-                    period === "AM"
-                      ? "bg-[#2EA937] text-white border-[#2EA937] hover:bg-[#2EA937]"
-                      : "bg-transparent hover:bg-transparent text-black"
-                  )}
-                >
-                  AM
-                </Button>
-                <Button
-                  onClick={() => setPeriod("PM")}
-                  className={cn(
-                    "h-11 rounded-2xl ",
-                    period === "PM"
-                      ? "bg-[#2EA937] text-white border-[#2EA937] hover:bg-[#2EA937]"
-                      : "bg-transparent hover:bg-transparent text-black"
-                  )}
-                >
-                  PM
-                </Button>
-              </div>
-
-              <div className="rounded-md flex items-center justify-center flex-col text-center gap-2 p-4 bg-[#f5f5f5]">
-                <h3 className="text-[#0085D8] text-sm font-semibold">
-                  Horarios disponibles
-                </h3>
-                {period ? (
-                  <span className="text-4xl font-bold text-[#D86C00]">6</span>
-                ) : (
-                  <p className="text-black/50 text-xs max-w-[20ch]">
-                    Seleccione AM o PM para revisar los horarios
-                  </p>
-                )}
-              </div>
-            </div> */}
           </div>
         </div>
 
@@ -347,13 +371,58 @@ export default function GroomingCalendarPage() {
           )}
         </Button>
 
-        <hr className="w-full mt-6 bg-gray-600" />
+        <hr className="w-full mt-2 bg-gray-600" />
 
         {/* 📍 Sección de ubicación */}
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-3">
           <h2 className="text-xl font-bold">Ubicación</h2>
 
-          <div className="w-full flex items-center justify-between mt-4">
+          {loading ? (
+            <div className="text-center py-8 text-gray-500">
+              Cargando direcciones...
+            </div>
+          ) : addresses.length === 0 ? (
+            <div className="text-center py-8 space-y-4">
+              <p className="text-gray-500">No tienes direcciones registradas</p>
+              <Link to="/address/register">
+                <Button className="bg-black text-white">
+                  Agregar dirección
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {addresses.map((address) => (
+                <div
+                  key={address.id}
+                  className="border border-gray-200 rounded-lg p-2 space-y-3 flex items-center justify-between"
+                >
+                  <div className="flex flex-col m-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-sm">{address.alias}</h3>
+                      {address.is_default && (
+                        <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">
+                          Predeterminada
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {address.address}
+                    </p>
+                  </div>
+
+                  <div className="flex">
+                    <Checkbox
+                      checked={selectedId === address.id}
+                      onCheckedChange={() => handleSelect(address.id)}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* <div className="w-full flex items-center justify-between mt-4">
             <div>
               <div className="flex items-center gap-x-2 text-base font-bold">
                 {profile.label_address}{" "}
@@ -377,12 +446,12 @@ export default function GroomingCalendarPage() {
                 strokeWidth={12}
               />
             </button>
-          </div>
+          </div> */}
 
-          <div className="w-full h-[1px] mt-2 bg-gray-300" />
+          {/* <div className="w-full h-[1px] mt-2 bg-gray-300" /> */}
 
           {/* 🗺️ Contenedor del mapa */}
-          <div
+          {/* <div
             className={cn(
               "w-full overflow-hidden rounded-xl mt-3 relative z-0 transition-all duration-300 ease-in-out",
               isMapOpen ? "h-[200px]" : "h-0"
@@ -426,7 +495,7 @@ export default function GroomingCalendarPage() {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

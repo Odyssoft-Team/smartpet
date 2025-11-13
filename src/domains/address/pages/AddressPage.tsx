@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { IoIosArrowBack } from "react-icons/io";
 import { supabase } from "@/lib/supabaseClient";
 
-interface Address {
+export interface Address {
   id: string;
   alias: string;
   address: string;
@@ -14,10 +14,6 @@ interface Address {
 export default function AddressPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchAddresses();
-  }, []);
 
   const fetchAddresses = async () => {
     try {
@@ -50,8 +46,14 @@ export default function AddressPage() {
     }
   };
 
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
+
   const handleDelete = async (id: string) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar esta dirección?")) {
+    if (
+      window.confirm("¿Estás seguro de que deseas eliminar esta dirección?")
+    ) {
       try {
         const { error } = await supabase
           .from("user_addresses")
@@ -87,7 +89,9 @@ export default function AddressPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-8 text-gray-500">Cargando direcciones...</div>
+          <div className="text-center py-8 text-gray-500">
+            Cargando direcciones...
+          </div>
         ) : addresses.length === 0 ? (
           <div className="text-center py-8 space-y-4">
             <p className="text-gray-500">No tienes direcciones registradas</p>
@@ -112,7 +116,9 @@ export default function AddressPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">{address.address}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {address.address}
+                    </p>
                   </div>
                 </div>
 

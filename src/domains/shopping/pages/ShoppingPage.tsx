@@ -12,10 +12,13 @@ import { Button } from "@/components/ui/button";
 import { HiPencil } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
 import { PaymentSuccess } from "../components/DialogSucessPay";
+import { useDetailStore } from "@/store/detail";
 
 export default function ShoppingPage() {
   // const { selectedService, setSelectedService } = useServiceStore();
   const { selectedService } = useServiceStore();
+  const { selectedService: selectedServiceBeta, listAdditionalServices } =
+    useDetailStore();
   const navigate = useNavigate();
 
   const hasService = selectedService && Object.keys(selectedService).length > 0;
@@ -91,21 +94,7 @@ export default function ShoppingPage() {
                 Fidel <PiDogFill className="size-5" />
               </h2>
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2">
-                  {/* {service && (
-                    <span className="text-xs text-[#2EA937]">Servicio (1)</span>
-                  )}
-                  {extras.length > 0 && (
-                    <span className="text-xs text-[#2EA937]">
-                      {"- "} Adicionales ({extras.length})
-                    </span>
-                  )}
-                  {!service && extras.length === 0 && (
-                    <span className="text-xs text-[#D86C00]">
-                      Sin opciones seleccionadas
-                    </span>
-                  )} */}
-                </div>
+                <div className="flex items-center gap-2"></div>
                 <Link
                   to={"/services/grooming/2"}
                   className="size-5 flex items-center justify-center rounded-full bg-gray-200"
@@ -120,7 +109,7 @@ export default function ShoppingPage() {
                 <h3 className="flex items-center gap-x-2 font-medium -mb-2">
                   {selectedService.service_name}
                   <span className="text-xs flex items-center gap-x-1 text-gray-400">
-                    <CiClock2 strokeWidth={1} /> {selectedService.time}
+                    <CiClock2 strokeWidth={1} /> {selectedService.time} min.
                   </span>
                 </h3>
                 <span className="text-sm text-gray-400">
@@ -128,9 +117,29 @@ export default function ShoppingPage() {
                 </span>
               </div>
 
-              {/* <h3 className="w-fit font-bold text-sm text-[#D86C00]">
-                S/.{selectedService.price}
-              </h3> */}
+              <h3 className="w-fit font-bold text-sm text-[#D86C00]">
+                S/.{selectedServiceBeta?.price_delta}
+              </h3>
+            </div>
+
+            <div className="w-full flex justify-between items-center">
+              {listAdditionalServices.map((item) => {
+                return (
+                  <div className="w-full flex justify-between items-center">
+                    <div className="w-fit">
+                      <h3 className="flex items-center gap-x-2 font-medium -mb-2">
+                        {item.name}
+                      </h3>
+                      <span className="text-sm text-gray-400">
+                        {item.description}
+                      </span>
+                    </div>
+                    <h3 className="w-fit font-bold text-sm text-[#D86C00]">
+                      S/.{item?.price}
+                    </h3>
+                  </div>
+                );
+              })}
             </div>
 
             {/* <div>
