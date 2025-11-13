@@ -97,17 +97,6 @@ export default function MypetsPage() {
         >
           Mis mascotas
         </Button>
-
-        <Link to="/register-pet/step1">
-          <div className="flex gap-1 items-center py-2 rounded-lg border border-green-600 p-2">
-            <div className="flex items-center gap-2">
-              <PiPlusBold className="size-4 text-green-600" strokeWidth={10} />
-              <div className="text-green-600 font-medium text-sm">
-                Nueva Mascota
-              </div>
-            </div>
-          </div>
-        </Link>
       </div>
       <div className="mt-6 w-full max-w-md mx-auto">
         <div className="w-full flex flex-col gap-3">
@@ -153,10 +142,16 @@ export default function MypetsPage() {
                     )}
                     <div className="flex flex-col items-start w-full">
                       <div className="flex gap-x-1 items-center">
-                        <span className="text-base text-black capitalize">
+                        <span className="text-base text-black font-semibold capitalize">
                           {pet.name}
                         </span>
                       </div>
+                      <span className="text-xs text-gray-700">
+                        {/* Raza:{" "} */}
+                        <span className="font-medium">
+                          {breed?.name || "—"}
+                        </span>
+                      </span>
                       <span className="text-xs text-gray-500">
                         Edad:{" "}
                         <span className="font-medium">
@@ -165,16 +160,10 @@ export default function MypetsPage() {
                             : "—"}
                         </span>
                       </span>
-                      <span className="text-xs text-gray-500 capitalize">
+                      <span className="text-xs text-gray-500 capitalize hidden">
                         Especie:
                         <span className="font-medium">
                           {specie?.name || "—"}
-                        </span>
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        Raza:{" "}
-                        <span className="font-medium">
-                          {breed?.name || "—"}
                         </span>
                       </span>
                     </div>
@@ -209,6 +198,18 @@ export default function MypetsPage() {
                 );
               })}
         </div>
+      </div>
+      <div className="fixed bottom-20 w-full left-0 right-0 px-6">
+        <Link to="/register-pet/step1">
+          <div className="flex gap-1 items-center py-3 rounded-2xl bg-green-600 px-auto justify-center">
+            <div className="flex items-center gap-2">
+              <PiPlusBold className="size-4 text-white" strokeWidth={10} />
+              <div className="text-white font-medium text-sm">
+                Nueva Mascota
+              </div>
+            </div>
+          </div>
+        </Link>
       </div>
     </div>
   );

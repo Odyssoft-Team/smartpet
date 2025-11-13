@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 
 import { HiHome } from "react-icons/hi2";
-import { FaBell, FaPaw, FaShoppingCart, FaUser } from "react-icons/fa";
+import { FaPaw, FaStethoscope, FaUser } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 
 export default function MenuBottom() {
@@ -10,8 +10,8 @@ export default function MenuBottom() {
   const menuItems = [
     { to: "/", label: "Inicio", icon: HiHome },
     { to: "/mypets", label: "Servicios", icon: FaPaw },
-    { to: "/shopping", label: "Compras", icon: FaShoppingCart },
-    { to: "/notifications", label: "Notificaciones", icon: FaBell },
+    /* { to: "/shopping", label: "Compras", icon: FaShoppingCart }, */
+    { to: "/notifications", label: "Ficha Médica", icon: FaStethoscope },
     { to: "/profile", label: "Perfil", icon: FaUser },
   ];
   return (
