@@ -117,7 +117,7 @@ export default function ShoppingPage() {
           <div className="w-full flex flex-col gap-3">
             <div className="w-full flex items-center justify-between">
               <h2 className="flex items-center gap-2 font-bold">
-                {selectedServiceBeta?.pet_name} <PiDogFill className="size-5" />
+                {selectedPet?.name} <PiDogFill className="size-5" />
               </h2>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2"></div>

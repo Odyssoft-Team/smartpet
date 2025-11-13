@@ -97,7 +97,12 @@ export default function HomePage() {
     const onSelect = () => {
       const idx = api.selectedScrollSnap();
       setIdxCarousel(idx);
-      setSelectedPet(listPets[idx]);
+      if (selectedPet) {
+        const idx_temp = listPets.findIndex((pet) => pet.id === selectedPet.id);
+        setSelectedPet(listPets[idx_temp]);
+      } else {
+        setSelectedPet(listPets[idx]);
+      }
       setPetAndUser(
         listPets[idx].user_id,
         Number(listPets[idx].id),
@@ -111,7 +116,7 @@ export default function HomePage() {
     return () => {
       api.off("select", onSelect);
     };
-  }, [api, listPets, setSelectedPet, setPetAndUser]);
+  }, [api, listPets, setSelectedPet, setPetAndUser, selectedPet]);
 
   // ✅ Mover el carousel cuando cambia el índice externamente (por ej. desde el combobox)
   useEffect(() => {
@@ -126,14 +131,16 @@ export default function HomePage() {
 
       if (data && Array.isArray(data)) {
         setListPets(data);
-        setSelectedPet(data[0]);
-        setPetAndUser(data[0].user_id, Number(data[0].id), data[0].name);
+        if (!selectedPet) {
+          setSelectedPet(data[0]);
+          setPetAndUser(data[0].user_id, Number(data[0].id), data[0].name);
+        }
       }
     } catch (error) {
       console.error("Error obteniendo las mascotas:", error);
       toast.error("No se pudieron cargar las mascotas");
     }
-  }, [setListPets, setSelectedPet, setPetAndUser]);
+  }, [setListPets, setSelectedPet, setPetAndUser, selectedPet]);
 
   useEffect(() => {
     fetchPets();
@@ -390,7 +397,7 @@ export default function HomePage() {
 
         <div className="flex flex-col gap-3">
           {listOrderServices.length > 0 &&
-            listOrderServices.map((item) => {
+            listOrderServices.slice(0, 3).map((item) => {
               return (
                 <Card
                   className="p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]"

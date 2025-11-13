@@ -58,6 +58,9 @@ export default function GroomingServicesPage() {
     listAdditionalServices: selected,
     totalAdditionalServices,
     toggleAdditionalService,
+    setPetAndUser,
+    selectedPet,
+    setSelectedPet,
   } = useDetailStore();
 
   const [variants, setVariants] = useState<ServiceVariant[]>([]);
@@ -87,8 +90,7 @@ export default function GroomingServicesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setVariants]);
 
-  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-    const { profile } = useProfileStore();
+  const { profile } = useProfileStore();
   const [listAddress, setListAddress] = useState<AddressByUser[]>([]);
   const [addressSelected, setAddressSelected] = useState<AddressByUser | null>(
     null
@@ -128,22 +130,25 @@ export default function GroomingServicesPage() {
   const isContinueEnabled = true;
 
   const fetchPets = useCallback(async () => {
-      try {
-        const data = await getPetsByUser();
-  
-        if (data && Array.isArray(data)) {
-          setListPets(data);
+    try {
+      const data = await getPetsByUser();
+
+      if (data && Array.isArray(data)) {
+        setListPets(data);
+        if (!selectedPet) {
           setSelectedPet(data[0]);
+          setPetAndUser(data[0].user_id, Number(data[0].id), data[0].name);
         }
-      } catch (error) {
-        console.error("Error obteniendo las mascotas:", error);
-        toast.error("No se pudieron cargar las mascotas");
       }
-    }, [setListPets]);
-  
-    useEffect(() => {
-      fetchPets();
-    }, [fetchPets]);
+    } catch (error) {
+      console.error("Error obteniendo las mascotas:", error);
+      toast.error("No se pudieron cargar las mascotas");
+    }
+  }, [setListPets, selectedPet, setSelectedPet, setPetAndUser]);
+
+  useEffect(() => {
+    fetchPets();
+  }, [fetchPets]);
   const fetchAddress = async () => {
     const data = await getAddressByUser(profile.id);
     if (data) {
