@@ -23,6 +23,7 @@ type EditPetFormValues = {
   name: string;
   weight: string;
   breed: string;
+  breed_id: number;
   birth_date?: string;
   allergies?: string;
   special_condition?: string;
@@ -88,7 +89,8 @@ export default function EditPage() {
       const payload: Partial<Pet> = {
         name: data.name,
         weight: data.weight ? parseFloat(data.weight) : null,
-        breed: data.breed || undefined,
+        // breed: data.breed || undefined,
+        breed_id: data.breed_id,
         birth_date: data.birth_date || null,
         allergies: data.allergies || null,
         special_condition: data.special_condition || null,
