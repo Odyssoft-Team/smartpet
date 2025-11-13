@@ -179,7 +179,7 @@ export default function GroomingServicesPage() {
                             "data-[state=active]:border-neutral-500"
                         )}
                       >
-                        <h3 className="text-base">{mergedItem.commend}</h3>
+                        <h3 className="text-base font-semibold">{mergedItem.commend}</h3>
                         <div className="w-full px-4">
                           <p className="text-[12px] text-black text-left">
                           {mergedItem.description ||

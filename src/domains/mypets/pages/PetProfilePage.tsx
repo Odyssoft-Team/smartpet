@@ -97,7 +97,7 @@ export default function PetProfilePage() {
         </Link>
       </div>
 
-      <div className="w-full max-w-md rounded-xl p-4 items-center">
+      <div className="w-full max-w-md rounded-xl items-center">
         <div className="items-center mb-6 flex gap-4">
           <div className="relative h-40 mb-4 w-2/5">
             {selectedPet.photo_url ? (
@@ -134,12 +134,12 @@ export default function PetProfilePage() {
                 : "—"}
             </p> */}
             <div className="border-t border-gray-200 my-4" />
-            <h3 className="mt-4">Alergias</h3>
-            <p className="text-gray-500 text-sm">
-              Alergias: {selectedPet.allergies || "Sin alergias"}
+            <h3 className="mt-4 text-cyan-600 font-bold">Alergias y condiciones</h3>
+            <p className="text-green-600 text-sm">
+              {/* Alergias:  */}{selectedPet.allergies || "Sin alergias"}
             </p>
             <p className="text-gray-500 text-sm">
-              Condición especial: {selectedPet.special_condition || "—"}
+              {/* Condición especial:  */}{selectedPet.special_condition || "Sin condición especial"}
             </p>
             {/* <p className="text-gray-500 text-sm">
               Comportamiento social: {selectedPet.social_behavior || "—"}
@@ -156,19 +156,19 @@ export default function PetProfilePage() {
               <Link to={`/pets/${selectedPet.id}/vaccines`} className="">
                 <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
                   <FaSyringe style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
-                  <span className="mt-2">Vacunas</span>
+                  <span className="mt-2 text-sm">Vacunas</span>
                 </Button>
               </Link>
               <Link to={`/pets/${selectedPet.id}/deworming`}>
                 <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
                   <FaWorm style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
-                  <span className="mt-2">Revisiones</span>
+                  <span className="mt-2 text-sm">Revisiones</span>
                 </Button>
               </Link>
               <Link to={`/pets/${selectedPet.id}/deworming`}>
                 <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
                   <FaWorm style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
-                  <span className="mt-2">Desparasitación</span>
+                  <span className="mt-2 text-sm">Desparasitación</span>
                 </Button>
               </Link>
             </div>
