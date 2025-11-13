@@ -7,7 +7,7 @@ import { usePetStore } from "@/store/pets.store";
 import { MdOutlinePets } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { deletePet } from "../services/deletePet";
-import { getAllSpecies, type Species } from "../services/getAllSpecies";
+//import { getAllSpecies, type Species } from "../services/getAllSpecies";
 import { getAllBreeds, type Breed } from "../services/getAllBreeds";
 import { Plus, Trash2 } from "lucide-react";
 import { FaSyringe } from "react-icons/fa";
@@ -17,10 +17,10 @@ export default function PetProfilePage() {
 
   const navigate = useNavigate();
 
-  const [listSpecies, setListSpecies] = useState<Species[]>([]);
+  //const [listSpecies, setListSpecies] = useState<Species[]>([]);
   const [listBreeds, setListBreeds] = useState<Breed[]>([]);
 
-  useEffect(() => {
+/*   useEffect(() => {
     const fetchSpecies = async () => {
       const data = await getAllSpecies();
       if (data) {
@@ -29,7 +29,7 @@ export default function PetProfilePage() {
     };
 
     fetchSpecies();
-  }, []);
+  }, []); */
 
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -42,7 +42,7 @@ export default function PetProfilePage() {
     fetchBreeds();
   }, []);
 
-  const specie = listSpecies.find((s) => s.id === selectedPet?.species_id);
+  //const specie = listSpecies.find((s) => s.id === selectedPet?.species_id);
   const breed = listBreeds.find((b) => b.id === selectedPet?.breed_id);
 
   const handleDelete = async () => {
@@ -68,7 +68,7 @@ export default function PetProfilePage() {
 
   if (!selectedPet) return null;
 
-  function getAge(birthDateString: string): number {
+/*   function getAge(birthDateString: string): number {
     const birthDate = new Date(birthDateString);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -80,7 +80,7 @@ export default function PetProfilePage() {
       age--;
     }
     return age;
-  }
+  } */
 
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white min-h-screen">
