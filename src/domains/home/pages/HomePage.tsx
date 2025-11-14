@@ -11,6 +11,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { IoChevronForward } from "react-icons/io5";
+import { LuMapPinPlus } from "react-icons/lu";
 import { LuDog } from "react-icons/lu";
 
 import { Separator } from "@/components/ui/separator";
@@ -32,14 +33,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IoIosArrowDown } from "react-icons/io";
-import {
-  Calendar,
-  CheckCheckIcon,
-  MapPinCheck,
-  Plus,
-  Repeat,
-} from "lucide-react";
-
+import { Calendar, CheckCheckIcon, MapPinCheck, Plus } from "lucide-react";
+import add_pet from "@/assets/home/add-pet.png";
 import fondo from "@/assets/home/fondo_pet.png";
 
 type Service = {
@@ -216,48 +211,59 @@ export default function HomePage() {
     <div className="w-full flex flex-col gap-4">
       {/* HEADER */}
       <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            className="text-white flex items-center gap-2"
-            asChild
-          >
+        {listAddress?.length > 0 ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="text-white flex items-center gap-2"
+              asChild
+            >
+              <Button
+                size="lg"
+                className="px-3 max-w-[13rem] bg-transparent hover:bg-transparent !p-0"
+              >
+                <MapPinCheck />
+                <span className="truncate font-medium text-sm">
+                  {addressSelected?.address}
+                </span>
+                <IoIosArrowDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-full rounded-lg"
+              align="start"
+              sideOffset={4}
+            >
+              {listAddress.map((team) => (
+                <DropdownMenuItem
+                  key={team.id}
+                  onClick={() => {
+                    setAddressSelected(team);
+                  }}
+                  className="gap-2 p-2"
+                >
+                  {team.address}
+                  {team.address === addressSelected?.address && (
+                    <DropdownMenuShortcut>
+                      <CheckCheckIcon className="mx-2 h-4 w-4 text-green-500" />
+                    </DropdownMenuShortcut>
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Link to="/address/register">
             <Button
               size="lg"
-              className="px-3 max-w-[13rem] bg-transparent hover:bg-transparent !p-0"
+              className="px-3 max-w-[13rem] bg-transparent hover:bg-transparent !p-0 flex items-center gap-x-1"
             >
-              <MapPinCheck />{" "}
-              <span className="truncate font-medium text-sm">
-                {addressSelected?.address}
-              </span>
-              <IoIosArrowDown />
+              <LuMapPinPlus /> Añadir nueva dirección
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-full rounded-lg"
-            align="start"
-            sideOffset={4}
-          >
-            {listAddress.map((team) => (
-              <DropdownMenuItem
-                key={team.id}
-                onClick={() => {
-                  setAddressSelected(team);
-                }}
-                className="gap-2 p-2"
-              >
-                {team.address}
-                {team.address === addressSelected?.address && (
-                  <DropdownMenuShortcut>
-                    <CheckCheckIcon className="mx-2 h-4 w-4 text-green-500" />
-                  </DropdownMenuShortcut>
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </Link>
+        )}
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild hidden={listPets.length === 0}>
             <Button size="lg" className="px-3 bg-cyan-600">
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
@@ -334,54 +340,68 @@ export default function HomePage() {
             <IoChevronForward />
           </span>
           <p className="text-xs text-[#0085D8] font-normal">
-            Desliza para alternar entre mascotas
+            {listPets.length > 0
+              ? "Desliza para alternar entre mascotas"
+              : "Añadir una mascota"}
           </p>
         </h2>
 
-        <Carousel
-          opts={{
-            align: "start",
-          }}
-          setApi={setApi}
-          className="w-full"
-        >
-          <CarouselContent>
-            {listPets.map((pet) => (
-              <CarouselItem key={pet.id}>
-                <Card className="p-0 rounded-md overflow-hidden">
-                  <CardContent className="flex items-center justify-center p-0 w-full h-[7rem] relative">
-                    <div className="w-full absolute flex items-center justify-center gap-4">
-                      {/* <img
+        {listPets.length > 0 ? (
+          <Carousel
+            opts={{
+              align: "start",
+            }}
+            setApi={setApi}
+            className="w-full"
+          >
+            <CarouselContent>
+              {listPets.map((pet) => (
+                <CarouselItem key={pet.id}>
+                  <Card className="p-0 rounded-md overflow-hidden">
+                    <CardContent className="flex items-center justify-center p-0 w-full h-[7rem] relative">
+                      <div className="w-full absolute flex items-center justify-center gap-4">
+                        {/* <img
                         className="size-20 object-cover"
                         src={pet.photo_url as string}
                         alt={pet?.name}
                       /> */}
-                      <Avatar className="size-20">
-                        <AvatarImage
-                          src={pet.photo_url as string}
-                          alt={pet?.name}
-                        />
-                        <AvatarFallback className="font-bold text-xl">
-                          {pet?.name?.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <h2 className="font-bold text-white capitalize">
-                        {pet.name}
-                      </h2>
-                    </div>
-                    <img
-                      className="w-full h-full object-cover"
-                      src={fondo}
-                      alt="asds"
-                    />
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+                        <Avatar className="size-20">
+                          <AvatarImage
+                            src={pet.photo_url as string}
+                            alt={pet?.name}
+                          />
+                          <AvatarFallback className="font-bold text-xl">
+                            {pet?.name?.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <h2 className="font-bold text-white capitalize">
+                          {pet.name}
+                        </h2>
+                      </div>
+                      <img
+                        className="w-full h-full object-cover"
+                        src={fondo}
+                        alt="asds"
+                      />
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        ) : (
+          <Link to={"/register-pet/step1"}>
+            <div className="w-full h-[7rem] bg-[#F5F5F5] rounded-md shadow border-none p-0 flex items-center justify-center relative">
+              <img
+                src={add_pet}
+                alt="img-add-pet"
+                className="h-auto w-[65px]"
+              />
+            </div>
+          </Link>
+        )}
       </div>
 
       <Separator />
@@ -452,35 +472,14 @@ export default function HomePage() {
             })}
 
           {listOrderServices.length === 0 && (
-            <Card className="p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]">
-              <CardContent className="flex items-center justify-between pl-2 pr-4 w-full py-3">
-                <div className="flex items-center gap-3">
-                  <figure className="relative flex">
-                    <img
-                      className="size-15 rounded-full overflow-hidden object-cover"
-                      src={(listPets[0]?.photo_url as string) || fidel_avatar}
-                      alt="asds"
-                    />
-                    <span className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
-                      <Repeat className="size-7" />
-                    </span>
-                  </figure>
-                  <div className="flex flex-col gap-1">
-                    <h3 className="font-bold flex items-center gap-1 text-lg leading-[1]">
-                      {listPets[0]?.name} <LuDog className="size-6" />
-                    </h3>
-                    <p className="font-medium text-sm leading-[1]">
-                      Ducha y corte de pelo
-                    </p>
-                    <span className="text-muted-foreground text-xs">
-                      17 de julio - 3:00 pm
-                    </span>
-                  </div>
-                </div>
-
-                <Button>Repetir</Button>
-              </CardContent>
-            </Card>
+            <>
+              <div className="w-full h-[5rem] text-[#0085D8] text-[15px] font-medium flex justify-center items-center p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]">
+                ¡Contrate su primer servicio!
+              </div>
+              <span className="text-sm text-neutral-400 -mt-1 font-light">
+                Acá podrá visualizar el status de sus servicios
+              </span>
+            </>
           )}
         </div>
       </div>

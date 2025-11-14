@@ -260,6 +260,7 @@ export default function ProfilePage() {
     clearProfile();
     localStorage.removeItem("profile-storage");
     localStorage.removeItem("cards-storage");
+    localStorage.removeItem("detail-store");
     logout();
     navigate("/auth/login");
   };
