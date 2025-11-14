@@ -323,16 +323,18 @@ export default function GroomingCalendarPage() {
                     (temp_date?.max_capacity as number) -
                     (temp_date?.used_capacity as number);
 
+                  const isFull = capacity === 0;
                   return (
                     <button
                       {...props}
+                      disabled={capacity === 0}
                       className={cn(
-                        "text-sm transition-all flex flex-col w-10 h-15 border rounded-md bg-white justify-center items-center gap-1 text-black",
+                        "text-sm transition-all flex flex-col w-10 h-15 border rounded-md bg-white justify-center items-center gap-1",
                         isSelected
                           ? "bg-[#0085D8] text-white shadow-md scale-105"
-                          : isAvailable
-                            ? " "
-                            : "text-gray-400 opacity-50"
+                          : isAvailable && !isFull
+                            ? "text-black"
+                            : "text-gray-400 opacity-50 cursor-not-allowed" // ❗ estilo si está lleno/no disponible
                       )}
                     >
                       <span className="font-bold text-xs">

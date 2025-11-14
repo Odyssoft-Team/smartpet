@@ -389,7 +389,12 @@ export default function HomePage() {
       {/* Historial de Servicios */}
       <div className="w-full flex flex-col gap-2">
         <h2 className="font-bold flex items-center gap-3 text-base">
-          Historial de servicios{" "}
+          {listOrderServices.length > 0 &&
+          new Date(
+            `${listOrderServices[0].scheduled_date}T${listOrderServices[0].scheduled_time}`
+          ) < new Date()
+            ? "Historial de servicios"
+            : "Próximos servicios"}
           <span className="bg-[#F5F5F5] rounded-full p-1">
             <IoChevronForward />
           </span>
