@@ -19,28 +19,28 @@ import ProfileEditForm from "../components/ProfileEditForm";
 import Modal from "../components/Modal";
 import { AvatarUploader } from "../components/AvatarUploader";
 
-import { ListHistorial } from "@/data/historial";
+//import { ListHistorial } from "@/data/historial";
 import type { ListProfile } from "../utils/Profile";
 import type { Cards } from "../utils/Card";
-import fidel from "@/assets/pets/fidel-dog.png";
+//import fidel from "@/assets/pets/fidel-dog.png";
 import user_demo from "@/assets/profile/user-profile.jpg";
 
 import {
   // FaRegTrashAlt,
-  FaPlayCircle,
-  FaRegHeart,
-  FaRegClock,
+  //FaPlayCircle,
+  //FaRegHeart,
+  //FaRegClock,
   // FaPaw,
   FaCreditCard,
   // FaBook,
 } from "react-icons/fa";
-import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+import { /* IoIosArrowDown, */ IoIosArrowForward } from "react-icons/io";
 //import { FiArrowRightCircle } from "react-icons/fi";
 //import { IoIosArrowForward } from "react-icons/io";
 import { BiSolidEnvelope } from "react-icons/bi";
 import { MdPhoneEnabled } from "react-icons/md";
 // import { HiPencil } from "react-icons/hi";
-import { TbDog } from "react-icons/tb";
+//import { TbDog } from "react-icons/tb";
 import { useProfileStore } from "@/store/profile.store";
 import { useCardsStore } from "@/store/card.store";
 import { HiMapPin } from "react-icons/hi2";
@@ -53,14 +53,14 @@ export default function ProfilePage() {
   const { getCurrentUserProfile, updateProfile } = useProfiles();
   // const { loadUserCards, updateCard } = useCards();
 
-  const [openVideos, setOpenVideos] = useState<{ [key: string]: boolean }>({});
+/*   const [openVideos, setOpenVideos] = useState<{ [key: string]: boolean }>({});
 
   const toggleVideo = (itemId: string) => {
     setOpenVideos((prev) => ({
       ...prev,
       [itemId]: !prev[itemId],
     }));
-  };
+  }; */
 
   // estados y const de PROFILE
 
@@ -422,177 +422,6 @@ export default function ProfilePage() {
 
           <hr className="mt-6 bg-gray-600" />
 
-          {/* Historial */}
-          <div className="flex flex-col gap-y-2">
-            <h2 className="ml-4 mt-4 text-base font-bold">Historial</h2>
-            <div className="flex flex-col gap-y-3">
-              {ListHistorial.slice(0, 2).map((item, index) => (
-                <div key={item.id || index} className="flex flex-col">
-                  {/* info */}
-                  <div className="flex px-4 items-center justify-between">
-                    <div className="flex items-center gap-x-2">
-                      <div className="relative w-fit h-fit">
-                        <img
-                          src={item.img}
-                          alt={`hs-${index}`}
-                          className="size-15 rounded-full"
-                        />
-                        <div className="absolute inset-0 bg-white/50 rounded-full z-20 flex items-center justify-center">
-                          <FaRegClock className="size-5 text-black" />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex items-center font-bold gap-x-1">
-                          {item.name} <item.icon className="size-5" />
-                        </div>
-                        <p className="text-xs -mb-1">{item.description}</p>
-                        <span className="text-[12px] text-gray-400">
-                          {item.date}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => toggleVideo(item.id || `item-${index}`)}
-                      className="size-5 flex items-center justify-center rounded-full bg-gray-200"
-                    >
-                      <IoIosArrowDown
-                        className={cn(
-                          "size-4 text-black",
-                          openVideos[item.id || `item-${index}`]
-                            ? "rotate-0"
-                            : "rotate-180"
-                        )}
-                        strokeWidth={12}
-                      />
-                    </button>
-                  </div>
-
-                  {/* video */}
-                  <div
-                    className={cn(
-                      "w-full m-2 transition-all duration-300 ease-in-out rounded-xl relative overflow-hidden",
-                      openVideos[item.id || `item-${index}`]
-                        ? "h-[170px]"
-                        : "h-0"
-                    )}
-                  >
-                    <div className="absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 z-10 w-fit h-fit -mt-3">
-                      <FaPlayCircle className="size-10" />
-                    </div>
-                    <div className="absolute inset-0 bottom-0 left-5 text-2xl text-white/95">
-                      35:00
-                    </div>
-                    <img
-                      src={item.video}
-                      alt="img-banio"
-                      className="w-full h-full"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <h2 className="ml-4 text-sm text-sky-500">Mayo 2025</h2>
-
-            <div className="flex flex-col gap-y-3">
-              {ListHistorial.slice(2, 4).map((item, index) => (
-                <div key={item.id || index + 2} className="flex flex-col">
-                  {/* info */}
-                  <div className="flex px-4 items-center justify-between">
-                    <div className="flex items-center gap-x-2">
-                      <div className="relative w-fit h-fit">
-                        <img
-                          src={item.img}
-                          alt={`hs-${index + 2}`}
-                          className="size-15 rounded-full"
-                        />
-                        <div className="absolute inset-0 bg-white/50 rounded-full z-20 flex items-center justify-center">
-                          <FaRegClock className="size-5 text-black" />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex items-center font-bold gap-x-1">
-                          {item.name} <item.icon className="size-5" />
-                        </div>
-                        <p className="text-xs -mb-1">{item.description}</p>
-                        <span className="text-[12px] text-gray-400">
-                          {item.date}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() =>
-                        toggleVideo(item.id || `item-${index + 2}`)
-                      }
-                      className="size-5 flex items-center justify-center rounded-full bg-gray-200"
-                    >
-                      <IoIosArrowDown
-                        className={cn(
-                          "size-4 text-black",
-                          openVideos[item.id || `item-${index + 2}`]
-                            ? "rotate-0"
-                            : "rotate-180"
-                        )}
-                        strokeWidth={12}
-                      />
-                    </button>
-                  </div>
-
-                  {/* video */}
-                  <div
-                    className={cn(
-                      "w-full m-2 transition-all duration-300 ease-in-out rounded-xl relative overflow-hidden",
-                      openVideos[item.id || `item-${index + 2}`]
-                        ? "h-[170px]"
-                        : "h-0"
-                    )}
-                  >
-                    <div className="absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 z-10 w-fit h-fit -mt-3">
-                      <FaPlayCircle className="size-10" />
-                    </div>
-                    <div className="absolute inset-0 bottom-0 left-5 text-2xl text-white/95">
-                      35:00
-                    </div>
-                    <img
-                      src={item.video}
-                      alt="img-banio"
-                      className="w-full h-full"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <hr className="mt-2 bg-gray-600" />
-
-          {/* favoritos */}
-          <div className="space-y-2">
-            <div className="ml-4 mt-4 flex items-center gap-x-2 text-base font-bold">
-              Favoritos <FaRegHeart className="text-red-500" />
-            </div>
-            <div className="flex px-4 py-2 items-center justify-between bg-gray-200 rounded-xl mt-4 ">
-              <div className="flex items-center gap-x-2">
-                <img
-                  src={fidel}
-                  alt="img-fidel"
-                  className="size-15 rounded-full mr-2"
-                />
-
-                <div className="pl-4 border-l-[2px] border-gray-400">
-                  <div className="flex items-center font-bold gap-x-1">
-                    Fidel <TbDog className="size-5" />
-                  </div>
-                  <p className="text-xs -mb-1">Ducha y corte de pelo</p>
-                  <span className="text-[12px] text-gray-400">Gromming</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 

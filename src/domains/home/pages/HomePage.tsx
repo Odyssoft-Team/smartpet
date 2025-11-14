@@ -461,7 +461,7 @@ export default function HomePage() {
                     </div>
 
                     <Link
-                      to={"/activities"}
+                      to={`/activities/${item.id}`}
                       className="bg-primary text-white px-3 rounded-md py-1"
                     >
                       Ver

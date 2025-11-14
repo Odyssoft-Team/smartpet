@@ -55,6 +55,15 @@ const NotificationsPage = lazy(
 const ActivitiesPage = lazy(
   () => import("../domains/activities/pages/ActivitiesPage")
 );
+const ChatPage = lazy(
+  () => import("../domains/activities/pages/ChatPage")
+);
+const VideoCallPage = lazy(
+  () => import("../domains/activities/pages/VideoCallPage")
+);
+const RatingPage = lazy(
+  () => import("../domains/activities/pages/RatingPage")
+);
 const ProfilePage = lazy(() => import("../domains/profile/pages/ProfilePage"));
 const LoginPage = lazy(() => import("@/domains/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/domains/auth/pages/RegisterPage"));
@@ -84,6 +93,18 @@ const VaccineListPage = lazy(
 const VaccineFormPage = lazy(
   () => import("../domains/mypets/pages/VaccineFormPage")
 );
+const DewormingListPage = lazy(
+  () => import("../domains/mypets/pages/DewormingListPage")
+);
+const DewormingFormPage = lazy(
+  () => import("../domains/mypets/pages/DewormingFormPage")
+);
+const RevisionsListPage = lazy(
+  () => import("../domains/mypets/pages/RevisionsListPage")
+);
+const RevisionsFormPage = lazy(
+  () => import("../domains/mypets/pages/RevisionsFormPage")
+);
 
 const CallbackPage = lazy(() => import("@/domains/auth/pages/CallbackPage"));
 
@@ -109,7 +130,10 @@ export const router = createBrowserRouter([
           { path: "/services/grooming/3", element: <GroomingCalendarPage /> },
           { path: "/shopping", element: <ShoppingPage /> },
           { path: "/notifications", element: <NotificationsPage /> },
-          { path: "/activities", element: <ActivitiesPage /> },
+          { path: "/activities/:orderId", element: <ActivitiesPage /> },
+          { path: "/chat/:orderId", element: <ChatPage /> },
+          { path: "/video/:orderId", element: <VideoCallPage /> },
+          { path: "/rating/:orderId", element: <RatingPage /> },
           { path: "/profile", element: <ProfilePage /> },
           { path: "/address", element: <AddressPage /> },
           { path: "/address/register", element: <AddressRegisterPage /> },
@@ -123,6 +147,10 @@ export const router = createBrowserRouter([
           { path: "/pet-medical-profile", element: <PetMedicalProfilePage /> },
           { path: "/pets/:petId/vaccines", element: <VaccineListPage /> },
           { path: "/pets/:petId/vaccines/new", element: <VaccineFormPage /> },
+          { path: "/pets/:petId/deworming", element: <DewormingListPage /> },
+          { path: "/pets/:petId/deworming/new", element: <DewormingFormPage /> },
+          { path: "/pets/:petId/revisions", element: <RevisionsListPage /> },
+          { path: "/pets/:petId/revisions/new", element: <RevisionsFormPage /> },
           { path: "/register-pet/step1", element: <RegisterPetStep1 /> },
           { path: "/register-pet/step2", element: <RegisterPetStep2 /> },
           { path: "/register-pet/step3", element: <RegisterPetStep3 /> },

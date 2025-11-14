@@ -159,7 +159,7 @@ export default function PetProfilePage() {
                   <span className="mt-2 text-sm">Vacunas</span>
                 </Button>
               </Link>
-              <Link to={`/pets/${selectedPet.id}/deworming`}>
+              <Link to={`/pets/${selectedPet.id}/revisions`}>
                 <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
                   <FaWorm style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
                   <span className="mt-2 text-sm">Revisiones</span>
