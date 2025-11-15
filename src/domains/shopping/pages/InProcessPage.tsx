@@ -18,7 +18,12 @@ export default function InProcessPage() {
     reset,
   } = useDetailStore();
 
-  const hasProgress = !!selectedService;
+  const hasProgress =
+    !!selectedService &&
+    !!selectedVariant &&
+    !!selectedDateService &&
+    listAdditionalServices.length > 0 &&
+    totalAdditionalServices > 0;
 
   const handleContinue = () => {
     switch (lastStep) {
@@ -51,7 +56,12 @@ export default function InProcessPage() {
             </h2>
             <p>Mascota: {selectedPet?.name}</p>
             <p>Variante: {selectedVariant?.name}</p>
-            <p>Fecha: {format(selectedDateService as Date, "dd/MM/yyyy")}</p>
+            <p>
+              Fecha:{" "}
+              {selectedDateService
+                ? format(selectedDateService as Date, "dd/MM/yyyy")
+                : ""}
+            </p>
             <p>Adicionales ({listAdditionalServices.length}): </p>
             {listAdditionalServices.length > 0 && (
               <ul className="text-sm pl-5 list-disc">
