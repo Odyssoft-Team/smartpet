@@ -93,7 +93,8 @@ export default function GroomingCalendarPage() {
     return today;
   };
 
-  const { selectedDateService, setSelectedDateService } = useDetailStore();
+  const { selectedDateService, setSelectedDateService, setLastStep } =
+    useDetailStore();
 
   useEffect(() => {
     setSelectedDateService(getInitialDate());
@@ -206,6 +207,11 @@ export default function GroomingCalendarPage() {
 
   useEffect(() => {
     fetchAddresses();
+  }, []);
+
+  // guardar el estado del paso actual del proceso de venta
+  useEffect(() => {
+    setLastStep("calendar");
   }, []);
 
   return (

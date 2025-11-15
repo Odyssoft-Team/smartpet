@@ -61,6 +61,7 @@ export default function GroomingServicesPage() {
     setPetAndUser,
     selectedPet,
     setSelectedPet,
+    setLastStep,
   } = useDetailStore();
 
   const [variants, setVariants] = useState<ServiceVariant[]>([]);
@@ -164,6 +165,12 @@ export default function GroomingServicesPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.id]);
+
+  // guardar el estado del paso actual del proceso de venta
+  useEffect(() => {
+    setLastStep("variant");
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col gap-8 items-center justify-center">
       {/* HEADER */}

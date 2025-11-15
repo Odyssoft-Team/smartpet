@@ -11,7 +11,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { IoChevronForward } from "react-icons/io5";
-// import { MdOutlineLocalGroceryStore } from "react-icons/md";
+import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { LuMapPinPlus } from "react-icons/lu";
 import { LuDog } from "react-icons/lu";
 
@@ -208,6 +208,10 @@ export default function HomePage() {
     fetchOrderServices();
   }, []);
 
+  const { lastStep } = useDetailStore();
+
+  const hasProcess = lastStep !== null && lastStep !== undefined;
+
   return (
     <div className="w-full flex flex-col gap-4">
       {/* HEADER */}
@@ -263,8 +267,14 @@ export default function HomePage() {
           </Link>
         )}
 
-        <div className="flex items-center gap-x-1">
-          {/* <MdOutlineLocalGroceryStore className="size-6 text-white" /> */}
+        <div className="flex items-center gap-x-3">
+          <Link to={"/shopping/in-process"} className="relative">
+            <MdOutlineLocalGroceryStore className="size-6 text-white" />
+
+            {hasProcess && (
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white w-3 h-3 rounded-full"></span>
+            )}
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild hidden={listPets.length === 0}>
               <Button size="lg" className="px-3 bg-cyan-600">
@@ -564,10 +574,7 @@ export default function HomePage() {
                               <div className="w-15">
                                 <img
                                   className="size-12 rounded-full overflow-hidden object-cover"
-                                  src={
-                                    (listPets[0]?.photo_url as string) ||
-                                    fidel_avatar
-                                  }
+                                  src={fidel_avatar}
                                   alt="asds"
                                 />
                               </div>

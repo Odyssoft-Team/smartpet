@@ -60,6 +60,11 @@ type detailStore = {
   setTime: (time: string) => void;
   setServicePrice: (price_service: number) => void;
   setOptionsPrice: (options: ServiceOption[]) => void;
+
+  // ultimos pasos de la compra
+  lastStep: "home" | "variant" | "calendar" | "payment";
+  setLastStep: (step: detailStore["lastStep"]) => void;
+
   reset: () => void;
 };
 
@@ -167,6 +172,9 @@ export const useDetailStore = create<detailStore>()(
           return { selectedService: updated, selectedOptions: options };
         }),
 
+      lastStep: "home",
+      setLastStep: (step) => set({ lastStep: step }),
+
       reset: () =>
         // set({
         //   selectedService: null,
@@ -186,6 +194,8 @@ export const useDetailStore = create<detailStore>()(
           listAdditionalServices: [],
           totalAdditionalServices: 0,
           selectedDateService: undefined,
+
+          lastStep: "home", // reinicia último paso
         }),
     }),
     {
