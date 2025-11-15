@@ -61,6 +61,7 @@ export default function GroomingServicesPage() {
     setPetAndUser,
     selectedPet,
     setSelectedPet,
+    setLastStep,
   } = useDetailStore();
 
   const [variants, setVariants] = useState<ServiceVariant[]>([]);
@@ -164,6 +165,12 @@ export default function GroomingServicesPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.id]);
+
+  // guardar el estado del paso actual del proceso de venta
+  useEffect(() => {
+    setLastStep("variant");
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col gap-8 items-center justify-center">
       {/* HEADER */}
@@ -210,7 +217,7 @@ export default function GroomingServicesPage() {
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button size="lg" className="px-3 bg-red-600">
+            <Button size="lg" className="px-3">
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {selectedPet?.name}

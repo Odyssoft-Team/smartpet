@@ -11,6 +11,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { IoChevronForward } from "react-icons/io5";
+import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { LuMapPinPlus } from "react-icons/lu";
 import { LuDog } from "react-icons/lu";
 
@@ -213,6 +214,10 @@ export default function HomePage() {
     fetchOrderServices();
   }, []);
 
+  const { lastStep } = useDetailStore();
+
+  const hasProcess = lastStep !== null && lastStep !== undefined;
+
   return (
     <div className="w-full flex flex-col gap-4">
       {/* HEADER */}
@@ -268,74 +273,83 @@ export default function HomePage() {
           </Link>
         )}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild hidden={listPets.length === 0}>
-            <Button size="lg" className="px-3 bg-cyan-600">
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
-                  {selectedPet?.name}
-                </span>
-              </div>
+        <div className="flex items-center gap-x-3">
+          <Link to={"/shopping/in-process"} className="relative">
+            <MdOutlineLocalGroceryStore className="size-6 text-white" />
 
-              <Avatar className="size-7">
-                <AvatarImage
-                  src={selectedPet?.photo_url as string}
-                  alt={selectedPet?.name}
-                />
-                <AvatarFallback className="font-bold text-black">
-                  {selectedPet?.name?.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[12rem] rounded-lg"
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Mascotas
-            </DropdownMenuLabel>
-            {listPets.length > 0 &&
-              listPets.map((team) => (
-                <DropdownMenuItem
-                  key={team.name}
-                  onClick={() => {
-                    setSelectedPet(team);
-                    setIdxCarousel(listPets.indexOf(team));
-                  }}
-                  className="gap-2 p-2"
-                >
-                  <Avatar className="size-6">
-                    <AvatarImage
-                      src={team.photo_url as string}
-                      alt={team.name}
-                    />
-                    <AvatarFallback>
-                      {team.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  {team.name}
-                  {team.name === selectedPet?.name && (
-                    <DropdownMenuShortcut>
-                      <CheckCheckIcon className="mr-2 h-4 w-4 text-green-500" />
-                    </DropdownMenuShortcut>
-                  )}
+            {hasProcess && (
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white w-3 h-3 rounded-full"></span>
+            )}
+          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild hidden={listPets.length === 0}>
+              <Button size="lg" className="px-3 bg-cyan-600">
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">
+                    {selectedPet?.name}
+                  </span>
+                </div>
+
+                <Avatar className="size-7">
+                  <AvatarImage
+                    src={selectedPet?.photo_url as string}
+                    alt={selectedPet?.name}
+                  />
+                  <AvatarFallback className="font-bold text-black">
+                    {selectedPet?.name?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-[12rem] rounded-lg"
+              align="end"
+              sideOffset={4}
+            >
+              <DropdownMenuLabel className="text-muted-foreground text-xs">
+                Mascotas
+              </DropdownMenuLabel>
+              {listPets.length > 0 &&
+                listPets.map((team) => (
+                  <DropdownMenuItem
+                    key={team.name}
+                    onClick={() => {
+                      setSelectedPet(team);
+                      setIdxCarousel(listPets.indexOf(team));
+                    }}
+                    className="gap-2 p-2"
+                  >
+                    <Avatar className="size-6">
+                      <AvatarImage
+                        src={team.photo_url as string}
+                        alt={team.name}
+                      />
+                      <AvatarFallback>
+                        {team.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    {team.name}
+                    {team.name === selectedPet?.name && (
+                      <DropdownMenuShortcut>
+                        <CheckCheckIcon className="mr-2 h-4 w-4 text-green-500" />
+                      </DropdownMenuShortcut>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              <DropdownMenuSeparator />
+              <Link to={"/register-pet/step1"}>
+                <DropdownMenuItem className="gap-2 p-2">
+                  <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                    <Plus className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground font-medium">
+                    Agregar mascota
+                  </div>
                 </DropdownMenuItem>
-              ))}
-            <DropdownMenuSeparator />
-            <Link to={"/register-pet/step1"}>
-              <DropdownMenuItem className="gap-2 p-2">
-                <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                  <Plus className="size-4" />
-                </div>
-                <div className="text-muted-foreground font-medium">
-                  Agregar mascota
-                </div>
-              </DropdownMenuItem>
-            </Link>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              </Link>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Listado de mascotas */}
@@ -567,10 +581,7 @@ export default function HomePage() {
                               <div className="w-15">
                                 <img
                                   className="size-12 rounded-full overflow-hidden object-cover"
-                                  src={
-                                    (listPets[0]?.photo_url as string) ||
-                                    fidel_avatar
-                                  }
+                                  src={fidel_avatar}
                                   alt="asds"
                                 />
                               </div>

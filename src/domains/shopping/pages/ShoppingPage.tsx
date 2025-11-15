@@ -6,7 +6,7 @@ import { useCardsStore } from "@/store/card.store";
 import MaskedCard from "@/domains/profile/components/MaskedCard";
 import { IoIosArrowDown } from "react-icons/io";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HiPencil } from "react-icons/hi2";
@@ -32,6 +32,7 @@ export default function ShoppingPage() {
     selectedVariant,
     selectedPet,
     reset: resetDetailStore,
+    setLastStep,
   } = useDetailStore();
   const navigate = useNavigate();
 
@@ -100,6 +101,11 @@ export default function ShoppingPage() {
     // setSelectedService(null);
     navigate("/");
   };
+
+  // guardar el estado del paso actual del proceso de venta
+  useEffect(() => {
+    setLastStep("payment");
+  }, []);
 
   return (
     <div className="w-full flex flex-col gap-6 items-center justify-center overflow-hidden">
