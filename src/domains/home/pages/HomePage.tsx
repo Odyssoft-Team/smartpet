@@ -124,8 +124,14 @@ export default function HomePage() {
   useEffect(() => {
     if (api && typeof idxCarousel === "number") {
       api.scrollTo(idxCarousel);
+      setSelectedPet(listPets[idxCarousel]);
+      setPetAndUser(
+        listPets[idxCarousel].user_id,
+        Number(listPets[idxCarousel].id),
+        listPets[idxCarousel].name
+      );
     }
-  }, [idxCarousel, api]);
+  }, [idxCarousel, api, listPets, setSelectedPet, setPetAndUser]);
 
   const fetchPets = useCallback(async () => {
     try {

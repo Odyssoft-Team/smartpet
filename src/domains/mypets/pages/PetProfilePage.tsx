@@ -139,26 +139,29 @@ export default function PetProfilePage() {
 
       <div className="w-full max-w-md rounded-xl items-center">
         {/* Imagen centrada con círculo de peso */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-30 mt-10">
           <div className="relative h-40 w-40">
             {/* Círculo de fondo con peso */}
-            <div className="absolute inset-0 rounded-full border-4 border-cyan-200">
+            <div className="absolute inset-0 rounded-full border-cyan-100 border-20 size-70 left-1/2 -top-10 transform -translate-x-1/2 z-[1]">
               {/* Peso en la parte superior del círculo */}
-              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-cyan-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+              <div className="absolute top-2 -left-5 transform bg-cyan-500 text-white py-1 rounded-full size-15 leading-[1] flex items-center justify-center font-bold text-base">
                 {selectedPet.weight ? `${selectedPet.weight} kg` : "— kg"}
               </div>
             </div>
 
             {/* Imagen de la mascota - más pequeña y posicionada abajo */}
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 w-36 h-36 rounded-2xl overflow-hidden">
+            <div className="absolute -bottom-20 left-1/2 transform -translate-x-1/2  z-[5] flex flex-col items-center justify-center gap-2">
+              <h1 className="text-3xl font-bold text-[#0085D8]">
+                {selectedPet.name}
+              </h1>
               {selectedPet.photo_url ? (
                 <img
                   src={selectedPet.photo_url}
                   alt={selectedPet.name}
-                  className="w-full h-full object-cover"
+                  className="object-cover size-48 rounded-2xl overflow-hidden"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                <div className="size-48 flex items-center justify-center bg-gray-200 rounded-2xl overflow-hidden">
                   <MdOutlinePets className="size-8 text-gray-600" />
                 </div>
               )}
@@ -167,7 +170,7 @@ export default function PetProfilePage() {
             {/* Botón de editar */}
             <Link
               to="/editmypets"
-              className="absolute bottom-0 right-0 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow"
+              className="absolute -bottom-22 -right-8 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow z-[6]"
               onClick={() => setSelectedPet(selectedPet)}
             >
               <HiPencil className="size-4" />
@@ -176,8 +179,8 @@ export default function PetProfilePage() {
         </div>
 
         {/* Información de la mascota */}
-        <div className="text-center space-y-4 mb-8">
-          <h1 className="text-3xl font-bold">{selectedPet.name}</h1>
+        <div className="text-center space-y-4 mb-8 z-[5]">
+          {/* <h1 className="text-3xl font-bold">{selectedPet.name}</h1> */}
           <p className="text-gray-500 text-lg">{breed?.name || "—"}</p>
 
           <div className="text-sm text-gray-500">
@@ -235,7 +238,7 @@ export default function PetProfilePage() {
         </div>
 
         {/* Botones de acción */}
-        <div className="w-full space-y-4 mb-8 px-4">
+        <div className="w-full space-y-4 mb-8 px-4 flex flex-col">
           <Link to="/pet-medical-profile" className="w-full">
             <Button
               size="lg"
@@ -248,15 +251,6 @@ export default function PetProfilePage() {
             </Button>
           </Link>
 
-          <Button
-            variant="destructive"
-            className="w-full rounded-xl py-3"
-            onClick={handleDelete}
-          >
-            <Trash2 className="mr-2" />
-            Borrar mascota
-          </Button>
-
           <Link to="/register-pet/step1" className="w-full">
             <Button
               size="lg"
@@ -267,6 +261,15 @@ export default function PetProfilePage() {
               Registrar nueva mascota
             </Button>
           </Link>
+
+          <Button
+            variant="destructive"
+            className="w-full rounded-xl py-3"
+            onClick={handleDelete}
+          >
+            <Trash2 className="mr-2" />
+            Borrar mascota
+          </Button>
         </div>
 
         <Separator />

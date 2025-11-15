@@ -16,9 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useLogin } from "@/hooks/useLogin";
 import { useAuthStore } from "@/store/auth.store";
+import { Eye, EyeOff } from "lucide-react";
 
 export function LoginForm() {
   const { setCurrentUser, setToken } = useAuthStore();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -77,14 +80,30 @@ export function LoginForm() {
 
           <Field className="flex flex-col gap-1">
             <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="pr-10" // espacio para el icono
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
           </Field>
 
           <Field>

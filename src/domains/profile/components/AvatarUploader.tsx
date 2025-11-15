@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { IoCamera } from "react-icons/io5";
 import { toast } from "sonner";
 import { useProfiles } from "../services/servicesProfile";
-import { Loader2 } from "lucide-react"; // 👈 Importar spinner
+import { Loader2 } from "lucide-react";
 
 interface AvatarUploaderProps {
   defaultImage: string;
@@ -19,10 +19,14 @@ export const AvatarUploader = ({
 }: AvatarUploaderProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { updateProfile } = useProfiles();
-  const [isUploading, setIsUploading] = useState(false); // 👈 Estado para el spinner
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleImageClick = () => {
-    if (isUploading) return; // 👈 Evitar clicks durante carga
+    if (isUploading) return;
+
+    // iPhone fix — reiniciar input para permitir re-seleccionar la misma imagen
+    if (fileInputRef.current) fileInputRef.current.value = "";
+
     fileInputRef.current?.click();
   };
 
@@ -30,7 +34,13 @@ export const AvatarUploader = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+
+    // ⚠ FIX para iPhone: si Safari NO entrega archivo, aplicar fallback
+    if (!file) {
+      toast.error("En estos momentos no se puede subir foto");
+      onAvatarChange(defaultImage);
+      return;
+    }
 
     if (!file.type.startsWith("image/")) {
       toast.warning("Por favor, selecciona un archivo de imagen válido");
@@ -42,7 +52,7 @@ export const AvatarUploader = ({
       return;
     }
 
-    setIsUploading(true); // 👈 Iniciar carga
+    setIsUploading(true);
 
     try {
       toast.loading("Subiendo imagen...", { id: "upload" });
@@ -57,7 +67,10 @@ export const AvatarUploader = ({
       }
 
       if (!imageUrl) {
-        toast.error("No se pudo subir la imagen", { id: "upload" });
+        toast.error("En estos momentos no se puede subir foto", {
+          id: "upload",
+        });
+        onAvatarChange(defaultImage); // Fallback default image
         return;
       }
 
@@ -65,11 +78,12 @@ export const AvatarUploader = ({
       toast.success("Imagen actualizada ✅", { id: "upload" });
     } catch (error) {
       console.error("Error al subir la imagen:", error);
-      toast.error("Ocurrió un error al actualizar la imagen", {
+      toast.error("En estos momentos no se puede subir foto", {
         id: "upload",
       });
+      onAvatarChange(defaultImage); // Fallback en caso de error
     } finally {
-      setIsUploading(false); // 👈 Finalizar carga
+      setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
@@ -88,14 +102,12 @@ export const AvatarUploader = ({
           className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-75 rounded-xl"
         />
 
-        {/* 👈 Spinner durante la carga */}
         {isUploading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl">
             <Loader2 className="size-8 text-white animate-spin" />
           </div>
         )}
 
-        {/* 👈 Overlay de cámara (solo cuando no está cargando) */}
         {!isUploading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 rounded-xl transition-all duration-300">
             <IoCamera className="size-8 text-white opacity-0 group-hover:opacity-100 transition-all duration-300" />
@@ -109,7 +121,7 @@ export const AvatarUploader = ({
         onChange={handleImageChange}
         accept="image/*"
         className="hidden"
-        disabled={isUploading} // 👈 Deshabilitar durante carga
+        disabled={isUploading}
       />
 
       <span

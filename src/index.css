@@ -85,6 +85,23 @@ body {
   min-height: 100vh;
 }
 
+/* 🔒 Ocultar botón de mostrar contraseña en Edge / Chrome / Opera */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+}
+
+/* Ocultar icono de mostrar contraseña en Chrome */
+input[type="password"]::-webkit-password-toggle {
+  display: none !important;
+}
+
+
 /* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

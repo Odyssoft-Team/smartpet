@@ -13,11 +13,15 @@ import { useNavigate } from "react-router-dom";
 import { useRegisterStore } from "@/store/register.store";
 import { useState } from "react";
 
+import { Eye, EyeOff } from "lucide-react";
+
 export function RegisterForm() {
   const navigate = useNavigate();
   const { email, setEmail, password, setPassword, isStepComplete } =
     useRegisterStore();
   const [error, setError] = useState<string>("");
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,14 +61,31 @@ export function RegisterForm() {
           </Field>
 
           <Field className="flex flex-col gap-1">
-            <FieldLabel htmlFor="pass-new">Contraseña</FieldLabel>
-            <Input
-              id="pass-new"
-              type="password"
-              placeholder=""
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <FieldLabel htmlFor="pass-new">Contraseña</FieldLabel>
+
+            <div className="relative">
+              <Input
+                id="pass-new"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="pr-10" // espacio para el icono
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+
             {error && <p className="text-sm text-red-500">{error}</p>}
           </Field>
 

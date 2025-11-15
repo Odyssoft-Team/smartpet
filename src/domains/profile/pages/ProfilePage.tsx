@@ -53,7 +53,7 @@ export default function ProfilePage() {
   const { getCurrentUserProfile, updateProfile } = useProfiles();
   // const { loadUserCards, updateCard } = useCards();
 
-/*   const [openVideos, setOpenVideos] = useState<{ [key: string]: boolean }>({});
+  /*   const [openVideos, setOpenVideos] = useState<{ [key: string]: boolean }>({});
 
   const toggleVideo = (itemId: string) => {
     setOpenVideos((prev) => ({
@@ -285,7 +285,7 @@ export default function ProfilePage() {
             {loading ? (
               <Skeleton className="inline-block h-6 w-32 align-middle rounded" />
             ) : (
-              `${profile.full_name.split(" ")[0]} ${profile.full_name.split(" ")[1]}`
+              `${profile.full_name.split(" ")[0]}`
             )}
             !
           </span>
@@ -421,7 +421,6 @@ export default function ProfilePage() {
           </div> */}
 
           <hr className="mt-6 bg-gray-600" />
-
         </div>
       </div>
 
