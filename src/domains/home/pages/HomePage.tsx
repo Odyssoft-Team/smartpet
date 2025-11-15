@@ -131,6 +131,8 @@ export default function HomePage() {
     try {
       const data = await getPetsByUser();
 
+      console.log("GAAAA:", data);
+
       if (data && Array.isArray(data)) {
         setListPets(data);
         if (!selectedPet) {
@@ -214,9 +216,9 @@ export default function HomePage() {
     fetchOrderServices();
   }, []);
 
-  const { lastStep } = useDetailStore();
+  const { selectedService } = useDetailStore();
 
-  const hasProcess = lastStep !== null && lastStep !== undefined;
+  const hasProgress = !!selectedService;
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -230,7 +232,7 @@ export default function HomePage() {
             >
               <Button
                 size="lg"
-                className="px-3 max-w-[13rem] bg-transparent hover:bg-transparent !p-0"
+                className="max-w-[13rem] bg-transparent hover:bg-transparent !p-0 gap-1"
               >
                 <MapPinCheck />
                 <span className="truncate font-medium text-sm">
@@ -277,19 +279,13 @@ export default function HomePage() {
           <Link to={"/shopping/in-process"} className="relative">
             <MdOutlineLocalGroceryStore className="size-6 text-white" />
 
-            {hasProcess && (
+            {hasProgress && (
               <span className="absolute -top-1 -right-1 bg-red-600 text-white w-3 h-3 rounded-full"></span>
             )}
           </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild hidden={listPets.length === 0}>
               <Button size="lg" className="px-3 bg-cyan-600">
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">
-                    {selectedPet?.name}
-                  </span>
-                </div>
-
                 <Avatar className="size-7">
                   <AvatarImage
                     src={selectedPet?.photo_url as string}
@@ -299,6 +295,11 @@ export default function HomePage() {
                     {selectedPet?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">
+                    {selectedPet?.name}
+                  </span>
+                </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent

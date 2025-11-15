@@ -15,12 +15,12 @@ export default function SplashScreen() {
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="flex flex-col items-center gap-4"
+          className="flex flex-col items-center justify-center text-center gap-4"
         >
           <div className="flex items-center gap-2 text-2xl font-black text-cyan-500 dark:text-blue-400">
             <span>ALLQU PET</span>
           </div>
-          <p className="text-gray-600 dark:text-gray-400 text-sm flex items-center gap-2">
+          <p className="text-gray-600 dark:text-gray-400 text-sm flex items-center gap-2 flex-col">
             <Loader2Icon className="animate-spin size-6" />
             TECNOLOGÍA, AMOR Y CONFIANZA AL SERVICIO DE QUIENES MÁS QUEREMOS
           </p>

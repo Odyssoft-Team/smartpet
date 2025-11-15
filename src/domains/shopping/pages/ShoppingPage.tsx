@@ -60,7 +60,7 @@ export default function ShoppingPage() {
     setLoading(true);
 
     const data: ServiceOrder = {
-      user_id: selectedServiceBeta?.user_id as string,
+      user_id: selectedPet?.user_id as string,
       card_id: selectedCardId,
       pet_id: selectedPet?.id as number,
       variant_id: selectedVariant?.id as number,
