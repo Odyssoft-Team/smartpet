@@ -33,7 +33,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IoIosArrowDown } from "react-icons/io";
-import { Calendar, CheckCheckIcon, MapPinCheck, Plus } from "lucide-react";
+import {
+  Calendar,
+  CheckCheckIcon,
+  Info,
+  MapPinCheck,
+  Plus,
+} from "lucide-react";
 import add_pet from "@/assets/home/add-pet.png";
 import fondo from "@/assets/home/fondo_pet.png";
 
@@ -476,8 +482,9 @@ export default function HomePage() {
               <div className="w-full h-[5rem] text-[#0085D8] text-[15px] font-medium flex justify-center items-center p-0 rounded-md overflow-hidden shadow border-none bg-[#F5F5F5]">
                 ¡Contrate su primer servicio!
               </div>
-              <span className="text-sm text-neutral-400 -mt-1 font-light">
-                Acá podrá visualizar el status de sus servicios
+              <span className="text-xs text-neutral-400 -mt-1 font-light flex items-center gap-1">
+                <Info className="size-4" /> Acá podrá visualizar el status de
+                sus servicios
               </span>
             </>
           )}

@@ -51,7 +51,7 @@ export default function RegisterPetStep6() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
-          <div className="relative w-60">
+          <div className="relative w-full">
             <Input
               type="text"
               value={special_condition}
@@ -60,7 +60,8 @@ export default function RegisterPetStep6() {
                 setField("special_condition", e.target.value);
               }}
               className=""
-              placeholder="displacia en cadera, etc.."
+              placeholder="Displacia en cadera, etc.."
+              disabled={special_condition === "No presenta una condición"}
             />
           </div>
 

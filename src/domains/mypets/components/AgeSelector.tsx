@@ -20,7 +20,7 @@ interface AgeSelectorProps {
 export default function AgeSelector({
   onSelectDate,
   onSelectAge,
-  onSelectUnknown,
+  // onSelectUnknown,
   selectedDate,
 }: AgeSelectorProps) {
   const [years, setYears] = useState<string>("");
@@ -54,7 +54,7 @@ export default function AgeSelector({
         >
           Edad aproximada
         </Button>
-        <Button
+        {/* <Button
           type="button"
           variant={method === "unknown" ? "default" : "outline"}
           onClick={() => {
@@ -63,7 +63,7 @@ export default function AgeSelector({
           }}
         >
           No sé
-        </Button>
+        </Button> */}
       </div>
 
       {method === "date" && (

@@ -47,7 +47,7 @@ export default function RegisterPetStep5() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
-          <div className="relative w-48">
+          <div className="relative w-full">
             <Input
               type="text"
               value={allergies}
@@ -55,15 +55,16 @@ export default function RegisterPetStep5() {
                 setError("");
                 setField("allergies", e.target.value);
               }}
-              className=""
+              className="w-full"
               placeholder="pulgas, pollo, etc."
+              disabled={allergies === "No especifico"}
             />
           </div>
 
           <div className="flex items-center gap-3">
             <Checkbox
               id="noAllergies"
-              checked={allergies === "Sin alergías"}
+              checked={allergies === "No especifico"}
               onCheckedChange={(checked) => {
                 setError("");
                 setField("allergies", checked ? "No especifico" : "");

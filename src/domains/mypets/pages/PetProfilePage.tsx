@@ -12,6 +12,7 @@ import { getAllBreeds, type Breed } from "../services/getAllBreeds";
 import { Plus, Trash2 } from "lucide-react";
 import { FaSyringe } from "react-icons/fa";
 import { FaWorm } from "react-icons/fa6";
+import { Separator } from "@/components/ui/separator";
 export default function PetProfilePage() {
   const { selectedPet, setSelectedPet } = usePetStore();
 
@@ -20,7 +21,7 @@ export default function PetProfilePage() {
   //const [listSpecies, setListSpecies] = useState<Species[]>([]);
   const [listBreeds, setListBreeds] = useState<Breed[]>([]);
 
-/*   useEffect(() => {
+  /*   useEffect(() => {
     const fetchSpecies = async () => {
       const data = await getAllSpecies();
       if (data) {
@@ -68,7 +69,7 @@ export default function PetProfilePage() {
 
   if (!selectedPet) return null;
 
-/*   function getAge(birthDateString: string): number {
+  /*   function getAge(birthDateString: string): number {
     const birthDate = new Date(birthDateString);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -99,7 +100,7 @@ export default function PetProfilePage() {
 
       <div className="w-full max-w-md rounded-xl items-center">
         <div className="items-center mb-6 flex gap-4">
-          <div className="relative h-40 mb-4 w-2/5">
+          <div className="relative h-40 mb-4 w-40">
             {selectedPet.photo_url ? (
               <img
                 src={selectedPet.photo_url}
@@ -119,7 +120,7 @@ export default function PetProfilePage() {
               <HiPencil className="size-5" />
             </Link>
           </div>
-          <div className="text-left space-y-0 w-3/5">
+          <div className="text-left space-y-0 w-[calc(100%-160px)]">
             <div className="flex items-center  gap-2">
               <h1 className="text-2xl font-bold">{selectedPet.name}</h1>
             </div>
@@ -134,12 +135,16 @@ export default function PetProfilePage() {
                 : "—"}
             </p> */}
             <div className="border-t border-gray-200 my-4" />
-            <h3 className="mt-4 text-cyan-600 font-bold">Alergias y condiciones</h3>
+            <h3 className="mt-4 text-cyan-600 font-bold text-base">
+              Alergias y condiciones
+            </h3>
             <p className="text-green-600 text-sm">
-              {/* Alergias:  */}{selectedPet.allergies || "Sin alergias"}
+              {/* Alergias:  */}
+              {selectedPet.allergies || "Sin alergias"}
             </p>
             <p className="text-gray-500 text-sm">
-              {/* Condición especial:  */}{selectedPet.special_condition || "Sin condición especial"}
+              {/* Condición especial:  */}
+              {selectedPet.special_condition || "Sin condición especial"}
             </p>
             {/* <p className="text-gray-500 text-sm">
               Comportamiento social: {selectedPet.social_behavior || "—"}
@@ -147,33 +152,48 @@ export default function PetProfilePage() {
           </div>
         </div>
 
-
         <div className="w-full space-y-6">
-
-
+          <Separator />
           <div className="flex flex-col gap-2">
+            <h2 className="font-semibold">Información Médica</h2>
             <div className="grid grid-cols-3 gap-3">
               <Link to={`/pets/${selectedPet.id}/vaccines`} className="">
-                <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
-                  <FaSyringe style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
+                <Button
+                  variant="outline"
+                  className="w-full flex flex-col items-center justify-center h-28 py-2"
+                >
+                  <FaSyringe
+                    style={{ width: 56, height: 56, fontSize: 56 }}
+                    aria-hidden
+                  />
                   <span className="mt-2 text-sm">Vacunas</span>
                 </Button>
               </Link>
               <Link to={`/pets/${selectedPet.id}/revisions`}>
-                <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
-                  <FaWorm style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
+                <Button
+                  variant="outline"
+                  className="w-full flex flex-col items-center justify-center h-28 py-2"
+                >
+                  <FaWorm
+                    style={{ width: 56, height: 56, fontSize: 56 }}
+                    aria-hidden
+                  />
                   <span className="mt-2 text-sm">Revisiones</span>
                 </Button>
               </Link>
               <Link to={`/pets/${selectedPet.id}/deworming`}>
-                <Button variant="outline" className="w-full flex flex-col items-center justify-center h-28 py-2">
-                  <FaWorm style={{ width: 56, height: 56, fontSize: 56 }} aria-hidden />
+                <Button
+                  variant="outline"
+                  className="w-full flex flex-col items-center justify-center h-28 py-2"
+                >
+                  <FaWorm
+                    style={{ width: 56, height: 56, fontSize: 56 }}
+                    aria-hidden
+                  />
                   <span className="mt-2 text-sm">Desparasitación</span>
                 </Button>
               </Link>
             </div>
-
-            <p>Información Médica</p>
 
             <Link to="/register-pet/step1" className="w-full">
               <Button

@@ -167,7 +167,7 @@ export default function RegisterPetStep2() {
               onValueChange={(value) => handleSelectBreed(parseInt(value))}
               disabled={breeds.length === 0}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue
                   placeholder={
                     breeds.length === 0
