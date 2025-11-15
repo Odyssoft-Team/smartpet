@@ -51,7 +51,10 @@ export async function registerWithEmail({
     email,
     password,
     options: {
-      data: { name, phone }, // se guarda en user_metadata
+      data: {
+        full_name: name,
+        phone,
+      }, // se guarda en user_metadata
       emailRedirectTo: `${window.location.origin}/auth/callback`,
     },
   });
