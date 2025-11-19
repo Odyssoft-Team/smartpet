@@ -114,21 +114,19 @@ export default function EditPage() {
 
   return (
     <div className="min-h-screen bg-white p-4">
-      <div className="w-full max-w-md mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-2 mb-6">
-          <Link to="/pet-profile">
-            <Button
-              size="back"
-              variant="back"
-              className="w-auto h-auto py-2 text-icon hover:text-icon"
-            >
-              <IoIosArrowBack className="size-8" />
-              <span>Editar mascota</span>
-            </Button>
-          </Link>
-        </div>
-
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+        <Link to="/pet-profile">
+          <Button
+            size="back"
+            variant="back"
+            className="w-auto h-auto text-icon hover:text-icon cursor-pointer gap-3"
+          >
+            <IoIosArrowBack className="size-6 text-white" />
+            <span className="-ml-2 text-white">Editar mascota</span>
+          </Button>
+        </Link>
+      </div>
+      <div className="w-full max-w-md mx-auto mt-18">
         {/* Form */}
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

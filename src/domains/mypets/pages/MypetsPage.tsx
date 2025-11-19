@@ -89,16 +89,17 @@ export default function MypetsPage() {
 
   return (
     <div className="h-full">
-      <div className="w-full flex items-center justify-between">
+      {/* HEADER */}
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
         <Button
           size="back"
           variant={"back"}
-          className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
+          className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer text-white"
         >
           Mis mascotas
         </Button>
       </div>
-      <div className="mt-6 w-full max-w-md mx-auto">
+      <div className="w-full max-w-md mx-auto mt-20">
         <div className="w-full flex flex-col gap-3">
           {loadingPets
             ? Array.from({ length: 2 }).map((_, index) => (

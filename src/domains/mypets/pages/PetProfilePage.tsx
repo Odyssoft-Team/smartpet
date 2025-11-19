@@ -124,7 +124,19 @@ export default function PetProfilePage() {
 
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white min-h-screen">
-      <div className="w-full flex justify-start mb-4">
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+        <Link to="/mypets">
+          <Button
+            size="back"
+            variant="back"
+            className="w-auto h-auto text-icon hover:text-icon cursor-pointer gap-3"
+          >
+            <IoIosArrowBack className="size-6 text-white" />
+            <span className="-ml-2 text-white">Perfil de mascota</span>
+          </Button>
+        </Link>
+      </div>
+      {/* <div className="w-full flex justify-start mb-4">
         <Link to="/mypets">
           <Button
             size="back"
@@ -135,9 +147,9 @@ export default function PetProfilePage() {
             <span className="-ml-2">Perfil</span>
           </Button>
         </Link>
-      </div>
+      </div> */}
 
-      <div className="w-full max-w-md rounded-xl items-center">
+      <div className="w-full max-w-md rounded-xl items-center mt-20">
         {/* Imagen centrada con círculo de peso */}
         <div className="flex justify-center mb-30 mt-10">
           <div className="relative h-40 w-40">
@@ -155,11 +167,13 @@ export default function PetProfilePage() {
                 {selectedPet.name}
               </h1>
               {selectedPet.photo_url ? (
-                <img
-                  src={selectedPet.photo_url}
-                  alt={selectedPet.name}
-                  className="object-cover size-48 rounded-2xl overflow-hidden"
-                />
+                <figure className="size-48 rounded-full overflow-hidden">
+                  <img
+                    src={selectedPet.photo_url}
+                    alt={selectedPet.name}
+                    className="object-cover flex size-full"
+                  />
+                </figure>
               ) : (
                 <div className="size-48 flex items-center justify-center bg-gray-200 rounded-2xl overflow-hidden">
                   <MdOutlinePets className="size-8 text-gray-600" />
@@ -215,7 +229,7 @@ export default function PetProfilePage() {
                   }}
                 />
               </div>
-              <div className="flex justify-between text-xs text-gray-400 mt-1 hidden">
+              <div className="justify-between text-xs text-gray-400 mt-1 hidden">
                 {[1, 2, 3, 4, 5].map((num) => (
                   <span
                     key={num}

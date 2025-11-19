@@ -44,6 +44,8 @@ import {
 import add_pet from "@/assets/home/add-pet.png";
 import fondo from "@/assets/home/fondo_pet.png";
 
+import pet_default from "@/assets/pets/pet-default.jpg";
+
 type Service = {
   id: number;
   name: string;
@@ -75,8 +77,14 @@ import { es } from "date-fns/locale";
 
 export default function HomePage() {
   const { setSelectedService } = useServiceStore();
-  const { setServicePrice, selectedPet, setSelectedPet, setPetAndUser } =
-    useDetailStore();
+  const {
+    setServicePrice,
+    selectedPet,
+    setSelectedPet,
+    setPetAndUser,
+    addressSelected,
+    setAddressSelected,
+  } = useDetailStore();
 
   const [loadingServices, setLoadingServices] = useState(false);
   const [listServices, setListServices] = useState<Service[]>([]);
@@ -84,9 +92,6 @@ export default function HomePage() {
   const { getServices } = useServices(); //tengo un loading aqui, puedes usarlo para mostrar un spinner
   const { profile } = useProfileStore();
   const [listAddress, setListAddress] = useState<AddressByUser[]>([]);
-  const [addressSelected, setAddressSelected] = useState<AddressByUser | null>(
-    null
-  );
   const [listPets, setListPets] = useState<Pet[]>([]);
 
   const [api, setApi] = useState<CarouselApi | null>(null);
@@ -137,8 +142,6 @@ export default function HomePage() {
     try {
       const data = await getPetsByUser();
 
-      console.log("GAAAA:", data);
-
       if (data && Array.isArray(data)) {
         setListPets(data);
         if (!selectedPet) {
@@ -154,7 +157,8 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchPets();
-  }, [fetchPets]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -296,6 +300,7 @@ export default function HomePage() {
                   <AvatarImage
                     src={selectedPet?.photo_url as string}
                     alt={selectedPet?.name}
+                    className="object-cover"
                   />
                   <AvatarFallback className="font-bold text-black">
                     {selectedPet?.name?.charAt(0).toUpperCase()}
@@ -396,6 +401,7 @@ export default function HomePage() {
                           <AvatarImage
                             src={pet.photo_url as string}
                             alt={pet?.name}
+                            className="object-cover"
                           />
                           <AvatarFallback className="font-bold text-xl">
                             {pet?.name?.charAt(0).toUpperCase()}
@@ -461,7 +467,8 @@ export default function HomePage() {
                         <img
                           className="size-15 rounded-full overflow-hidden object-cover"
                           src={
-                            (listPets[0]?.photo_url as string) || fidel_avatar
+                            (listPets.find((pet) => pet.id === item.pet_id)
+                              ?.photo_url as string) || pet_default
                           }
                           alt="asds"
                         />

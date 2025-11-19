@@ -1,3 +1,4 @@
+import type { AddressByUser } from "@/domains/address/services/getAddressByUser";
 import type { Pet } from "@/domains/mypets/services/getPetsByUser";
 import type { AdditionalServices } from "@/domains/services/services/getAdditionalServices";
 import { create } from "zustand";
@@ -51,6 +52,9 @@ type detailStore = {
 
   selectedPet: Pet | null;
   setSelectedPet: (pet: Pet | null) => void;
+
+  addressSelected: AddressByUser | null;
+  setAddressSelected: (address: AddressByUser | null) => void;
 
   setPetAndUser: (user_id: string, pet_id: number, pet_name?: string) => void;
   setService: (service: Service) => void;
@@ -131,6 +135,9 @@ export const useDetailStore = create<detailStore>()(
         })),
 
       setService: (service) => set({ selectedService: service }),
+
+      addressSelected: null,
+      setAddressSelected: (address) => set({ addressSelected: address }),
 
       setVariant: (id: number, price_delta: number, name: string) =>
         set((state) => {

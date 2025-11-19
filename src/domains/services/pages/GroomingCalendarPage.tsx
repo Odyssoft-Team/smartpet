@@ -25,10 +25,10 @@ import {
 } from "../services/getAvailableDatesByService";
 import { format } from "date-fns";
 import { useDetailStore } from "@/store/detail";
-import type { Address } from "@/domains/address/pages/AddressPage";
 import { supabase } from "@/lib/supabaseClient";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import type { AddressByUser } from "@/domains/address/services/getAddressByUser";
 
 // function MapEvents({
 //   onMapClick,
@@ -93,8 +93,12 @@ export default function GroomingCalendarPage() {
     return today;
   };
 
-  const { selectedDateService, setSelectedDateService, setLastStep } =
-    useDetailStore();
+  const {
+    selectedDateService,
+    setSelectedDateService,
+    setLastStep,
+    setAddressSelected,
+  } = useDetailStore();
 
   useEffect(() => {
     setSelectedDateService(getInitialDate());
@@ -159,19 +163,25 @@ export default function GroomingCalendarPage() {
   // Deshabilitar botón Reservar si ya está reservado
   const isReserveDisabled = isReserving || !selectedDateService || isReserved;
 
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<AddressByUser[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedId, setSelectedId] = useState<string | null>(
+  const [selectedId, setSelectedId] = useState<string | number | null>(
     addresses.find((a) => a.is_default)?.id ?? null
   );
 
   useEffect(() => {
     setSelectedId(addresses.find((a) => a.is_default)?.id ?? null);
+    const temp = addresses.find((a) => a.is_default);
+    if (temp) {
+      setAddressSelected(temp);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addresses]);
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
+    setAddressSelected(addresses.find((a) => a.id === Number(id)) ?? null);
   };
 
   const fetchAddresses = async () => {
@@ -212,6 +222,7 @@ export default function GroomingCalendarPage() {
   // guardar el estado del paso actual del proceso de venta
   useEffect(() => {
     setLastStep("calendar");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -422,7 +433,7 @@ export default function GroomingCalendarPage() {
                   <div className="flex">
                     <Checkbox
                       checked={selectedId === address.id}
-                      onCheckedChange={() => handleSelect(address.id)}
+                      onCheckedChange={() => handleSelect(String(address.id))}
                     />
                   </div>
                 </div>

@@ -33,6 +33,7 @@ export default function ShoppingPage() {
     selectedPet,
     reset: resetDetailStore,
     setLastStep,
+    addressSelected,
   } = useDetailStore();
   const navigate = useNavigate();
 
@@ -55,14 +56,22 @@ export default function ShoppingPage() {
 
   // Función para procesar el pago
   const handlePayment = async () => {
-    if (!selectedCardId) return;
+    if (!selectedCardId) {
+      toast.error("Por favor, seleccione una tarjeta antes de continuar.");
+      return;
+    }
+
+    if (!addressSelected) {
+      toast.error("Por favor, seleccione una dirección antes de continuar.");
+      return;
+    }
 
     setLoading(true);
 
     const data: ServiceOrder = {
       user_id: selectedPet?.user_id as string,
       card_id: selectedCardId,
-      pet_id: selectedPet?.id as number,
+      pet_id: selectedServiceBeta?.pet_id as number,
       variant_id: selectedVariant?.id as number,
       scheduled_date: format(selectedDateService as Date, "yyyy-MM-dd"),
       notes: "",
@@ -105,7 +114,7 @@ export default function ShoppingPage() {
   // guardar el estado del paso actual del proceso de venta
   useEffect(() => {
     setLastStep("payment");
-  }, []);
+  }, [setLastStep]);
 
   return (
     <div className="w-full flex flex-col gap-6 items-center justify-center overflow-hidden">

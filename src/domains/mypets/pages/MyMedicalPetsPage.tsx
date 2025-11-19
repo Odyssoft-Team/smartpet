@@ -88,16 +88,16 @@ export default function MyMedicalPetsPage() {
 
   return (
     <div className="h-full">
-      <div className="w-full flex items-center justify-between">
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
         <Button
           size="back"
-          variant={"back"}
-          className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
+          variant="back"
+          className="w-auto h-auto text-icon hover:text-icon cursor-pointer gap-3"
         >
-          Historial Médico
+          <span className="-ml-2 text-white">Historial Médico</span>
         </Button>
       </div>
-      <div className="mt-6 w-full max-w-md mx-auto">
+      <div className="mt-20 w-full max-w-md mx-auto">
         <div className="w-full flex flex-col gap-3">
           {loadingPets
             ? Array.from({ length: 2 }).map((_, index) => (

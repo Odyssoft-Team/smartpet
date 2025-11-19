@@ -276,8 +276,17 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white h-fit min-h-screen">
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+        <Button
+          size="back"
+          variant="back"
+          className="w-auto h-auto text-icon hover:text-icon cursor-pointer gap-3"
+        >
+          <span className="-ml-2 text-white">Mi perfil</span>
+        </Button>
+      </div>
       {/* Body */}
-      <div className="w-full max-w-md rounded-xl flex flex-col mb-2">
+      <div className="w-full max-w-md rounded-xl flex flex-col mb-2 mt-20">
         {/* perfil */}
         <div className="flex flex-col items-center gap-y-4">
           <span className="text-xl font-bold text-[#D86C00]">
