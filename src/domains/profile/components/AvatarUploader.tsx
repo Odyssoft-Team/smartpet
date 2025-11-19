@@ -91,7 +91,7 @@ export const AvatarUploader = ({
   return (
     <div className="flex flex-col items-center">
       <div
-        className={`relative group shadow-xl size-[80px] rounded-full bg-transparent cursor-pointer overflow-hidden ${
+        className={`relative group shadow-xl size-[120px] rounded-full bg-transparent cursor-pointer overflow-hidden ${
           isUploading ? "opacity-50 cursor-not-allowed" : ""
         }`}
         onClick={handleImageClick}

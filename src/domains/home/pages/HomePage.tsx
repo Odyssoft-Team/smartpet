@@ -552,7 +552,7 @@ export default function HomePage() {
                     <CarouselItem key={item.id} className="basis-[80%]">
                       <Card className="p-0 border-none shadow-none rounded-none">
                         <Link
-                          to="/services/grooming/2"
+                          to="/services/grooming"
                           onClick={() => {
                             if (index === 0) {
                               setSelectedService({

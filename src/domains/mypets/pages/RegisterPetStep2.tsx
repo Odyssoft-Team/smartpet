@@ -3,12 +3,21 @@ import { useNavigate } from "react-router-dom";
 import PetFormLayout from "../components/PetFormLayout";
 import { useRegisterPetStore } from "../store/registerPet.store";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { getAllSpecies, type Species } from "../services/getAllSpecies";
 import { getBreedsBySpecies } from "../services/getBreedsBySpecies";
 
@@ -55,6 +64,8 @@ export default function RegisterPetStep2() {
   const [species, setSpecies] = useState<Species[]>([]);
   const [breeds, setBreeds] = useState<Breed[]>([]);
   const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(null);
+  const [selectedBreed, setSelectedBreed] = useState<Breed | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchSpecies = async () => {
@@ -88,12 +99,25 @@ export default function RegisterPetStep2() {
         if (data && data.length > 0) {
           // Si carga exitosamente, reemplazar con datos de Supabase
           setBreeds(data);
+          
+          // Si ya hay un breed_id seleccionado, encontrar la raza
+          if (breed_id) {
+            const found = data.find((b) => b.id === breed_id);
+            if (found) setSelectedBreed(found);
+          }
+        } else {
+          // Si hay breed_id pero no cargó desde Supabase, usar datos hardcodeados
+          if (breed_id) {
+            const fallbackBreeds = DEFAULT_BREEDS[species_id as keyof typeof DEFAULT_BREEDS] || [];
+            const found = fallbackBreeds.find((b) => b.id === breed_id);
+            if (found) setSelectedBreed(found);
+          }
         }
       }
     };
     fetchBreeds();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [species_id, getBreedsBySpecies]);
+  }, [species_id, breed_id, getBreedsBySpecies]);
 
   const handleNext = () => {
     if (!species_id || !breed_id) return;
@@ -119,6 +143,10 @@ export default function RegisterPetStep2() {
   };
 
   const handleSelectBreed = (breedId: number) => {
+    const selected = breeds.find((b) => b.id === breedId);
+    if (selected) {
+      setSelectedBreed(selected);
+    }
     setField("breed_id", breedId);
   };
 
@@ -162,28 +190,54 @@ export default function RegisterPetStep2() {
         {species_id && (
           <div className="space-y-2">
             <p className="text-center font-medium">Selecciona la raza</p>
-            <Select
-              value={breed_id?.toString() || ""}
-              onValueChange={(value) => handleSelectBreed(parseInt(value))}
-              disabled={breeds.length === 0}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={
-                    breeds.length === 0
-                      ? "Cargando razas..."
-                      : "Selecciona una raza"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {breeds.map((breed) => (
-                  <SelectItem key={breed.id} value={breed.id.toString()}>
-                    {breed.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-full justify-between"
+                  disabled={breeds.length === 0}
+                >
+                  {selectedBreed
+                    ? selectedBreed.name
+                    : breeds.length === 0
+                    ? "Cargando razas..."
+                    : "Selecciona una raza"}
+                  <ChevronsUpDown className="opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Buscar raza..." className="h-9" />
+                  <CommandList>
+                    <CommandEmpty>No se encontraron razas.</CommandEmpty>
+                    <CommandGroup>
+                      {breeds.map((breed) => (
+                        <CommandItem
+                          key={breed.id}
+                          value={breed.name}
+                          onSelect={() => {
+                            handleSelectBreed(breed.id);
+                            setOpen(false);
+                          }}
+                        >
+                          {breed.name}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              selectedBreed?.id === breed.id
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
         )}
       </div>

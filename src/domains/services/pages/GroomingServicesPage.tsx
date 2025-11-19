@@ -18,7 +18,6 @@ import { toast } from "sonner";
 import { useDetailStore, type ServiceVariant } from "@/store/detail";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, CheckCheckIcon, MapPinCheck, Plus } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import {
   getPetsByUser,
   type Pet,
@@ -27,11 +26,6 @@ import {
   getAddressByUser,
   type AddressByUser,
 } from "@/domains/address/services/getAddressByUser";
-import {
-  getAdditionalServices,
-  type AdditionalServices,
-} from "../services/getAdditionalServices";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,9 +49,7 @@ export default function GroomingServicesPage() {
   const {
     setVariant,
     selectedVariant,
-    listAdditionalServices: selected,
     totalAdditionalServices,
-    toggleAdditionalService,
     setPetAndUser,
     selectedPet,
     setSelectedPet,
@@ -99,33 +91,10 @@ export default function GroomingServicesPage() {
 
   const [listPets, setListPets] = useState<Pet[]>([]);
 
-  const [listAdditionalServices, setListAdditionalServices] = useState<
-    AdditionalServices[]
-  >([]);
-
-  useEffect(() => {
-    const fetchAdditionalServices = async () => {
-      try {
-        const data = await getAdditionalServices(selectedService?.id ?? 0);
-
-        if (data) {
-          console.log("✅ Servicios adicionales cargados:", data);
-          setListAdditionalServices(data);
-        } else {
-          toast.error("No se pudieron cargar los servicios adicionales");
-        }
-      } catch (error) {
-        console.error("Error cargando servicios adicionales:", error);
-      }
-    };
-
-    fetchAdditionalServices();
-  }, [selectedService?.id]);
-
   const total = useDetailStore((state) => state.selectedService?.total ?? 0);
 
   const handleContinue = () => {
-    navigate("/services/grooming/3");
+    navigate("/services/grooming/optional");
   };
 
   const isContinueEnabled = true;
@@ -169,7 +138,7 @@ export default function GroomingServicesPage() {
   // guardar el estado del paso actual del proceso de venta
   useEffect(() => {
     setLastStep("variant");
-  }, []);
+  }, [setLastStep]);
 
   return (
     <div className="w-full h-full flex flex-col gap-8 items-center justify-center">
@@ -473,231 +442,22 @@ export default function GroomingServicesPage() {
             {/* SERVICIOS ADICIONALES */}
           </Accordion>
 
-          <Separator />
-
-          <div className="w-full flex flex-col gap-2">
-            <h3 className="font-bold text-[#0085D8]">Adicionales+</h3>
-
-            {/* <Accordion
-              type="single"
-              collapsible
-              className="w-full space-y-2"
-              defaultValue="item-1"
+          {/* Botón: Comprar */}
+          <div className="w-full h-auto flex justify-between items-center fixed left-0 right-0 px-4 bottom-16 bg-white border-t py-3">
+            <Button
+              className="flex w-fit items-center bg-green-600 rounded-full px-5"
+              disabled={!isContinueEnabled}
+              onClick={handleContinue}
             >
-              <AccordionItem value="item-1" className="border-none">
-                <AccordionTrigger className="border h-auto py-2 px-2">
-                  Pelaje y estilo
-                </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4 text-balance px-2 py-2">
-                  {listAdditionalServices
-                    .filter((item) => item.category === "pelaje")
-                    .map((item) => {
-                      return (
-                        <div
-                          className={cn(
-                            "flex items-center gap-3 w-full justify-between",
-                            item.price <= 0 && "pointer-events-none opacity-50"
-                          )}
-                        >
-                          <div className="flex flex-col">
-                            <span className="text-sm text-[#0085D8]">
-                              {item.name}
-                            </span>
-                            <p className="text-xs text-black">
-                              {item.description}
-                            </p>
-                            {item.price <= 0 && (
-                              <span className="text-xs text-[#D86C00] font-bold">
-                                No aplicable
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {item.price > 0 && (
-                              <span className="font-bold text-[#0085D8] text-xs">
-                                S/. {item.price}
-                              </span>
-                            )}
-                            <Checkbox id="terms" />
-                          </div>
-                        </div>
-                      );
-                    })}
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2" className="border-none">
-                <AccordionTrigger className="border h-auto py-2 px-2">
-                  AllquSpa Plus+
-                </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4 text-balance px-2 py-2">
-                  {listAdditionalServices
-                    .filter((item) => item.category === "spa")
-                    .map((item) => {
-                      return (
-                        <div
-                          className={cn(
-                            "flex items-center gap-3 w-full justify-between",
-                            item.price <= 0 && "pointer-events-none opacity-50"
-                          )}
-                        >
-                          <div className="flex flex-col">
-                            <span className="text-sm text-[#0085D8]">
-                              {item.name}
-                            </span>
-                            <p className="text-xs text-black">
-                              {item.description}
-                            </p>
-                            {item.price <= 0 && (
-                              <span className="text-xs text-[#D86C00] font-bold">
-                                No aplicable
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {item.price > 0 && (
-                              <span className="font-bold text-[#0085D8] text-xs">
-                                S/. {item.price}
-                              </span>
-                            )}
-                            <Checkbox id="terms" />
-                          </div>
-                        </div>
-                      );
-                    })}
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3" className="border-none">
-                <AccordionTrigger className="border h-auto py-2 px-2">
-                  Cuidado y salud
-                </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4 text-balance px-2 py-2">
-                  {listAdditionalServices
-                    .filter((item) => item.category === "cuidado")
-                    .map((item) => {
-                      return (
-                        <div
-                          className={cn(
-                            "flex items-center gap-3 w-full justify-between",
-                            item.price <= 0 && "pointer-events-none opacity-50"
-                          )}
-                        >
-                          <div className="flex flex-col">
-                            <span className="text-sm text-[#0085D8]">
-                              {item.name}
-                            </span>
-                            <p className="text-xs text-black">
-                              {item.description}
-                            </p>
-                            {item.price <= 0 && (
-                              <span className="text-xs text-[#D86C00] font-bold">
-                                No aplicable
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {item.price > 0 && (
-                              <span className="font-bold text-[#0085D8] text-xs">
-                                S/. {item.price}
-                              </span>
-                            )}
-                            <Checkbox id="terms" />
-                          </div>
-                        </div>
-                      );
-                    })}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion> */}
+              Continuar
+            </Button>
 
-            <Accordion
-              type="single"
-              collapsible
-              className="w-full space-y-2"
-              defaultValue="item-1"
-            >
-              {["pelaje", "spa", "cuidado"].map((category, index) => (
-                <AccordionItem
-                  key={category}
-                  value={`item-${index + 1}`}
-                  className="border-none"
-                >
-                  <AccordionTrigger className="border h-auto py-2 px-2 capitalize">
-                    {category === "spa"
-                      ? "AllquSpa Plus+"
-                      : category === "pelaje"
-                        ? "Pelaje y estilo"
-                        : "Cuidado y salud"}
-                  </AccordionTrigger>
-
-                  <AccordionContent className="flex flex-col gap-4 text-balance px-2 py-2">
-                    {listAdditionalServices
-                      .filter((item) => item.category === category)
-                      .map((item) => {
-                        const isChecked = selected.some(
-                          (s) => s.id === item.id
-                        );
-
-                        return (
-                          <div
-                            key={item.id}
-                            className={cn(
-                              "flex items-center gap-3 w-full justify-between",
-                              item.price <= 0 &&
-                                "pointer-events-none opacity-50"
-                            )}
-                          >
-                            <div className="flex flex-col">
-                              <span className="text-sm text-[#0085D8]">
-                                {item.name}
-                              </span>
-                              <p className="text-xs text-black">
-                                {item.description}
-                              </p>
-                              {item.price <= 0 && (
-                                <span className="text-xs text-[#D86C00] font-bold">
-                                  No aplicable
-                                </span>
-                              )}
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              {item.price > 0 && (
-                                <span className="font-bold text-[#0085D8] text-xs">
-                                  S/. {item.price}
-                                </span>
-                              )}
-                              <Checkbox
-                                checked={isChecked}
-                                onCheckedChange={() =>
-                                  toggleAdditionalService(item)
-                                }
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </div>
-
-        {/* Botón: Comprar */}
-        <div className="w-full h-auto flex justify-between items-center fixed left-0 right-0 px-4 bottom-16 bg-white border-t py-3">
-          <Button
-            className="flex w-fit items-center bg-green-600 rounded-full px-5"
-            disabled={!isContinueEnabled}
-            onClick={handleContinue}
-          >
-            Continuar
-          </Button>
-
-          <div className="flex flex-col justify-end items-end">
-            <h3 className="font-bold text-lg">Total a pagar</h3>
-            <h3 className="text-[#D86C00] font-bold text-lg -mt-1">
-              S/. {total + totalAdditionalServices}
-            </h3>
+            <div className="flex flex-col justify-end items-end">
+              <h3 className="font-bold text-lg">Total a pagar</h3>
+              <h3 className="text-[#D86C00] font-bold text-lg -mt-1">
+                S/. {total + totalAdditionalServices}
+              </h3>
+            </div>
           </div>
         </div>
       </div>

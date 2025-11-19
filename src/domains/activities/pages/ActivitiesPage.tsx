@@ -144,11 +144,19 @@ export default function ActivitiesPage() {
           </div>
         </div>
 
-        <Link to={`/chat/${orderId}`}>
-          <Button className="w-full">
-            Iniciar Chat
-          </Button>
-        </Link>
+        <div className="flex flex-col gap-2">
+          <Link to={`/activities/${orderId}/reschedule`}>
+            <Button variant="outline" className="w-full">
+              Reprogramar Fecha
+            </Button>
+          </Link>
+          
+          <Link to={`/chat/${orderId}`}>
+            <Button className="w-full">
+              Iniciar Chat
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import { ProtectedLayout } from "./layouts/ProtedtedLayout";
+import { ProtectedLayout } from "./layouts/ProtectedLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import ErrorPage from "@/shared/pages/ErrorPage";
 import AppLayout from "./layouts/AppLayout";
@@ -10,6 +10,7 @@ import AddressRegisterPage from "@/domains/address/pages/RegisterPage";
 import AddressEditPage from "@/domains/address/pages/EditPage";
 import CardsPage from "@/domains/cards/pages/CardsPage";
 import CardsRegisterPage from "@/domains/cards/pages/RegisterPage";
+import GroomingOptionalPage from "@/domains/services/pages/GroomingOptionalPage";
 
 const RegisterPetStep1 = lazy(
   () => import("@/domains/mypets/pages/RegisterPetStep1")
@@ -37,9 +38,7 @@ const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
 const ServicesPage = lazy(
   () => import("../domains/services/pages/ServicesPage")
 );
-const GroomingPage = lazy(
-  () => import("../domains/services/pages/GroomingPage")
-);
+
 const GroomingServicesPage = lazy(
   () => import("../domains/services/pages/GroomingServicesPage")
 );
@@ -112,6 +111,8 @@ const LiveHomePage = lazy(() => import("@/domains/live/pages/HomePage"));
 const LiveHostPage = lazy(() => import("@/domains/live/pages/HostPage"));
 const LiveViewerPage = lazy(() => import("@/domains/live/pages/ViewerPage"));
 
+const RescheduleServicePage = lazy(() => import("../domains/services/pages/RescheduleServicePage"));
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -124,13 +125,15 @@ export const router = createBrowserRouter([
         children: [
           { path: "/", element: <HomePage /> },
           { path: "/services", element: <ServicesPage /> },
-          { path: "/services/grooming", element: <GroomingPage /> },
-          { path: "/services/grooming/2", element: <GroomingServicesPage /> },
+          { path: "/services/grooming", element: <GroomingServicesPage /> },
+          { path: "/services/grooming", element: <GroomingServicesPage /> },
+          { path: "/services/grooming/optional", element: <GroomingOptionalPage /> },
           { path: "/services/grooming/3", element: <GroomingCalendarPage /> },
           { path: "/shopping", element: <ShoppingPage /> },
           { path: "/shopping/in-process", element: <InProcessPage /> },
           { path: "/notifications", element: <NotificationsPage /> },
           { path: "/activities/:orderId", element: <ActivitiesPage /> },
+          { path: "/activities/:orderId/reschedule", element: <RescheduleServicePage /> },
           { path: "/chat/:orderId", element: <ChatPage /> },
           { path: "/video/:orderId", element: <VideoCallPage /> },
           { path: "/rating/:orderId", element: <RatingPage /> },
