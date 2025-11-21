@@ -24,7 +24,7 @@ export default function PetFormLayout({
   totalSteps,
 }: PetFormLayoutProps) {
   return (
-    <div className="flex flex-col items-center justify-start pt-20 bg-white h-fit min-h-screen">
+    <div className="flex flex-col items-center justify-start bg-white h-fit min-h-screen">
       <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
         <Button
           size="back"
@@ -32,8 +32,9 @@ export default function PetFormLayout({
           className="w-auto h-auto text-icon hover:text-icon cursor-pointer gap-3"
         >
           <IoIosArrowBack className="size-6 text-white" />
-          <span className="-ml-2 text-white">Registro de mascota</span>
         </Button>
+        <span className="-ml-2 text-white">Registro de mascota</span>
+        <span className=""> </span>
       </div>
       <div className="w-full flex justify-start mb-4">
         {showBackButton && (
@@ -69,7 +70,7 @@ export default function PetFormLayout({
           <Button
             onClick={onNext}
             disabled={nextDisabled}
-            className="w-full max-w-[200px] bg-black text-white"
+            className="w-full bg-cyan-500 text-white h-11"
           >
             Continuar
           </Button>
