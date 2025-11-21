@@ -31,12 +31,12 @@ export default function PetFormLayout({
           variant="back"
           className="w-auto h-auto text-icon hover:text-icon cursor-pointer gap-3"
         >
-          <IoIosArrowBack className="size-6 text-white" />
+          {/* <IoIosArrowBack className="size-6 text-white" /> */}
+          <span className="-ml-2 text-white">Registro de mascota</span>
         </Button>
-        <span className="-ml-2 text-white">Registro de mascota</span>
         <span className=""> </span>
       </div>
-      <div className="w-full flex justify-start mb-4">
+      <div className="w-full flex justify-start mt-18 mb-4">
         {showBackButton && (
           <Button
             type="button"
@@ -45,8 +45,8 @@ export default function PetFormLayout({
             variant="back"
             className="w-auto h-auto py-2 text-icon hover:text-icon cursor-pointer"
           >
-            <IoIosArrowBack className="size-8" />
-            <span className="-ml-2">Atrás</span>
+            <IoIosArrowBack className="size-6" />
+            <span className="-ml-2 text-lg">Atrás</span>
           </Button>
         )}
       </div>

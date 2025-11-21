@@ -34,6 +34,8 @@ const RegisterPetStep7 = lazy(
   () => import("@/domains/mypets/pages/RegisterPetStep7")
 );
 
+const CouponsPage = lazy(() => import("@/domains/coupons/pages/CouponsPage"));
+
 const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
 const ServicesPage = lazy(
   () => import("../domains/services/pages/ServicesPage")
@@ -111,7 +113,9 @@ const LiveHomePage = lazy(() => import("@/domains/live/pages/HomePage"));
 const LiveHostPage = lazy(() => import("@/domains/live/pages/HostPage"));
 const LiveViewerPage = lazy(() => import("@/domains/live/pages/ViewerPage"));
 
-const RescheduleServicePage = lazy(() => import("../domains/services/pages/RescheduleServicePage"));
+const RescheduleServicePage = lazy(
+  () => import("../domains/services/pages/RescheduleServicePage")
+);
 
 export const router = createBrowserRouter([
   {
@@ -127,13 +131,19 @@ export const router = createBrowserRouter([
           { path: "/services", element: <ServicesPage /> },
           { path: "/services/grooming", element: <GroomingServicesPage /> },
           { path: "/services/grooming", element: <GroomingServicesPage /> },
-          { path: "/services/grooming/optional", element: <GroomingOptionalPage /> },
+          {
+            path: "/services/grooming/optional",
+            element: <GroomingOptionalPage />,
+          },
           { path: "/services/grooming/3", element: <GroomingCalendarPage /> },
           { path: "/shopping", element: <ShoppingPage /> },
           { path: "/shopping/in-process", element: <InProcessPage /> },
           { path: "/notifications", element: <NotificationsPage /> },
           { path: "/activities/:orderId", element: <ActivitiesPage /> },
-          { path: "/activities/:orderId/reschedule", element: <RescheduleServicePage /> },
+          {
+            path: "/activities/:orderId/reschedule",
+            element: <RescheduleServicePage />,
+          },
           { path: "/chat/:orderId", element: <ChatPage /> },
           { path: "/video/:orderId", element: <VideoCallPage /> },
           { path: "/rating/:orderId", element: <RatingPage /> },
@@ -167,6 +177,7 @@ export const router = createBrowserRouter([
           { path: "/register-pet/step5", element: <RegisterPetStep5 /> },
           { path: "/register-pet/step6", element: <RegisterPetStep6 /> },
           { path: "/register-pet/step7", element: <RegisterPetStep7 /> },
+          { path: "/coupons", element: <CouponsPage /> },
           // {
           //   path: "/live",
           //   element: <LiveHomePage />,
