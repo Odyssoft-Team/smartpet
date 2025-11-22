@@ -7,7 +7,7 @@ import MaskedCard from "@/domains/profile/components/MaskedCard";
 import { IoIosArrowDown } from "react-icons/io";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check, ChevronRight, Loader2, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HiPencil } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
@@ -193,6 +193,21 @@ export default function ShoppingPage() {
                 );
               })}
             </div>
+
+            <Separator />
+
+            <Link to={"/coupons"} className="w-full cursor-pointer">
+              <Button
+                variant={"outline"}
+                className="text-start justify-between border-[#E4C40F] text-[#E4C40F] w-full hover:text-[#E4C40F] hover:bg-transparent"
+              >
+                <span className="flex items-center gap-2 text-base">
+                  AllquCupones
+                  <Smile className="size-5" />
+                </span>
+                <ChevronRight className="size-5 text-black" />
+              </Button>
+            </Link>
 
             <Separator />
 

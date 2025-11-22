@@ -177,8 +177,8 @@ export default function RegisterPetStep2() {
                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
               }`}
             >
-              <span className="text-3xl">
-                {sp.id === 1 ? "🐕" : sp.id === 2 ? "🐈" : "🐾"}
+              <span className="text-5xl">
+                {/* {sp.id === 1 ? "🐕" : sp.id === 2 ? "🐈" : "🐾"} */}
                 {sp.id === 1 ? "🐕" : "🐈"}
               </span>
               <span className="font-medium">{sp.name}</span>

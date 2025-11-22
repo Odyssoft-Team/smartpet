@@ -114,7 +114,7 @@ export default function EditPage() {
 
   return (
     <div className="min-h-screen bg-white p-4">
-      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-2 z-50 justify-between flex items-center">
         <Link to="/pet-profile">
           <Button
             size="back"

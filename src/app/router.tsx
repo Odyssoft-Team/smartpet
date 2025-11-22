@@ -34,6 +34,8 @@ const RegisterPetStep7 = lazy(
   () => import("@/domains/mypets/pages/RegisterPetStep7")
 );
 
+const CouponsPage = lazy(() => import("@/domains/coupons/pages/CouponsPage"));
+
 const HomePage = lazy(() => import("../domains/home/pages/HomePage"));
 const ServicesPage = lazy(
   () => import("../domains/services/pages/ServicesPage")
@@ -174,6 +176,7 @@ export const router = createBrowserRouter([
           { path: "/register-pet/step5", element: <RegisterPetStep5 /> },
           { path: "/register-pet/step6", element: <RegisterPetStep6 /> },
           { path: "/register-pet/step7", element: <RegisterPetStep7 /> },
+          { path: "/coupons", element: <CouponsPage /> },
           // {
           //   path: "/live",
           //   element: <LiveHomePage />,

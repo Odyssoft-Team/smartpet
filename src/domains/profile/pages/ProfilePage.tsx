@@ -32,7 +32,7 @@ import {
   //FaRegClock,
   // FaPaw,
   FaCreditCard,
-  // FaBook,
+  FaBook,
 } from "react-icons/fa";
 import { /* IoIosArrowDown, */ IoIosArrowForward } from "react-icons/io";
 //import { FiArrowRightCircle } from "react-icons/fi";
@@ -271,12 +271,12 @@ export default function ProfilePage() {
     { to: "/address", label: "Mis Direcciones", icon: HiMapPin },
     { to: "/cards", label: "Métodos de pago", icon: FaCreditCard },
 
-    // { to: "/libro", label: "Libro de Reclamaciones", icon: FaBook },
+    { to: "/libro", label: "Libro de Reclamaciones", icon: FaBook },
   ];
 
   return (
     <div className="flex flex-col items-center justify-start pt-4 bg-white h-fit min-h-screen">
-      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 pt-3 pb-2 z-50 justify-between flex items-center">
         <Button
           size="back"
           variant="back"

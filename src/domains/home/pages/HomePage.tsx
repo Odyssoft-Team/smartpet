@@ -263,7 +263,7 @@ export default function HomePage() {
   return (
     <div className="w-full flex flex-col gap-4">
       {/* HEADER */}
-      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 py-3 z-50 justify-between flex items-center">
+      <div className="bg-cyan-500 fixed top-0 left-0 right-0 px-4 pt-3 pb-2 z-50 justify-between flex items-center">
         {listAddress?.length > 0 ? (
           <DropdownMenu>
             <DropdownMenuTrigger
