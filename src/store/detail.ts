@@ -52,6 +52,7 @@ type detailStore = {
 
   selectedPet: Pet | null;
   setSelectedPet: (pet: Pet | null) => void;
+  clearSelectedPet: () => void;
 
   addressSelected: AddressByUser | null;
   setAddressSelected: (address: AddressByUser | null) => void;
@@ -94,6 +95,7 @@ export const useDetailStore = create<detailStore>()(
 
       selectedPet: null,
       setSelectedPet: (pet) => set({ selectedPet: pet }),
+      clearSelectedPet: () => set({ selectedPet: null }),
 
       listAdditionalServices: [],
       totalAdditionalServices: 0,

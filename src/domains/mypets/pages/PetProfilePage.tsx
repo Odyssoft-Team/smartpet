@@ -3,7 +3,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { usePetStore } from "@/store/pets.store";
+// import { usePetStore } from "@/store/pets.store";
 import { MdOutlinePets } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { deletePet } from "../services/deletePet";
@@ -15,9 +15,11 @@ import { getOrderServices } from "@/domains/home/services/getOrderServices";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import type { ServiceOrder } from "@/domains/shopping/services/addServiceOrder";
+import { useDetailStore } from "@/store/detail";
 
 export default function PetProfilePage() {
-  const { selectedPet, setSelectedPet } = usePetStore();
+  // const { selectedPet, setSelectedPet } = usePetStore();
+  const { selectedPet, setSelectedPet } = useDetailStore();
 
   const navigate = useNavigate();
 
@@ -94,6 +96,7 @@ export default function PetProfilePage() {
     const success = await deletePet(selectedPet.id);
     if (success) {
       toast.success("Mascota eliminada con éxito");
+      useDetailStore.getState().clearSelectedPet();
       navigate("/mypets");
     }
   };

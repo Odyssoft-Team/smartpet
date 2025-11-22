@@ -111,7 +111,9 @@ const LiveHomePage = lazy(() => import("@/domains/live/pages/HomePage"));
 const LiveHostPage = lazy(() => import("@/domains/live/pages/HostPage"));
 const LiveViewerPage = lazy(() => import("@/domains/live/pages/ViewerPage"));
 
-const RescheduleServicePage = lazy(() => import("../domains/services/pages/RescheduleServicePage"));
+const RescheduleServicePage = lazy(
+  () => import("../domains/services/pages/RescheduleServicePage")
+);
 
 export const router = createBrowserRouter([
   {
@@ -126,14 +128,19 @@ export const router = createBrowserRouter([
           { path: "/", element: <HomePage /> },
           { path: "/services", element: <ServicesPage /> },
           { path: "/services/grooming", element: <GroomingServicesPage /> },
-          { path: "/services/grooming", element: <GroomingServicesPage /> },
-          { path: "/services/grooming/optional", element: <GroomingOptionalPage /> },
+          {
+            path: "/services/grooming/optional",
+            element: <GroomingOptionalPage />,
+          },
           { path: "/services/grooming/3", element: <GroomingCalendarPage /> },
           { path: "/shopping", element: <ShoppingPage /> },
           { path: "/shopping/in-process", element: <InProcessPage /> },
           { path: "/notifications", element: <NotificationsPage /> },
           { path: "/activities/:orderId", element: <ActivitiesPage /> },
-          { path: "/activities/:orderId/reschedule", element: <RescheduleServicePage /> },
+          {
+            path: "/activities/:orderId/reschedule",
+            element: <RescheduleServicePage />,
+          },
           { path: "/chat/:orderId", element: <ChatPage /> },
           { path: "/video/:orderId", element: <VideoCallPage /> },
           { path: "/rating/:orderId", element: <RatingPage /> },

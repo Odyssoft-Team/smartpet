@@ -15,7 +15,12 @@ export const ProtectedLayout = () => {
 
   return (
     <AuthGate>
-      <Toaster richColors visibleToasts={1} theme="light" />
+      <Toaster
+        richColors
+        visibleToasts={1}
+        position="top-right"
+        theme="light"
+      />
       {isValidToken ? <Outlet /> : <Navigate to="/auth/login" />}
     </AuthGate>
   );

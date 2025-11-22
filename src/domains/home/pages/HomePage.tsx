@@ -230,6 +230,36 @@ export default function HomePage() {
 
   const hasProgress = !!selectedService;
 
+  const handleClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    index: number,
+    item: Service
+  ) => {
+    // Servicios que no son el primero
+    if (index !== 0) {
+      toast.error("Este servicio no está disponible.");
+      e.preventDefault();
+      return;
+    }
+
+    // No hay mascota seleccionada
+    if (!selectedPet) {
+      toast.error("Para continuar, seleccione o cree una mascota.");
+      e.preventDefault();
+      return;
+    }
+
+    // Todo OK → guardar servicio seleccionado
+    setSelectedService({
+      id: item.id,
+      service_name: item.name,
+      sub: item.description,
+      time: item.duration_minutes,
+    });
+
+    setServicePrice(item.price);
+  };
+
   return (
     <div className="w-full flex flex-col gap-4">
       {/* HEADER */}
@@ -525,8 +555,13 @@ export default function HomePage() {
 
       <div className="w-full flex flex-col items-center justify-center gap-2 overflow-hidden">
         <h2 className="font-bold flex items-center gap-3 text-lg text-[#D86C00]">
-          Otras opciones
+          Más servicios
         </h2>
+        {!selectedPet && (
+          <span className="text-xs text-neutral-400 -mt-1 font-light flex items-center gap-1">
+            <Info className="size-4" /> para comenzar, cree una mascota
+          </span>
+        )}
 
         <Carousel
           opts={{
@@ -560,21 +595,11 @@ export default function HomePage() {
                       <Card className="p-0 border-none shadow-none rounded-none">
                         <Link
                           to="/services/grooming"
-                          onClick={() => {
-                            if (index === 0) {
-                              setSelectedService({
-                                id: item.id,
-                                service_name: item.name,
-                                sub: item.description,
-                                time: item.duration_minutes,
-                              });
-                              setServicePrice(item.price);
-                            }
-                          }}
+                          onClick={(e) => handleClick(e, index, item)}
                           className={cn(
                             index === 0
-                              ? "pointer-events-auto"
-                              : "pointer-events-none opacity-80 cursor-not-allowed"
+                              ? "opacity-100"
+                              : "opacity-50 cursor-not-allowed pointer-events-none"
                           )}
                         >
                           <CardContent className="flex flex-col justify-center p-0 gap-2">
