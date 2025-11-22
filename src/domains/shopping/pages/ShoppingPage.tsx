@@ -20,6 +20,7 @@ import {
 } from "../services/addServiceOrder";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ShoppingPage() {
   // const { selectedService, setSelectedService } = useServiceStore();
@@ -34,6 +35,7 @@ export default function ShoppingPage() {
     reset: resetDetailStore,
     setLastStep,
     addressSelected,
+    couponSelected,
   } = useDetailStore();
   const navigate = useNavigate();
 
@@ -75,8 +77,7 @@ export default function ShoppingPage() {
       variant_id: selectedVariant?.id as number,
       scheduled_date: format(selectedDateService as Date, "yyyy-MM-dd"),
       notes: "",
-      total:
-        totalAdditionalServices + (selectedServiceBeta?.price_service ?? 0),
+      total: calculateTotal(),
       payment_status: "paid",
       scheduled_time: "10:00 am",
       status: "pending",
@@ -115,6 +116,32 @@ export default function ShoppingPage() {
   useEffect(() => {
     setLastStep("payment");
   }, [setLastStep]);
+
+  const calculateTotal = () => {
+    const price_temp =
+      totalAdditionalServices + (selectedServiceBeta?.price_service ?? 0);
+    if (couponSelected?.discount_type === "percent") {
+      return price_temp - price_temp * (couponSelected?.discount_value / 100);
+    } else {
+      return price_temp - (couponSelected?.discount_value ?? 0);
+    }
+  };
+
+  const calculateDiscount = () => {
+    const price_temp =
+      totalAdditionalServices + (selectedServiceBeta?.price_service ?? 0);
+    if (couponSelected?.discount_type === "percent") {
+      return price_temp * (couponSelected?.discount_value / 100);
+    } else {
+      return couponSelected?.discount_value ?? 0;
+    }
+  };
+
+  useEffect(() => {
+    calculateTotal();
+    calculateDiscount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [couponSelected]);
 
   return (
     <div className="w-full flex flex-col gap-6 items-center justify-center overflow-hidden">
@@ -194,8 +221,6 @@ export default function ShoppingPage() {
               })}
             </div>
 
-            <Separator />
-
             <Link to={"/coupons"} className="w-full cursor-pointer">
               <Button
                 variant={"outline"}
@@ -209,12 +234,35 @@ export default function ShoppingPage() {
               </Button>
             </Link>
 
+            {couponSelected && (
+              <div className="w-full flex items-center justify-between border rounded-md p-2">
+                <div className="flex flex-col items-start leading-[1]">
+                  <h3 className="text-[#FBBC05] font-medium">
+                    {couponSelected?.code}
+                  </h3>
+                  <p className="pt-1 text-center text-xs text-muted-foreground">
+                    {couponSelected?.name}
+                  </p>
+                </div>
+                <Checkbox
+                  checked={true}
+                  className="data-[state=checked]:bg-[#FBBC05] data-[state=checked]:border-[#FBBC05]"
+                />
+              </div>
+            )}
+
             <Separator />
 
-            <div className="w-full flex items-center justify-end font-bold text-[#2EA937]">
-              Total: S/.{" "}
-              {totalAdditionalServices +
-                (selectedServiceBeta?.price_service ?? 0)}
+            <div className="w-full flex flex-col">
+              {couponSelected && (
+                <div className="w-full flex items-end justify-end text-xs text-[#FBBC05] font-bold">
+                  Dscto: - S/. {calculateDiscount()}
+                </div>
+              )}
+
+              <div className="w-full flex items-center justify-end font-bold text-[#2EA937]">
+                Total: S/. {calculateTotal()}
+              </div>
             </div>
           </div>
         ) : (

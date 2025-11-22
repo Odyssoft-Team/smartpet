@@ -1,4 +1,5 @@
 import type { AddressByUser } from "@/domains/address/services/getAddressByUser";
+import type { Coupons } from "@/domains/coupons/services/getCoupons";
 import type { Pet } from "@/domains/mypets/services/getPetsByUser";
 import type { AdditionalServices } from "@/domains/services/services/getAdditionalServices";
 import { create } from "zustand";
@@ -42,6 +43,9 @@ type detailStore = {
   selectedOptions: ServiceOption[];
   scheduledDate: string | null;
   scheduledTime: string | null;
+
+  couponSelected: Coupons | null;
+  setCouponSelected: (coupon: Coupons | null) => void;
 
   listAdditionalServices: AdditionalServices[];
   totalAdditionalServices: number;
@@ -92,6 +96,9 @@ export const useDetailStore = create<detailStore>()(
       selectedOptions: [],
       scheduledDate: null,
       scheduledTime: null,
+
+      couponSelected: null,
+      setCouponSelected: (coupon) => set({ couponSelected: coupon }),
 
       selectedPet: null,
       setSelectedPet: (pet) => set({ selectedPet: pet }),
