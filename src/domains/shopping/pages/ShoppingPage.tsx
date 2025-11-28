@@ -7,7 +7,7 @@ import MaskedCard from "@/domains/profile/components/MaskedCard";
 import { IoIosArrowDown } from "react-icons/io";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Check, ChevronRight, Loader2, Smile } from "lucide-react";
+import { Check, ChevronRight, Loader2, Smile, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HiPencil } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
@@ -36,6 +36,7 @@ export default function ShoppingPage() {
     setLastStep,
     addressSelected,
     couponSelected,
+    setCouponSelected,
   } = useDetailStore();
   const navigate = useNavigate();
 
@@ -94,6 +95,7 @@ export default function ShoppingPage() {
           resetDetailStore();
           clearService();
           setShowSuccessDialog(false);
+          setCouponSelected(null);
           navigate("/");
         }, 2000);
       } else {
@@ -158,7 +160,7 @@ export default function ShoppingPage() {
         {hasService ? (
           <div className="w-full flex flex-col gap-3">
             <div className="w-full flex items-center justify-between">
-              <h2 className="flex items-center gap-2 font-bold">
+              <h2 className="flex items-center gap-2 font-bold uppercase">
                 {selectedPet?.name} <PiDogFill className="size-5" />
               </h2>
               <div className="flex items-center gap-2">
@@ -244,10 +246,20 @@ export default function ShoppingPage() {
                     {couponSelected?.name}
                   </p>
                 </div>
-                <Checkbox
-                  checked={true}
-                  className="data-[state=checked]:bg-[#FBBC05] data-[state=checked]:border-[#FBBC05]"
-                />
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    checked={true}
+                    className="data-[state=checked]:bg-[#2EA937] data-[state=checked]:border-[#2EA937]"
+                  />
+
+                  <Button
+                    variant={"ghost"}
+                    className="bg-transparent hover:bg-transparent border-none p-0!"
+                    onClick={() => setCouponSelected(null)}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
               </div>
             )}
 

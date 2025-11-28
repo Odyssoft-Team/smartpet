@@ -32,7 +32,11 @@ export default function CouponsPage() {
   });
 
   const onSelect = (coupon: Coupons) => {
-    setCouponSelected(coupon);
+    if (coupon === couponSelected) {
+      setCouponSelected(null);
+    } else {
+      setCouponSelected(coupon);
+    }
   };
 
   return (
@@ -129,6 +133,16 @@ export default function CouponsPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {couponSelected && (
+        <div className="w-full flex items-center justify-center mt-8">
+          <Link to="/shopping">
+            <Button className="w-auto h-auto py-2 text-icon bg-green-500 hover:bg-green-500 hover:text-icon cursor-pointer text-white">
+              Continuar compra
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

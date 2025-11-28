@@ -228,8 +228,6 @@ export default function HomePage() {
 
   const { selectedService } = useDetailStore();
 
-  const hasProgress = !!selectedService;
-
   const handleClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     index: number,
@@ -319,7 +317,7 @@ export default function HomePage() {
           <Link to={"/shopping/in-process"} className="relative">
             <MdOutlineLocalGroceryStore className="size-6 text-white" />
 
-            {hasProgress && (
+            {selectedService && (
               <span className="absolute -top-1 -right-1 bg-red-600 text-white w-3 h-3 rounded-full"></span>
             )}
           </Link>
